@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+
+:root {
+  --background: #f8f8f8;
+  --foreground: #171717;
+  --accent: #9CB24D;
+  --test: #237e5f;
+}
+
+@layer base {
+  body {
+    @apply bg-[--background] text-[--foreground];
+  }
+}
+
+@layer components {
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+}
