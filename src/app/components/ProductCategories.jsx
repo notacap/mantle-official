@@ -44,6 +44,12 @@ export default function ProductCategories() {
       description: 'Sustainable accessories to complete your look.',
       image: '/images/DSCF6361-scaled.jpg',
       tag: 'accessories'
+    },
+    {
+      title: 'Shop All',
+      description: 'Browse our complete collection of sustainable products.',
+      image: '/images/home-1.jpg',
+      tag: 'shop'
     }
   ];
 
@@ -56,56 +62,32 @@ export default function ProductCategories() {
         
         <div style={{ 
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+          gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)',
           gap: '2rem',
           marginBottom: '3rem'
         }}>
-          {collections.map((collection, index) => (
-            <div key={index} style={{ 
-              textAlign: 'center',
-              display: 'flex',
-              flexDirection: 'column',
-              height: '100%'
-            }}>
-              <Link href={`/collections/${collection.tag}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                <div style={{ 
-                  position: 'relative',
-                  height: '300px',
-                  borderRadius: '0.5rem',
-                  overflow: 'hidden',
-                  marginBottom: '1.5rem',
-                  backgroundColor: '#f3f4f6'
-                }}>
-                  <img
-                    src={collection.image}
-                    alt={collection.title}
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                      transition: 'transform 0.3s ease'
-                    }}
-                    onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
-                    onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
-                  />
-                </div>
-              </Link>
-              
-              <h3 style={{ fontSize: '1.25rem', fontWeight: '500', marginBottom: '0.75rem' }}>
-                {collection.title}
-              </h3>
-              
-              <p style={{ color: '#4b5563', marginBottom: '1.5rem', flex: '1' }}>
-                {collection.description}
-              </p>
-              
-              {/* <div style={{ marginTop: 'auto' }}>
-                <ButtonWithHover href={`/collections/${collection.tag}`}>
-                  Shop {collection.title}
-                </ButtonWithHover>
-              </div> */}
-            </div>
-          ))}
+          {collections.map((collection, index) => {
+            const isHovered = hoveredCategory === index;
+            const category = {
+              name: collection.title,
+              image: collection.image,
+              link: collection.tag === 'shop' ? '/shop' : `/collections/${collection.tag}`
+            };
+            
+            return (
+              <div key={index} style={{ height: '100%' }}>
+                <CategoryCard 
+                  category={category}
+                  isHovered={isHovered}
+                  onMouseEnter={() => setHoveredCategory(index)}
+                  onMouseLeave={() => setHoveredCategory(null)}
+                  height="300px"
+                  alwaysShowButton={isMobile}
+                  description={collection.description}
+                />
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -113,7 +95,7 @@ export default function ProductCategories() {
 }
 
 // Extracted category card component for reuse
-function CategoryCard({ category, isHovered, onMouseEnter, onMouseLeave, height = 'auto', alwaysShowButton = false }) {
+function CategoryCard({ category, isHovered, onMouseEnter, onMouseLeave, height = 'auto', alwaysShowButton = false, description }) {
   return (
     <div 
       style={{ 
@@ -163,14 +145,14 @@ function CategoryCard({ category, isHovered, onMouseEnter, onMouseLeave, height 
           alignItems: 'center',
           padding: '1.5rem',
           transition: 'background-color 0.3s ease',
-          backgroundColor: isHovered ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.4)',
+          backgroundColor: isHovered ? 'rgba(0, 0, 0, 0.65)' : 'rgba(0, 0, 0, 0.55)',
           boxSizing: 'border-box'
         }}>
           <h3 style={{
             color: 'white',
             fontSize: '1.75rem',
             fontWeight: 'bold',
-            marginBottom: '1.5rem',
+            marginBottom: '0.75rem',
             textAlign: 'center',
             textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
             transition: 'transform 0.3s ease',
@@ -178,6 +160,21 @@ function CategoryCard({ category, isHovered, onMouseEnter, onMouseLeave, height 
           }}>
             {category.name}
           </h3>
+          
+          {description && (
+            <p style={{
+              color: 'white',
+              fontSize: '1rem',
+              marginBottom: '1.5rem',
+              textAlign: 'center',
+              textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
+              maxWidth: '90%',
+              opacity: isHovered ? 1 : 0.9,
+              transition: 'opacity 0.3s ease',
+            }}>
+              {description}
+            </p>
+          )}
           
           <div style={{
             opacity: isHovered || alwaysShowButton ? 1 : 0,

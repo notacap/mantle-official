@@ -4,6 +4,7 @@ import FeaturedProducts from "./components/FeaturedProducts";
 import ProductCategories from "./components/ProductCategories";
 import InstagramSection from "./components/InstagramSection";
 import NewsletterSignup from "./components/NewsletterSignup";
+import Image from "next/image";
 
 export const metadata = {
   title: "Mantle Clothing | Premium Sustainable Apparel",
@@ -30,22 +31,6 @@ export default function Home() {
     
     {/* Product Categories Section */}
     <ProductCategories />
-    
-    {/* Mission Statement Section */}
-    <section style={{ backgroundColor: 'white', padding: '4rem 1rem' }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
-        <h2 style={{ fontSize: '1.875rem', fontWeight: 'bold', marginBottom: '1.5rem' }}>
-          Our Mission
-        </h2>
-        <p style={{ fontSize: '1.125rem', maxWidth: '48rem', margin: '0 auto', color: '#4b5563', marginBottom: '2rem' }}>
-          At Mantle Clothing, we believe that fashion should never come at the expense of our planet. 
-          Our mission is to create high-quality, sustainable apparel that looks good, feels good, and does good.
-        </p>
-        <ButtonWithHover href="/about" variant="outline">
-          Learn More About Us
-        </ButtonWithHover>
-      </div>
-    </section>
     
     {/* Instagram Section */}
     <InstagramSection />

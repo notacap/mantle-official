@@ -112,7 +112,7 @@ export default function HeroSlideshow() {
               {slide.subheading}
             </p>
             <ButtonWithHover href="/shop" variant="filled">
-              Shop Collection
+              Shop Now
             </ButtonWithHover>
           </div>
         </div>
