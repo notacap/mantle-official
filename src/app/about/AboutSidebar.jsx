@@ -78,7 +78,9 @@ export default function AboutSidebar() {
                 color: activeSection === section.id ? '#9CB24D' : '#666',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
-                border: 'none',
+                borderTop: 'none',
+                borderRight: 'none',
+                borderBottom: 'none',
                 outline: 'none'
               }}
             >
