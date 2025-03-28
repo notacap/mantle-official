@@ -1,0 +1,210 @@
+.partners-page {
+  background-color: #F8F8F8;
+}
+
+/* Hero Section */
+.hero-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #F8F8F8;
+  margin: 8rem 0 4rem;
+  padding: 1rem 0;
+}
+
+.hero-image-container {
+  width: 100%;
+  max-width: 500px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.hero-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: block;
+}
+
+.hero-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* Section Containers */
+.section-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem 3rem;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.section-title:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background-color: #9CB24D;
+}
+
+/* Dealers Section */
+.dealers-section {
+  margin: 2rem 0 4rem;
+}
+
+.dealer-container {
+  background-color: white;
+  border-radius: 12px;
+  padding: 3rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.dealer-link {
+  display: block;
+  margin-bottom: 2rem;
+  transition: transform 0.3s ease;
+}
+
+.dealer-link:hover {
+  transform: scale(1.05);
+}
+
+.dealer-logo {
+  max-width: 380px;
+  height: auto;
+}
+
+.dealer-description {
+  color: #555;
+  line-height: 1.6;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* Industry Partners Section */
+.partners-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.5rem;
+  max-width: 1080px;
+  margin: 0 auto;
+  justify-content: center;
+}
+
+.partner-logo-container {
+  background-color: white;
+  border-radius: 8px;
+  padding: 2.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  aspect-ratio: 16/9;
+  height: 180px;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 300px;
+}
+
+.partner-logo-container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.partner-logo {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+}
+
+/* Responsive Styles */
+@media (min-width: 768px) {
+  .dealer-logo {
+    max-width: 380px;
+  }
+}
+
+@media (max-width: 1100px) and (min-width: 768px) {
+  .hero-section {
+    margin: 4rem 0 3rem;
+  }
+
+  .partners-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    max-width: 800px;
+  }
+  
+  .partner-logo-container {
+    height: 160px;
+  }
+}
+
+@media (max-width: 767px) {
+  .section-title {
+    font-size: 2rem;
+  }
+  
+  .hero-section {
+    margin: 3.5rem 0 2.5rem;
+  }
+  
+  .hero-image-container {
+    max-width: 85%;
+  }
+  
+  .dealer-container {
+    padding: 2rem 1.5rem;
+  }
+  
+  .dealer-logo {
+    max-width: 280px;
+  }
+  
+  .partners-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    max-width: 500px;
+  }
+  
+  .partner-logo-container {
+    padding: 1.5rem;
+    height: 120px;
+    max-width: 220px;
+  }
+}
+
+@media (max-width: 480px) {
+  .partners-grid {
+    grid-template-columns: 1fr;
+    max-width: 280px;
+  }
+  
+  .partner-logo-container {
+    height: 140px;
+    max-width: 260px;
+  }
+} 

@@ -1,0 +1,286 @@
+.contact-page {
+  background-color: #F8F8F8;
+}
+
+/* Hero Section */
+.contact-hero {
+  position: relative;
+  width: 100%;
+  height: 50vh;
+  min-height: 400px;
+  max-height: 600px;
+  overflow: hidden;
+}
+
+.hero-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-image {
+  object-fit: cover;
+  object-position: center;
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+}
+
+.hero-title {
+  color: white;
+  font-size: 4rem;
+  font-weight: bold;
+  text-align: center;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Section Containers */
+.section-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4rem 1.5rem;
+}
+
+/* Contact Form Section */
+.contact-form-section {
+  background-color: #F8F8F8;
+  padding: 2rem 0 5rem;
+}
+
+.form-container {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  padding: 3rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.form-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+/* Form Selection Buttons */
+.form-selector {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.selector-button {
+  border: none;
+  background-color: #f0f0f0;
+  padding: 1rem 2rem;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 180px;
+  width: 180px;
+}
+
+.selector-button:hover {
+  background-color: #e0e0e0;
+}
+
+.selector-button.active {
+  background-color: #9CB24D;
+  color: white;
+}
+
+/* Form Styles */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-weight: 500;
+  color: #555;
+  font-size: 1rem;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 0.875rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #9CB24D;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 150px;
+}
+
+.form-row {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+.submit-button {
+  background-color: #9CB24D;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  align-self: center;
+  margin-top: 1rem;
+}
+
+.submit-button:hover {
+  background-color: #8CA23D;
+}
+
+.form-info {
+  margin-top: 2rem;
+  text-align: center;
+  color: #666;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.form-info a {
+  color: #9CB24D;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.form-info a:hover {
+  text-decoration: underline;
+  color: #8CA23D;
+}
+
+/* Honeypot field - hidden from real users */
+.honeypot-field {
+  display: none;
+  position: absolute;
+  left: -9999px;
+}
+
+/* CAPTCHA styles */
+.captcha-group label {
+  margin-bottom: 0.5rem;
+}
+
+.captcha-group input {
+  max-width: 200px;
+}
+
+.valid-captcha {
+  border-color: #68a020 !important;
+  background-color: rgba(156, 178, 77, 0.05);
+}
+
+.invalid-captcha {
+  border-color: #e74c3c !important;
+  background-color: rgba(231, 76, 60, 0.05);
+}
+
+.submit-button:disabled {
+  background-color: #c1c1c1;
+  cursor: not-allowed;
+}
+
+.submit-button:disabled:hover {
+  background-color: #c1c1c1;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .contact-hero {
+    height: 40vh;
+    min-height: 300px;
+  }
+  
+  .hero-title {
+    font-size: 3rem;
+  }
+  
+  .section-container {
+    padding: 3rem 1.5rem;
+  }
+  
+  .form-container {
+    padding: 2rem;
+  }
+  
+  .form-selector {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .contact-hero {
+    height: 35vh;
+    min-height: 250px;
+  }
+  
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  
+  .section-container {
+    padding: 2rem 1rem;
+  }
+  
+  .form-container {
+    padding: 1.5rem;
+  }
+  
+  .form-title {
+    font-size: 1.5rem;
+  }
+} 

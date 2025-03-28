@@ -171,6 +171,67 @@ export default function FeaturedProducts() {
     return fallbackImages[index % fallbackImages.length];
   };
 
+  // Product skeleton for loading state
+  const ProductSkeleton = () => (
+    <div style={{ 
+      flex: '0 0 auto',
+      width: '280px',
+      height: '470px',
+      backgroundColor: 'white', 
+      borderRadius: '0.5rem', 
+      overflow: 'hidden', 
+      boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+    }}>
+      <div style={{ 
+        height: '300px', 
+        backgroundColor: '#f3f4f6',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%)',
+          backgroundSize: '200% 100%',
+          animation: 'shimmer 1.5s infinite'
+        }}></div>
+      </div>
+      <div style={{ padding: '1.5rem' }}>
+        <div style={{ 
+          height: '24px', 
+          width: '80%', 
+          backgroundColor: '#f3f4f6', 
+          marginBottom: '0.5rem',
+          borderRadius: '0.25rem',
+          background: 'linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%)',
+          backgroundSize: '200% 100%',
+          animation: 'shimmer 1.5s infinite'
+        }}></div>
+        <div style={{ 
+          height: '60px', 
+          backgroundColor: '#f3f4f6', 
+          marginBottom: '1rem',
+          borderRadius: '0.25rem',
+          background: 'linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%)',
+          backgroundSize: '200% 100%',
+          animation: 'shimmer 1.5s infinite'
+        }}></div>
+        <div style={{ 
+          height: '20px', 
+          width: '40%', 
+          backgroundColor: '#f3f4f6',
+          borderRadius: '0.25rem',
+          background: 'linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%)',
+          backgroundSize: '200% 100%',
+          animation: 'shimmer 1.5s infinite'
+        }}></div>
+      </div>
+    </div>
+  );
+
   return (
     <section style={{ 
       maxWidth: '1200px', 
@@ -184,8 +245,27 @@ export default function FeaturedProducts() {
       </h2>
       
       {isLoading ? (
-        <div style={{ textAlign: 'center', padding: '2rem 0' }}>
-          <p>Loading products...</p>
+        <div style={{ position: 'relative', padding: '0 40px' }}>
+          <div 
+            className="featured-products"
+            style={{ 
+              display: 'flex',
+              overflowX: 'auto',
+              gap: '1.5rem',
+              paddingBottom: '0.75rem',
+              scrollbarWidth: 'thin',
+              scrollbarColor: '#9CB24D #e5e7eb',
+              msOverflowStyle: 'none',
+              WebkitOverflowScrolling: 'touch',
+              scrollSnapType: 'x mandatory',
+              scrollBehavior: 'smooth',
+              width: '100%'
+            }}
+          >
+            {Array(4).fill(0).map((_, index) => (
+              <ProductSkeleton key={index} />
+            ))}
+          </div>
         </div>
       ) : error ? (
         <div style={{ textAlign: 'center', padding: '2rem 0', color: '#ef4444' }}>
@@ -393,6 +473,15 @@ export default function FeaturedProducts() {
           -ms-overflow-style: none;  /* IE and Edge */
           scrollbar-width: thin;  /* Firefox */
           scroll-behavior: smooth;
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: -200% 0;
+          }
+          100% {
+            background-position: 200% 0;
+          }
         }
       `}</style>
     </section>
