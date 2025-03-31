@@ -1,0 +1,56 @@
+/* In The Wild Page Styles */
+.in-the-wild-page .hero-section {
+  position: relative;
+}
+
+.in-the-wild-page .hero-overlay {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Professional Card Styles */
+.professional-card {
+  transition: transform 0.3s ease;
+}
+
+.professional-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Bio Text Scrollbar Styles */
+.bio-text::-webkit-scrollbar {
+  width: 6px;
+}
+
+.bio-text::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.bio-text::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 10px;
+}
+
+.bio-text::-webkit-scrollbar-thumb:hover {
+  background: #8ca23d;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .professional-card {
+    flex-direction: column;
+  }
+  
+  .profile-content,
+  .bio-section {
+    width: 100% !important;
+  }
+  
+  .bio-text {
+    max-height: none;
+    overflow: visible;
+  }
+} 
