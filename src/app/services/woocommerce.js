@@ -43,15 +43,17 @@ function getBaseUrl() {
   /**
    * Fetch regular products from the internal API
    * @param {number} limit - Number of products to fetch
+   * @param {number} page - Page number for pagination
    * @returns {Promise<Array>} - Array of product objects
    */
-  export async function getProducts(limit = 8) {
+  export async function getProducts(limit = 12, page = 1) {
     try {
       // Use our internal API route
       const url = new URL('/api/products/all', getBaseUrl());
       
-      // Add limit parameter
+      // Add parameters
       url.searchParams.append('limit', limit.toString());
+      url.searchParams.append('page', page.toString());
       
       const response = await fetch(url.toString());
       
@@ -59,8 +61,8 @@ function getBaseUrl() {
         throw new Error(`Failed to fetch products: ${response.status}`);
       }
       
-      const products = await response.json();
-      return products;
+      const data = await response.json();
+      return data.products || []; // Return just the products array
     } catch (error) {
       console.error('Error fetching products:', error);
       return [];
