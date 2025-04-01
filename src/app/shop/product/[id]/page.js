@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { 
@@ -6,6 +7,7 @@ import {
   formatPrice 
 } from '../../../services/woocommerce';
 import ProductActions from './ProductActions';
+import '../loading.css';
 
 // Star rating component
 function StarRating({ rating, count }) {
@@ -47,9 +49,30 @@ function getProductAttributes(product) {
   return { colors, sizes };
 }
 
-// Server component to fetch and display product
-export default async function ProductPage({ params }) {
-  const { id } = params;
+// Product image component that can be separately suspended
+function ProductImage({ product }) {
+  return (
+    <div style={{ 
+      position: 'relative', 
+      height: '500px',
+      backgroundColor: '#f9fafb',
+      borderRadius: '0.5rem',
+      overflow: 'hidden',
+    }}>
+      <Image
+        src={getProductImageUrl(product)}
+        alt={product.name}
+        fill
+        style={{ objectFit: 'contain' }}
+        priority
+        sizes="(max-width: 768px) 100vw, 50vw"
+      />
+    </div>
+  );
+}
+
+// Product details component that fetches data
+async function ProductDetails({ id }) {
   const product = await getProduct(id);
   
   if (!product || product.error) {
@@ -61,11 +84,7 @@ export default async function ProductPage({ params }) {
   const reviewCount = product.rating_count || 0;
   
   return (
-    <div style={{ 
-      maxWidth: '1200px', 
-      margin: '0 auto', 
-      padding: '4rem 1rem',
-    }}>
+    <>
       <div style={{ 
         display: 'grid', 
         gridTemplateColumns: '1fr',
@@ -74,23 +93,29 @@ export default async function ProductPage({ params }) {
           gridTemplateColumns: '1fr 1fr'
         }
       }}>
-        {/* Product Image */}
-        <div style={{ 
-          position: 'relative', 
-          height: '500px',
-          backgroundColor: '#f9fafb',
-          borderRadius: '0.5rem',
-          overflow: 'hidden',
-        }}>
-          <Image
-            src={getProductImageUrl(product)}
-            alt={product.name}
-            fill
-            style={{ objectFit: 'contain' }}
-            priority
-            sizes="(max-width: 768px) 100vw, 50vw"
-          />
-        </div>
+        {/* Product Image with Suspense */}
+        <Suspense fallback={
+          <div style={{ 
+            position: 'relative', 
+            height: '500px',
+            backgroundColor: '#f9fafb',
+            borderRadius: '0.5rem',
+            overflow: 'hidden',
+          }}>
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%)',
+              backgroundSize: '200% 100%',
+              animation: 'shimmer 1.5s infinite'
+            }}></div>
+          </div>
+        }>
+          <ProductImage product={product} />
+        </Suspense>
         
         {/* Product Details */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -117,6 +142,122 @@ export default async function ProductPage({ params }) {
             colors={colors} 
           />
         </div>
+      </div>
+    </>
+  );
+}
+
+// Main component that wraps everything
+export default function ProductPage({ params }) {
+  const { id } = params;
+  
+  return (
+    <div style={{ 
+      maxWidth: '1200px', 
+      margin: '0 auto', 
+      padding: '4rem 1rem',
+    }}>
+      <Suspense fallback={<ProductLoadingSkeleton />}>
+        <ProductDetails id={id} />
+      </Suspense>
+    </div>
+  );
+}
+
+// Inline loading skeleton for product
+function ProductLoadingSkeleton() {
+  return (
+    <div style={{ 
+      display: 'grid', 
+      gridTemplateColumns: '1fr',
+      gap: '2rem',
+      '@media (min-width: 768px)': {
+        gridTemplateColumns: '1fr 1fr'
+      }
+    }}>
+      {/* Product Image Skeleton */}
+      <div style={{ 
+        position: 'relative', 
+        height: '500px',
+        backgroundColor: '#f9fafb',
+        borderRadius: '0.5rem',
+        overflow: 'hidden',
+      }}>
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%)',
+          backgroundSize: '200% 100%',
+          animation: 'shimmer 1.5s infinite'
+        }}></div>
+      </div>
+      
+      {/* Product Details Skeleton */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        {/* Title Skeleton */}
+        <div style={{ 
+          height: '36px', 
+          width: '70%', 
+          backgroundColor: '#f3f4f6', 
+          borderRadius: '0.25rem',
+          background: 'linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%)',
+          backgroundSize: '200% 100%',
+          animation: 'shimmer 1.5s infinite'
+        }}></div>
+        
+        {/* Rating Skeleton */}
+        <div style={{ 
+          height: '24px', 
+          width: '120px', 
+          backgroundColor: '#f3f4f6', 
+          borderRadius: '0.25rem',
+          background: 'linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%)',
+          backgroundSize: '200% 100%',
+          animation: 'shimmer 1.5s infinite'
+        }}></div>
+        
+        {/* Price Skeleton */}
+        <div style={{ 
+          height: '30px', 
+          width: '100px', 
+          backgroundColor: '#f3f4f6', 
+          borderRadius: '0.25rem',
+          background: 'linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%)',
+          backgroundSize: '200% 100%',
+          animation: 'shimmer 1.5s infinite'
+        }}></div>
+        
+        {/* Description Skeleton */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          {Array(4).fill(0).map((_, index) => (
+            <div 
+              key={index}
+              style={{ 
+                height: '16px', 
+                width: index === 3 ? '60%' : '100%', 
+                backgroundColor: '#f3f4f6', 
+                borderRadius: '0.25rem',
+                background: 'linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%)',
+                backgroundSize: '200% 100%',
+                animation: 'shimmer 1.5s infinite'
+              }}
+            ></div>
+          ))}
+        </div>
+        
+        {/* Interactive Elements Skeleton */}
+        <div style={{ 
+          height: '200px', 
+          backgroundColor: '#f3f4f6', 
+          borderRadius: '0.25rem',
+          background: 'linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%)',
+          backgroundSize: '200% 100%',
+          animation: 'shimmer 1.5s infinite',
+          marginTop: '1rem'
+        }}></div>
       </div>
     </div>
   );
