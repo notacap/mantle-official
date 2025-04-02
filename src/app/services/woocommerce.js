@@ -225,3 +225,142 @@ function getBaseUrl() {
       return [];
     }
   } 
+  
+  /**
+   * Fetch all collections (tags) from the internal API
+   * @param {number} limit - Number of collections to fetch
+   * @param {number} page - Page number for pagination
+   * @returns {Promise<Object>} - Object with collections array and pagination info
+   */
+  export async function getCollections(limit = 100, page = 1) {
+    try {
+      // Use our internal API route
+      const url = new URL('/api/collections', getBaseUrl());
+      
+      // Add parameters
+      url.searchParams.append('limit', limit.toString());
+      url.searchParams.append('page', page.toString());
+      
+      const response = await fetch(url.toString());
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch collections: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      return data; // Returns { collections: [...], pagination: {...} }
+    } catch (error) {
+      console.error('Error fetching collections:', error);
+      return { collections: [], pagination: { total: 0, totalPages: 0, currentPage: 1, perPage: limit } };
+    }
+  }
+  
+  /**
+   * Fetch a single collection (tag) from the internal API
+   * @param {number} collectionId - Collection ID to fetch
+   * @returns {Promise<Object>} - Collection object
+   */
+  export async function getCollection(collectionId) {
+    try {
+      // Use our internal API route
+      const url = new URL('/api/collections/single', getBaseUrl());
+      
+      // Add query parameters
+      url.searchParams.append('id', collectionId.toString());
+      
+      const response = await fetch(url.toString());
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch collection: ${response.status}`);
+      }
+      
+      const collection = await response.json();
+      return collection;
+    } catch (error) {
+      console.error('Error fetching collection:', error);
+      return null;
+    }
+  }
+  
+  /**
+   * Fetch all categories from the internal API
+   * @param {number} limit - Number of categories to fetch
+   * @param {number} page - Page number for pagination
+   * @param {string} orderby - Field to order by (default: name)
+   * @param {string} order - Order direction (default: asc)
+   * @returns {Promise<Object>} - Object with categories array and pagination info
+   */
+  export async function getCategories(limit = 100, page = 1, orderby = 'name', order = 'asc') {
+    try {
+      // Use our internal API route
+      const url = new URL('/api/categories', getBaseUrl());
+      
+      // Add parameters
+      url.searchParams.append('limit', limit.toString());
+      url.searchParams.append('page', page.toString());
+      url.searchParams.append('orderby', orderby);
+      url.searchParams.append('order', order);
+      
+      const response = await fetch(url.toString());
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch categories: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      return data; // Returns { categories: [...], pagination: {...} }
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+      return { categories: [], pagination: { total: 0, totalPages: 0, currentPage: 1, perPage: limit } };
+    }
+  }
+  
+  /**
+   * Fetch a single category from the internal API
+   * @param {number} categoryId - Category ID to fetch
+   * @returns {Promise<Object>} - Category object
+   */
+  export async function getCategory(categoryId) {
+    try {
+      // Use our internal API route
+      const url = new URL('/api/categories/single', getBaseUrl());
+      
+      // Add query parameters
+      url.searchParams.append('id', categoryId.toString());
+      
+      const response = await fetch(url.toString());
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch category: ${response.status}`);
+      }
+      
+      const category = await response.json();
+      return category;
+    } catch (error) {
+      console.error('Error fetching category:', error);
+      return null;
+    }
+  }
+  
+  /**
+   * Fetch category tree from the internal API
+   * @returns {Promise<Array>} - Array of root categories with children
+   */
+  export async function getCategoryTree() {
+    try {
+      // Use our internal API route
+      const url = new URL('/api/categories/tree', getBaseUrl());
+      
+      const response = await fetch(url.toString());
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch category tree: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      return data.categoryTree || [];
+    } catch (error) {
+      console.error('Error fetching category tree:', error);
+      return [];
+    }
+  } 

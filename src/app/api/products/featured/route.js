@@ -22,8 +22,6 @@ export async function GET(request) {
     apiUrl.searchParams.append('consumer_key', process.env.WOOCOMMERCE_CONSUMER_KEY);
     apiUrl.searchParams.append('consumer_secret', process.env.WOOCOMMERCE_CONSUMER_SECRET);
     
-    console.log('Fetching featured products with URL:', apiUrl.toString());
-    
     // Fetch products from WooCommerce
     const response = await fetch(apiUrl.toString(), {
       method: 'GET',
