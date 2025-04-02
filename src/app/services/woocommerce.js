@@ -205,6 +205,12 @@ function getBaseUrl() {
    */
   export async function getProductsByTag(tag, limit = 8) {
     try {
+      // Check if we have a valid tag
+      if (!tag) {
+        console.error('No tag provided to getProductsByTag');
+        return [];
+      }
+      
       // Use our internal API route
       const url = new URL('/api/products/tag', getBaseUrl());
       
@@ -224,7 +230,7 @@ function getBaseUrl() {
       console.error('Error fetching products by tag:', error);
       return [];
     }
-  } 
+  }
   
   /**
    * Fetch all collections (tags) from the internal API
