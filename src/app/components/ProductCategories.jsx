@@ -43,7 +43,8 @@ export default function ProductCategories() {
       title: 'Accessories',
       description: 'Sustainable accessories to complete your look.',
       image: '/images/DSCF6361-scaled.jpg',
-      tag: 'accessories'
+      tag: 'accessories',
+      isCategory: true
     },
     {
       title: 'Shop All',
@@ -71,7 +72,12 @@ export default function ProductCategories() {
             const category = {
               name: collection.title,
               image: collection.image,
-              link: collection.tag === 'shop' ? '/shop' : `/collections/${collection.tag}`
+              // If it's an accessory, link to the category page, otherwise use collections or shop
+              link: collection.isCategory 
+                ? `/categories/${collection.tag}` 
+                : collection.tag === 'shop' 
+                  ? '/shop' 
+                  : `/collections/${collection.tag}`
             };
             
             return (
