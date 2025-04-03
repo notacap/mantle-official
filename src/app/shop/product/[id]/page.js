@@ -1,10 +1,12 @@
 import { Suspense } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { 
   getProduct, 
   getProductImageUrl, 
-  formatPrice 
+  formatPrice,
+  getCategories
 } from '../../../services/woocommerce';
 import ProductActions from './ProductActions';
 import '../loading.css';
@@ -71,9 +73,43 @@ function ProductImage({ product }) {
   );
 }
 
+// Breadcrumb navigation component
+function Breadcrumbs({ product, categories }) {
+  // Find the first category of the product
+  let category = null;
+  if (product.categories && product.categories.length > 0) {
+    const categoryId = product.categories[0].id;
+    category = categories.find(cat => cat.id === categoryId);
+  }
+
+  return (
+    <div className="text-sm text-gray-500 mb-6">
+      <Link href="/" className="hover:underline">Home</Link> {' / '}
+      <Link href="/shop" className="hover:underline">Shop</Link>
+      {category && (
+        <>
+          {' / '}
+          <Link 
+            href={`/categories/${category.slug}`} 
+            className="hover:underline"
+          >
+            {category.name}
+          </Link>
+        </>
+      )}
+      {' / '}
+      <span className="font-medium text-gray-700">{product.name}</span>
+    </div>
+  );
+}
+
 // Product details component that fetches data
 async function ProductDetails({ id }) {
-  const product = await getProduct(id);
+  // Fetch product and categories in parallel
+  const [product, categoriesData] = await Promise.all([
+    getProduct(id),
+    getCategories()
+  ]);
   
   if (!product || product.error) {
     notFound();
@@ -87,9 +123,13 @@ async function ProductDetails({ id }) {
   const { colors, sizes } = getProductAttributes(product);
   const rating = product.average_rating || 0;
   const reviewCount = product.rating_count || 0;
+  const categories = categoriesData.categories || [];
   
   return (
     <>
+      {/* Breadcrumb navigation */}
+      <Breadcrumbs product={product} categories={categories} />
+      
       <div style={{ 
         display: 'grid', 
         gridTemplateColumns: '1fr',
@@ -160,7 +200,7 @@ export default function ProductPage({ params }) {
     <div style={{ 
       maxWidth: '1200px', 
       margin: '0 auto', 
-      padding: '4rem 1rem',
+      padding: '2rem 1rem',
     }}>
       <Suspense fallback={<ProductLoadingSkeleton />}>
         <ProductDetails id={id} />
@@ -172,98 +212,107 @@ export default function ProductPage({ params }) {
 // Inline loading skeleton for product
 function ProductLoadingSkeleton() {
   return (
-    <div style={{ 
-      display: 'grid', 
-      gridTemplateColumns: '1fr',
-      gap: '2rem',
-      '@media (min-width: 768px)': {
-        gridTemplateColumns: '1fr 1fr'
-      }
-    }}>
-      {/* Product Image Skeleton */}
-      <div style={{ 
-        position: 'relative', 
-        height: '500px',
-        backgroundColor: '#f9fafb',
-        borderRadius: '0.5rem',
-        overflow: 'hidden',
-      }}>
-        <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%)',
-          backgroundSize: '200% 100%',
-          animation: 'shimmer 1.5s infinite'
-        }}></div>
+    <>
+      {/* Breadcrumb Skeleton */}
+      <div className="text-sm text-gray-300 mb-6 animate-pulse">
+        <span className="inline-block bg-gray-200 rounded w-10 h-4 mr-2"></span> {' / '}
+        <span className="inline-block bg-gray-200 rounded w-10 h-4 mr-2"></span> {' / '}
+        <span className="inline-block bg-gray-200 rounded w-24 h-4"></span>
       </div>
       
-      {/* Product Details Skeleton */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-        {/* Title Skeleton */}
+      <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: '1fr',
+        gap: '2rem',
+        '@media (min-width: 768px)': {
+          gridTemplateColumns: '1fr 1fr'
+        }
+      }}>
+        {/* Product Image Skeleton */}
         <div style={{ 
-          height: '36px', 
-          width: '70%', 
-          backgroundColor: '#f3f4f6', 
-          borderRadius: '0.25rem',
-          background: 'linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%)',
-          backgroundSize: '200% 100%',
-          animation: 'shimmer 1.5s infinite'
-        }}></div>
-        
-        {/* Rating Skeleton */}
-        <div style={{ 
-          height: '24px', 
-          width: '120px', 
-          backgroundColor: '#f3f4f6', 
-          borderRadius: '0.25rem',
-          background: 'linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%)',
-          backgroundSize: '200% 100%',
-          animation: 'shimmer 1.5s infinite'
-        }}></div>
-        
-        {/* Price Skeleton */}
-        <div style={{ 
-          height: '30px', 
-          width: '100px', 
-          backgroundColor: '#f3f4f6', 
-          borderRadius: '0.25rem',
-          background: 'linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%)',
-          backgroundSize: '200% 100%',
-          animation: 'shimmer 1.5s infinite'
-        }}></div>
-        
-        {/* Description Skeleton */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-          {Array(4).fill(0).map((_, index) => (
-            <div 
-              key={index}
-              style={{ 
-                height: '16px', 
-                width: index === 3 ? '60%' : '100%', 
-                backgroundColor: '#f3f4f6', 
-                borderRadius: '0.25rem',
-                background: 'linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%)',
-                backgroundSize: '200% 100%',
-                animation: 'shimmer 1.5s infinite'
-              }}
-            ></div>
-          ))}
+          position: 'relative', 
+          height: '500px',
+          backgroundColor: '#f9fafb',
+          borderRadius: '0.5rem',
+          overflow: 'hidden',
+        }}>
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%)',
+            backgroundSize: '200% 100%',
+            animation: 'shimmer 1.5s infinite'
+          }}></div>
         </div>
         
-        {/* Interactive Elements Skeleton */}
-        <div style={{ 
-          height: '200px', 
-          backgroundColor: '#f3f4f6', 
-          borderRadius: '0.25rem',
-          background: 'linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%)',
-          backgroundSize: '200% 100%',
-          animation: 'shimmer 1.5s infinite',
-          marginTop: '1rem'
-        }}></div>
+        {/* Product Details Skeleton */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          {/* Title Skeleton */}
+          <div style={{ 
+            height: '36px', 
+            width: '70%', 
+            backgroundColor: '#f3f4f6', 
+            borderRadius: '0.25rem',
+            background: 'linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%)',
+            backgroundSize: '200% 100%',
+            animation: 'shimmer 1.5s infinite'
+          }}></div>
+          
+          {/* Rating Skeleton */}
+          <div style={{ 
+            height: '24px', 
+            width: '120px', 
+            backgroundColor: '#f3f4f6', 
+            borderRadius: '0.25rem',
+            background: 'linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%)',
+            backgroundSize: '200% 100%',
+            animation: 'shimmer 1.5s infinite'
+          }}></div>
+          
+          {/* Price Skeleton */}
+          <div style={{ 
+            height: '30px', 
+            width: '100px', 
+            backgroundColor: '#f3f4f6', 
+            borderRadius: '0.25rem',
+            background: 'linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%)',
+            backgroundSize: '200% 100%',
+            animation: 'shimmer 1.5s infinite'
+          }}></div>
+          
+          {/* Description Skeleton */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            {Array(4).fill(0).map((_, index) => (
+              <div 
+                key={index}
+                style={{ 
+                  height: '16px', 
+                  width: index === 3 ? '60%' : '100%', 
+                  backgroundColor: '#f3f4f6', 
+                  borderRadius: '0.25rem',
+                  background: 'linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%)',
+                  backgroundSize: '200% 100%',
+                  animation: 'shimmer 1.5s infinite'
+                }}
+              ></div>
+            ))}
+          </div>
+          
+          {/* Interactive Elements Skeleton */}
+          <div style={{ 
+            height: '200px', 
+            backgroundColor: '#f3f4f6', 
+            borderRadius: '0.25rem',
+            background: 'linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%)',
+            backgroundSize: '200% 100%',
+            animation: 'shimmer 1.5s infinite',
+            marginTop: '1rem'
+          }}></div>
+        </div>
       </div>
-    </div>
+    </>
   );
 } 
