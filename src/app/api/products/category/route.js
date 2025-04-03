@@ -25,6 +25,7 @@ export async function GET(request) {
     apiUrl.searchParams.append('category', categoryId);
     apiUrl.searchParams.append('status', 'publish');
     apiUrl.searchParams.append('per_page', limit.toString());
+    apiUrl.searchParams.append('stock_status', 'instock');
     
     // Add authentication
     apiUrl.searchParams.append('consumer_key', process.env.WOOCOMMERCE_CONSUMER_KEY);

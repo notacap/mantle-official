@@ -39,6 +39,14 @@ export async function GET(request) {
     
     const product = await response.json();
     
+    // Check if product is out of stock and return 404 if so
+    if (product.stock_status === 'outofstock') {
+      return NextResponse.json(
+        { error: 'Product is currently out of stock' },
+        { status: 404 }
+      );
+    }
+    
     // Return the product
     return NextResponse.json(product);
   } catch (error) {

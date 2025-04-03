@@ -35,13 +35,13 @@ export default function ProductActions({ productId, price, sizes, colors }) {
     setIsAddingToCart(true);
     
     try {
-      console.log('Adding to cart:', {
-        productId,
-        quantity,
-        selectedSize,
-        selectedColor,
-        price
-      });
+      // console.log('Adding to cart:', {
+      //   productId,
+      //   quantity,
+      //   selectedSize,
+      //   selectedColor,
+      //   price
+      // });
       
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1000));

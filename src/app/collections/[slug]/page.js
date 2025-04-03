@@ -34,7 +34,7 @@ async function CollectionProductsData({ tag }) {
   // Fetch products from the API
   const products = await getProductsByTag(tag, 24); // Show 24 products by default
   
-  console.log(`Products for tag ${tag}:`, products);
+  // console.log(`Products for tag ${tag}:`, products);
   
   // Check if we have products
   if (!products || products.length === 0) {

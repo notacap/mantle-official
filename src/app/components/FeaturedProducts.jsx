@@ -27,12 +27,12 @@ export default function FeaturedProducts() {
         const result = await getFeaturedProducts(8);
         
         // Log products for debugging
-        console.log('Loaded products:', result.products?.map(p => ({
-          id: p.id,
-          name: p.name,
-          imageCount: p?.images?.length,
-          images: p.images
-        })));
+        // console.log('Loaded products:', result.products?.map(p => ({
+        //   id: p.id,
+        //   name: p.name,
+        //   imageCount: p?.images?.length,
+        //   images: p.images
+        // })));
         
         // Set products and featured flag
         setProducts(result.products || []);

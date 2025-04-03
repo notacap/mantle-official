@@ -17,6 +17,7 @@ export async function GET(request) {
     apiUrl.searchParams.append('featured', 'true');
     apiUrl.searchParams.append('status', 'publish');
     apiUrl.searchParams.append('per_page', limit.toString());
+    apiUrl.searchParams.append('stock_status', 'instock');
     
     // Add authentication
     apiUrl.searchParams.append('consumer_key', process.env.WOOCOMMERCE_CONSUMER_KEY);
@@ -38,12 +39,13 @@ export async function GET(request) {
     
     // If no featured products, try to get regular products
     if (products.length === 0) {
-      console.log('No featured products found, fetching regular products');
+      // console.log('No featured products found, fetching regular products');
       
       // Create a new URL for regular products
       const regularProductsUrl = new URL('https://mantle-clothing.com/wp-json/wc/v3/products');
       regularProductsUrl.searchParams.append('status', 'publish');
       regularProductsUrl.searchParams.append('per_page', limit.toString());
+      regularProductsUrl.searchParams.append('stock_status', 'instock');
       regularProductsUrl.searchParams.append('consumer_key', process.env.WOOCOMMERCE_CONSUMER_KEY);
       regularProductsUrl.searchParams.append('consumer_secret', process.env.WOOCOMMERCE_CONSUMER_SECRET);
       
@@ -56,7 +58,7 @@ export async function GET(request) {
       
       if (regularResponse.ok) {
         const regularProducts = await regularResponse.json();
-        console.log(`Found ${regularProducts.length} regular products`);
+        // console.log(`Found ${regularProducts.length} regular products`);
         
         // Return regular products with a flag indicating they're not featured
         return NextResponse.json({

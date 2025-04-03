@@ -18,6 +18,7 @@ export async function GET(request) {
     apiUrl.searchParams.append('status', 'publish');
     apiUrl.searchParams.append('per_page', limit.toString());
     apiUrl.searchParams.append('page', page.toString());
+    apiUrl.searchParams.append('stock_status', 'instock'); // Only get in-stock items
     
     // Add sorting (newest first)
     apiUrl.searchParams.append('orderby', 'date');

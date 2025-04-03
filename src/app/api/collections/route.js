@@ -40,9 +40,33 @@ export async function GET(request) {
     
     const collections = await response.json();
     
+    // Fetch product counts for each collection
+    const collectionsWithCounts = await Promise.all(
+      collections.map(async (collection) => {
+        // Create URL for products in this collection
+        const productsUrl = new URL('https://mantle-clothing.com/wp-json/wc/v3/products');
+        productsUrl.searchParams.append('tag', collection.id);
+        productsUrl.searchParams.append('status', 'publish');
+        productsUrl.searchParams.append('stock_status', 'instock');
+        productsUrl.searchParams.append('per_page', '1'); // We only need the total count
+        productsUrl.searchParams.append('consumer_key', process.env.WOOCOMMERCE_CONSUMER_KEY);
+        productsUrl.searchParams.append('consumer_secret', process.env.WOOCOMMERCE_CONSUMER_SECRET);
+        
+        // Fetch products to get the count
+        const productsResponse = await fetch(productsUrl.toString());
+        if (!productsResponse.ok) {
+          console.error(`Failed to fetch products for collection ${collection.id}`);
+          return { ...collection, count: 0 };
+        }
+        
+        const totalProducts = productsResponse.headers.get('X-WP-Total');
+        return { ...collection, count: parseInt(totalProducts) || 0 };
+      })
+    );
+    
     // Return collections with pagination info
     return NextResponse.json({
-      collections,
+      collections: collectionsWithCounts,
       pagination: {
         total: totalCollections,
         totalPages,

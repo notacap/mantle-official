@@ -79,6 +79,11 @@ async function ProductDetails({ id }) {
     notFound();
   }
   
+  // Handle out-of-stock products
+  if (product.stock_status === 'outofstock') {
+    notFound();
+  }
+  
   const { colors, sizes } = getProductAttributes(product);
   const rating = product.average_rating || 0;
   const reviewCount = product.rating_count || 0;
