@@ -10,6 +10,7 @@ import {
 } from '../../../services/woocommerce';
 import ProductActions from './ProductActions';
 import '../loading.css';
+import '../product.css';
 
 // Star rating component
 function StarRating({ rating, count }) {
@@ -54,7 +55,7 @@ function getProductAttributes(product) {
 // Product image component that can be separately suspended
 function ProductImage({ product }) {
   return (
-    <div style={{ 
+    <div className="product-image-container" style={{ 
       position: 'relative', 
       height: '500px',
       backgroundColor: '#f9fafb',
@@ -130,17 +131,10 @@ async function ProductDetails({ id }) {
       {/* Breadcrumb navigation */}
       <Breadcrumbs product={product} categories={categories} />
       
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: '1fr',
-        gap: '2rem',
-        '@media (minWidth: 768px)': {
-          gridTemplateColumns: '1fr 1fr'
-        }
-      }}>
+      <div className="product-layout">
         {/* Product Image with Suspense */}
         <Suspense fallback={
-          <div style={{ 
+          <div className="product-image-container" style={{ 
             position: 'relative', 
             height: '500px',
             backgroundColor: '#f9fafb',
@@ -222,16 +216,9 @@ function ProductLoadingSkeleton() {
         <span className="inline-block bg-gray-200 rounded w-24 h-4"></span>
       </div>
       
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: '1fr',
-        gap: '2rem',
-        '@media (min-width: 768px)': {
-          gridTemplateColumns: '1fr 1fr'
-        }
-      }}>
+      <div className="product-layout">
         {/* Product Image Skeleton */}
-        <div style={{ 
+        <div className="product-image-container" style={{ 
           position: 'relative', 
           height: '500px',
           backgroundColor: '#f9fafb',

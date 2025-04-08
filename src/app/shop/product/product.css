@@ -1,0 +1,17 @@
+.product-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .product-layout {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Add padding to the product image container */
+.product-image-container {
+  margin-top: 7rem;
+  padding-top: 10rem;
+} 
