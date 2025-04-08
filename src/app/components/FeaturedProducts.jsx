@@ -53,6 +53,13 @@ export default function FeaturedProducts() {
   const checkScrollability = () => {
     if (!scrollContainerRef.current) return;
     
+    // If we have 3 or fewer products, disable scrolling completely
+    if (products.length <= 3) {
+      setCanScrollLeft(false);
+      setCanScrollRight(false);
+      return;
+    }
+    
     const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
     setCanScrollLeft(scrollLeft > 0);
     setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10); // 10px buffer
@@ -272,9 +279,9 @@ export default function FeaturedProducts() {
           <p>{error}</p>
         </div>
       ) : (
-        <div style={{ position: 'relative', padding: '0 40px' }}>
+        <div style={{ position: 'relative', padding: products.length <= 3 ? '0' : '0 40px' }}>
           {/* Left scroll button */}
-          {products.length > 0 && (
+          {products.length > 0 && products.length > 3 && (
             <button 
               onClick={scrollLeft}
               aria-label="Scroll left"
@@ -320,16 +327,17 @@ export default function FeaturedProducts() {
             className="featured-products"
             style={{ 
               display: 'flex',
-              overflowX: 'auto',
+              overflowX: products.length <= 3 ? 'visible' : 'auto',
               gap: '1.5rem',
               paddingBottom: '0.75rem',
               scrollbarWidth: 'thin',
               scrollbarColor: '#9CB24D #e5e7eb',
               msOverflowStyle: 'none',
               WebkitOverflowScrolling: 'touch',
-              scrollSnapType: 'x mandatory',
+              scrollSnapType: products.length <= 3 ? 'none' : 'x mandatory',
               scrollBehavior: 'smooth',
-              width: '100%'
+              width: '100%',
+              justifyContent: products.length <= 3 ? 'center' : 'flex-start'
             }}
           >
             {products.length > 0 ? (
@@ -410,7 +418,7 @@ export default function FeaturedProducts() {
           </div>
           
           {/* Right scroll button */}
-          {products.length > 0 && (
+          {products.length > 0 && products.length > 3 && (
             <button 
               onClick={scrollRight}
               aria-label="Scroll right"
