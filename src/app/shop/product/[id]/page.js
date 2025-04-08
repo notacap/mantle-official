@@ -134,7 +134,7 @@ async function ProductDetails({ id }) {
         display: 'grid', 
         gridTemplateColumns: '1fr',
         gap: '2rem',
-        '@media (min-width: 768px)': {
+        '@media (minWidth: 768px)': {
           gridTemplateColumns: '1fr 1fr'
         }
       }}>
