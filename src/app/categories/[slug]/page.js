@@ -9,7 +9,9 @@ export const dynamicParams = true;
 
 // Generate metadata for the page
 export async function generateMetadata({ params }) {
-  const { slug } = params;
+  // Ensure params is properly awaited
+  const resolvedParams = await Promise.resolve(params);
+  const slug = resolvedParams.slug;
   
   // Find category by slug
   const categoriesData = await getCategories();
@@ -39,7 +41,9 @@ async function CategoryProductsData({ categoryId }) {
 }
 
 export default async function CategoryPage({ params }) {
-  const { slug } = params;
+  // Ensure params is properly awaited
+  const resolvedParams = await Promise.resolve(params);
+  const slug = resolvedParams.slug;
   
   // Find category by slug
   const categoriesData = await getCategories();

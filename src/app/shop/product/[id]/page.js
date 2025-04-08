@@ -193,8 +193,10 @@ async function ProductDetails({ id }) {
 }
 
 // Main component that wraps everything
-export default function ProductPage({ params }) {
-  const { id } = params;
+export default async function ProductPage({ params }) {
+  // Ensure params is properly awaited
+  const resolvedParams = await Promise.resolve(params);
+  const id = resolvedParams.id;
   
   return (
     <div style={{ 

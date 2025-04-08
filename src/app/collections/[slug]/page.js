@@ -9,7 +9,9 @@ export const dynamicParams = true;
 
 // Generate metadata for the page
 export async function generateMetadata({ params }) {
-  const { slug } = params;
+  // Ensure params is properly awaited
+  const resolvedParams = await Promise.resolve(params);
+  const slug = resolvedParams.slug;
   
   // Find collection by slug
   const collectionsData = await getCollections();
@@ -58,7 +60,9 @@ async function CollectionProductsData({ tag }) {
 }
 
 export default async function CollectionPage({ params }) {
-  const { slug } = params;
+  // Ensure params is properly awaited
+  const resolvedParams = await Promise.resolve(params);
+  const slug = resolvedParams.slug;
   
   // Find collection by slug
   const collectionsData = await getCollections();
