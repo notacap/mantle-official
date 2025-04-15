@@ -1,6 +1,11 @@
 /* In The Wild Page Styles */
+.in-the-wild-page {
+  position: relative;
+}
+
 .in-the-wild-page .hero-section {
   position: relative;
+  margin-top: 0;
 }
 
 .in-the-wild-page .hero-overlay {

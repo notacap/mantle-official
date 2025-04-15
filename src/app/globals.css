@@ -9,8 +9,21 @@
 }
 
 @layer base {
-  body {
+  html, body {
     @apply bg-[--background] text-[--foreground];
+    position: relative;
+    width: 100%;
+    min-height: 100%;
+    overflow-x: hidden;
+  }
+  
+  main {
+    position: relative;
+  }
+  
+  /* Fix for hero sections to prevent layout shifts, except for partners page */
+  .hero-section:not(.partners-page .hero-section) {
+    margin-top: 0 !important;
   }
 }
 

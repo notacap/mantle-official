@@ -54,11 +54,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#f8f8f8] text-gray-900 min-h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#f8f8f8] text-gray-900 min-h-screen relative`}
       >
         <ReactQueryProvider>
           <Navbar />
-          <main>
+          <main className="relative">
             {children}
           </main>
           <Footer />

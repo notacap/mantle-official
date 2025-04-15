@@ -1,6 +1,7 @@
 /* Main layout */
 .about-page {
   background-color: #F8F8F8;
+  position: relative;
 }
 
 /* Hero section */
@@ -8,6 +9,7 @@
   position: relative;
   width: 100%;
   height: 500px;
+  margin-top: 0; /* Remove any top margin */
 }
 
 .hero-overlay {
