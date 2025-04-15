@@ -8,7 +8,7 @@ import {
   formatPrice,
   getCategories
 } from '../../../services/woocommerce';
-import ProductActions from './ProductActions';
+import ProductActions from '@/app/components/shop/ProductActions';
 import '../loading.css';
 import '../product.css';
 

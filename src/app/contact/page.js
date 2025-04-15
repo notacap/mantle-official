@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import ContactForm from './ContactForm';
+import ContactForm from '../components/contact/ContactForm';
 import './contact.css';
 
 export const metadata = {

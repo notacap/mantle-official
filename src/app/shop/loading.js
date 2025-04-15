@@ -1,4 +1,4 @@
-import ProductSkeleton from './ProductSkeleton';
+import ProductSkeleton from '../components/shop/ProductSkeleton';
 import './products.css';
 
 export default function ShopLoading() {

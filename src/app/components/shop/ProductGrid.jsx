@@ -2,8 +2,8 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { getProductImageUrl, formatPrice } from '../services/woocommerce';
-import './products.css'; // Import the CSS file for animations
+import { getProductImageUrl, formatPrice } from '@/app/services/woocommerce';
+import '@/app/shop/products.css'; // Import the CSS file for animations
 import ProductSkeleton from './ProductSkeleton';
 
 // Function to strip HTML tags from description

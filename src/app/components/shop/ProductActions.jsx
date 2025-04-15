@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { formatPrice } from '../../../services/woocommerce';
+import { formatPrice } from '@/app/services/woocommerce';
 
 export default function ProductActions({ productId, price, sizes, colors }) {
   const [quantity, setQuantity] = useState(1);

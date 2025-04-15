@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import AboutSidebar from './AboutSidebar';
+import AboutSidebar from '../components/about/AboutSidebar';
 import './about.css';
 
 export const metadata = {

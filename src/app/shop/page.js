@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import { getProducts } from '../services/woocommerce';
-import ProductGrid from './ProductGrid';
-import ProductSkeleton from './ProductSkeleton';
+import ProductGrid from '../components/shop/ProductGrid';
+import ProductSkeleton from '../components/shop/ProductSkeleton';
 import Link from 'next/link';
 import './products.css';
 import ShopSidebar from '../components/ShopSidebar';
