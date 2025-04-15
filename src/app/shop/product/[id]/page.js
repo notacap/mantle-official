@@ -4,9 +4,9 @@ import '../loading.css';
 import '../product.css';
 
 // Main component that wraps everything
-export default function ProductPage({ params }) {
-  // Extract the id directly from params
-  const id = params.id;
+export default async function ProductPage({ params }) {
+  // Await params before accessing its properties
+  const { id } = await params;
   
   return (
     <div style={{ 
