@@ -1,4 +1,7 @@
 import { NextResponse } from 'next/server';
+import { fetchWithCache } from '@/app/lib/cache';
+
+export const revalidate = 300; // Revalidate this route at most every 5 minutes (300 seconds)
 
 /**
  * GET handler for all products
@@ -28,24 +31,29 @@ export async function GET(request) {
     apiUrl.searchParams.append('consumer_key', process.env.WOOCOMMERCE_CONSUMER_KEY);
     apiUrl.searchParams.append('consumer_secret', process.env.WOOCOMMERCE_CONSUMER_SECRET);
     
+    // Cache TTL (5 minutes)
+    const CACHE_TTL = 5 * 60 * 1000;
     
-    // Fetch products from WooCommerce
-    const response = await fetch(apiUrl.toString(), {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
+    // Fetch products with caching
+    const products = await fetchWithCache(
+      apiUrl.toString(),
+      {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        next: { revalidate: 300 } // Use Next.js Cache for 5 minutes
       },
+      CACHE_TTL
+    );
+    
+    // Get pagination info from a separate headers request
+    // This could be fetched only when needed or cached separately
+    const headersResponse = await fetch(apiUrl.toString(), { 
+      method: 'HEAD',
+      headers: { 'Content-Type': 'application/json' },
     });
     
-    if (!response.ok) {
-      throw new Error(`Failed to fetch products: ${response.status}`);
-    }
-    
-    // Get total products from headers for pagination
-    const totalProducts = response.headers.get('X-WP-Total');
-    const totalPages = response.headers.get('X-WP-TotalPages');
-    
-    const products = await response.json();
+    const totalProducts = headersResponse.headers.get('X-WP-Total') || 0;
+    const totalPages = headersResponse.headers.get('X-WP-TotalPages') || 0;
     
     // Return products with pagination info
     return NextResponse.json({

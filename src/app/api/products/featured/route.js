@@ -1,4 +1,7 @@
 import { NextResponse } from 'next/server';
+import { fetchWithCache } from '@/app/lib/cache';
+
+export const revalidate = 300; // Revalidate this route every 5 minutes
 
 /**
  * GET handler for featured products
@@ -23,24 +26,22 @@ export async function GET(request) {
     apiUrl.searchParams.append('consumer_key', process.env.WOOCOMMERCE_CONSUMER_KEY);
     apiUrl.searchParams.append('consumer_secret', process.env.WOOCOMMERCE_CONSUMER_SECRET);
     
-    // Fetch products from WooCommerce
-    const response = await fetch(apiUrl.toString(), {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
+    // Cache TTL (5 minutes)
+    const CACHE_TTL = 5 * 60 * 1000;
+    
+    // Fetch products from WooCommerce with caching
+    const products = await fetchWithCache(
+      apiUrl.toString(),
+      {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        next: { revalidate: 300 }
       },
-    });
-    
-    if (!response.ok) {
-      throw new Error(`Failed to fetch products: ${response.status}`);
-    }
-    
-    const products = await response.json();
+      CACHE_TTL
+    );
     
     // If no featured products, try to get regular products
     if (products.length === 0) {
-      // console.log('No featured products found, fetching regular products');
-      
       // Create a new URL for regular products
       const regularProductsUrl = new URL('https://mantle-clothing.com/wp-json/wc/v3/products');
       regularProductsUrl.searchParams.append('status', 'publish');
@@ -49,23 +50,22 @@ export async function GET(request) {
       regularProductsUrl.searchParams.append('consumer_key', process.env.WOOCOMMERCE_CONSUMER_KEY);
       regularProductsUrl.searchParams.append('consumer_secret', process.env.WOOCOMMERCE_CONSUMER_SECRET);
       
-      const regularResponse = await fetch(regularProductsUrl.toString(), {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
+      // Fetch regular products with caching
+      const regularProducts = await fetchWithCache(
+        regularProductsUrl.toString(),
+        {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+          next: { revalidate: 300 }
         },
-      });
+        CACHE_TTL
+      );
       
-      if (regularResponse.ok) {
-        const regularProducts = await regularResponse.json();
-        // console.log(`Found ${regularProducts.length} regular products`);
-        
-        // Return regular products with a flag indicating they're not featured
-        return NextResponse.json({
-          products: regularProducts,
-          isFeatured: false
-        });
-      }
+      // Return regular products with a flag indicating they're not featured
+      return NextResponse.json({
+        products: regularProducts,
+        isFeatured: false
+      });
     }
     
     // Return the featured products
@@ -76,7 +76,7 @@ export async function GET(request) {
   } catch (error) {
     console.error('Error fetching featured products:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch featured products' },
+      { error: 'Failed to fetch featured products', message: error.message },
       { status: 500 }
     );
   }

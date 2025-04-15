@@ -1,10 +1,10 @@
 import { Suspense } from 'react';
-import { getCollections, getProductsByTag, getCategories } from '@/app/services/woocommerce';
-import ProductGrid from '@/app/components/shop/ProductGrid';
+import { getCollections } from '@/app/services/woocommerce';
 import ProductSkeleton from '@/app/components/shop/ProductSkeleton';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import ShopSidebar from '@/app/components/ShopSidebar';
+import CollectionProducts from '@/app/components/shop/CollectionProducts';
 
 export const dynamicParams = true;
 
@@ -30,34 +30,6 @@ export async function generateMetadata({ params }) {
     title: `${collection.name} | Mantle Clothing`,
     description: `Browse our ${collection.name} collection of sustainable products.`
   };
-}
-
-// Component to fetch products by tag (collection)
-async function CollectionProductsData({ tag }) {
-  // Fetch products from the API
-  const products = await getProductsByTag(tag, 24); // Show 24 products by default
-  
-  // console.log(`Products for tag ${tag}:`, products);
-  
-  // Check if we have products
-  if (!products || products.length === 0) {
-    return (
-      <div className="text-center py-10">
-        <h2 className="text-xl font-medium text-gray-600">No products found in this collection</h2>
-        <p className="mt-2 text-gray-500">Try browsing our other collections or visit the shop.</p>
-        <div className="mt-6">
-          <Link 
-            href="/shop" 
-            className="px-5 py-2 bg-black text-white hover:bg-gray-800 rounded-md inline-block"
-          >
-            Browse All Products
-          </Link>
-        </div>
-      </div>
-    );
-  }
-  
-  return <ProductGrid products={products} />;
 }
 
 export default async function CollectionPage({ params }) {
@@ -123,20 +95,8 @@ export default async function CollectionPage({ params }) {
           <ShopSidebar currentSlug={slug} isCategoryPage={false} />
         </Suspense>
         
-        {/* Products grid with suspense fallback */}
-        <Suspense fallback={
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-            gap: '2rem',
-          }}>
-            {Array(12).fill(0).map((_, index) => (
-              <ProductSkeleton key={index} />
-            ))}
-          </div>
-        }>
-          <CollectionProductsData tag={slug} />
-        </Suspense>
+        {/* Products grid with React Query */}
+        <CollectionProducts tag={slug} />
       </div>
     </div>
   );

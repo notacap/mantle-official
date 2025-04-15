@@ -3,51 +3,36 @@
 import { useRef, useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { getFeaturedProducts, formatPrice, getProductImageUrl, getProductSecondaryImageUrl } from '../services/woocommerce';
+import { useQuery } from '@tanstack/react-query';
+import { formatPrice, getProductImageUrl, getProductSecondaryImageUrl } from '../services/woocommerce';
 
 export default function FeaturedProducts() {
   const scrollContainerRef = useRef(null);
   const [isScrolling, setIsScrolling] = useState(false);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
-  const [products, setProducts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [isFeatured, setIsFeatured] = useState(true);
   const [imageErrors, setImageErrors] = useState({});
   const [hoveredProduct, setHoveredProduct] = useState(null);
 
-  // Fetch products from the API
-  useEffect(() => {
-    async function loadProducts() {
-      try {
-        setIsLoading(true);
-        
-        // Get products from the API
-        const result = await getFeaturedProducts(8);
-        
-        // Log products for debugging
-        // console.log('Loaded products:', result.products?.map(p => ({
-        //   id: p.id,
-        //   name: p.name,
-        //   imageCount: p?.images?.length,
-        //   images: p.images
-        // })));
-        
-        // Set products and featured flag
-        setProducts(result.products || []);
-        setIsFeatured(result.isFeatured);
-        setError(null);
-      } catch (err) {
-        console.error('Failed to load products:', err);
-        setError('Failed to load products. Please try again later.');
-      } finally {
-        setIsLoading(false);
+  // Fetch featured products with React Query
+  const { 
+    data,
+    isLoading,
+    error
+  } = useQuery({
+    queryKey: ['products', 'featured'],
+    queryFn: async () => {
+      const response = await fetch('/api/products/featured?limit=8');
+      if (!response.ok) {
+        throw new Error('Failed to fetch featured products');
       }
+      return response.json();
     }
+  });
 
-    loadProducts();
-  }, []);
+  // Extract products and featured flag from data
+  const products = data?.products || [];
+  const isFeatured = data?.isFeatured ?? true;
 
   // Check if scrolling is possible in either direction
   const checkScrollability = () => {
@@ -276,7 +261,7 @@ export default function FeaturedProducts() {
         </div>
       ) : error ? (
         <div style={{ textAlign: 'center', padding: '2rem 0', color: '#ef4444' }}>
-          <p>{error}</p>
+          <p>{error.message}</p>
         </div>
       ) : (
         <div style={{ position: 'relative', padding: products.length <= 3 ? '0' : '0 40px' }}>

@@ -1,10 +1,10 @@
 import { Suspense } from 'react';
-import { getCategories, getProductsByCategory } from '@/app/services/woocommerce';
-import ProductGrid from '@/app/components/shop/ProductGrid';
+import { getCategories } from '@/app/services/woocommerce';
 import ProductSkeleton from '@/app/components/shop/ProductSkeleton';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import ShopSidebar from '@/app/components/ShopSidebar';
+import CategoryProducts from '@/app/components/shop/CategoryProducts';
 
 export const dynamicParams = true;
 
@@ -32,13 +32,6 @@ export async function generateMetadata({ params }) {
       `Browse our ${category.name} collection - ${category.description.replace(/<[^>]*>/g, '')}` : 
       `Browse our ${category.name} collection of sustainable products.`
   };
-}
-
-// Component to fetch products by category
-async function CategoryProductsData({ categoryId }) {
-  // Fetch products from the API
-  const products = await getProductsByCategory(categoryId, 24); // Show 24 products by default
-  return <ProductGrid products={products} />;
 }
 
 export default async function CategoryPage({ params }) {
@@ -104,20 +97,8 @@ export default async function CategoryPage({ params }) {
           <ShopSidebar currentSlug={slug} isCategoryPage={true} />
         </Suspense>
         
-        {/* Products grid with suspense fallback */}
-        <Suspense fallback={
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-            gap: '2rem',
-          }}>
-            {Array(12).fill(0).map((_, index) => (
-              <ProductSkeleton key={index} />
-            ))}
-          </div>
-        }>
-          <CategoryProductsData categoryId={category.id} />
-        </Suspense>
+        {/* Products grid with React Query */}
+        <CategoryProducts categoryId={category.id} />
       </div>
     </div>
   );
