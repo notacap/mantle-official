@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
-
+                                                                                                                                                                                                       
 export const metadata = {
   title: "Mantle Clothing | Premium Sustainable Apparel",
   description: "Discover Mantle Clothing's premium sustainable apparel. Shop our collection of eco-friendly, ethically-made clothing for conscious consumers.",
@@ -54,11 +54,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#f8f8f8] text-gray-900 min-h-screen relative`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#f8f8f8] text-gray-900 min-h-screen relative flex flex-col`}
       >
         <ReactQueryProvider>
           <Navbar />
-          <main className="relative">
+          <main className="relative flex-grow min-h-0">
             {children}
           </main>
           <Footer />
