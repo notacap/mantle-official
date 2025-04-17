@@ -2,15 +2,199 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { FiShoppingCart, FiMenu, FiX } from 'react-icons/fi';
+import { useQuery } from '@tanstack/react-query';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isShopHovered, setIsShopHovered] = useState(false);
+  const [hoveredSection, setHoveredSection] = useState(null);
+  
+  const shopMenuRef = useRef(null);
+  const categoryRef = useRef(null);
+  const collectionRef = useRef(null);
+  const categorySubmenuRef = useRef(null);
+  const collectionSubmenuRef = useRef(null);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  // Handle shop hover
+  const handleShopMouseEnter = () => {
+    setIsShopHovered(true);
+  };
+
+  const handleShopMouseLeave = (e) => {
+    // Check if we're moving to any of the submenus before closing
+    const relatedTargets = [
+      categoryRef.current, 
+      collectionRef.current,
+      categorySubmenuRef.current, 
+      collectionSubmenuRef.current
+    ];
+    
+    // Don't close if hovering over or moving to any of our menu elements
+    for (const target of relatedTargets) {
+      if (target && (target.contains(e.relatedTarget) || target === e.relatedTarget)) {
+        return;
+      }
+    }
+    
+    setIsShopHovered(false);
+    setHoveredSection(null);
+  };
+
+  // Handle category hover
+  const handleCategoryMouseEnter = () => {
+    setHoveredSection('categories');
+  };
+
+  const handleCategoryMouseLeave = (e) => {
+    // Don't close the menu if moving to the submenu
+    if (
+      categorySubmenuRef.current && 
+      (categorySubmenuRef.current.contains(e.relatedTarget) || categorySubmenuRef.current === e.relatedTarget)
+    ) {
+      return;
+    }
+    
+    // Only clear hoveredSection if we're not moving to another menu item
+    if (
+      !collectionRef.current?.contains(e.relatedTarget) &&
+      e.relatedTarget !== collectionRef.current
+    ) {
+      setHoveredSection(null);
+    }
+  };
+
+  // Handle submenu hover
+  const handleCategorySubmenuMouseLeave = (e) => {
+    // Keep the menu open only if we're moving to the category link
+    if (
+      categoryRef.current && 
+      (categoryRef.current.contains(e.relatedTarget) || categoryRef.current === e.relatedTarget)
+    ) {
+      return;
+    }
+    
+    // If we're moving outside the dropdown entirely, close everything
+    if (
+      !shopMenuRef.current?.contains(e.relatedTarget) ||
+      (!categoryRef.current?.contains(e.relatedTarget) && 
+       !collectionRef.current?.contains(e.relatedTarget))
+    ) {
+      setHoveredSection(null);
+    }
+  };
+
+  // Handle collection hover
+  const handleCollectionMouseEnter = () => {
+    setHoveredSection('collections');
+  };
+
+  const handleCollectionMouseLeave = (e) => {
+    // Don't close the menu if moving to the submenu
+    if (
+      collectionSubmenuRef.current && 
+      (collectionSubmenuRef.current.contains(e.relatedTarget) || collectionSubmenuRef.current === e.relatedTarget)
+    ) {
+      return;
+    }
+    
+    // Only clear hoveredSection if we're not moving to another menu item
+    if (
+      !categoryRef.current?.contains(e.relatedTarget) &&
+      e.relatedTarget !== categoryRef.current
+    ) {
+      setHoveredSection(null);
+    }
+  };
+
+  // Handle submenu hover
+  const handleCollectionSubmenuMouseLeave = (e) => {
+    // Keep the menu open only if we're moving to the collection link
+    if (
+      collectionRef.current && 
+      (collectionRef.current.contains(e.relatedTarget) || collectionRef.current === e.relatedTarget)
+    ) {
+      return;
+    }
+    
+    // If we're moving outside the dropdown entirely, close everything
+    if (
+      !shopMenuRef.current?.contains(e.relatedTarget) ||
+      (!categoryRef.current?.contains(e.relatedTarget) && 
+       !collectionRef.current?.contains(e.relatedTarget))
+    ) {
+      setHoveredSection(null);
+    }
+  };
+
+  // Handle clicks outside the dropdown to close it
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (shopMenuRef.current && !shopMenuRef.current.contains(event.target)) {
+        setIsShopHovered(false);
+        setHoveredSection(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Fetch categories using React Query
+  const { 
+    data: categoriesData,
+    isLoading: isLoadingCategories,
+  } = useQuery({
+    queryKey: ['categories'],
+    queryFn: async () => {
+      const response = await fetch('/api/categories');
+      if (!response.ok) {
+        throw new Error('Failed to fetch categories');
+      }
+      return response.json();
+    }
+  });
+  
+  // Fetch collections using React Query
+  const { 
+    data: collectionsData,
+    isLoading: isLoadingCollections,
+  } = useQuery({
+    queryKey: ['collections'],
+    queryFn: async () => {
+      const response = await fetch('/api/collections');
+      if (!response.ok) {
+        throw new Error('Failed to fetch collections');
+      }
+      return response.json();
+    }
+  });
+
+  // Extract data
+  const categories = categoriesData?.categories || [];
+  const collections = collectionsData?.collections || [];
+  
+  // Define the desired category order
+  const categoryOrder = ['Pants', 'Tops', 'Outerwear', 'Accessories'];
+  
+  // Filter out the 'Uncategorized' category and sort by specified order
+  const sortedCategories = categories
+    .filter(category => category?.name?.toLowerCase() !== 'uncategorized')
+    .sort((a, b) => {
+      const indexA = categoryOrder.indexOf(a?.name);
+      const indexB = categoryOrder.indexOf(b?.name);
+      if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+      if (indexA !== -1) return -1;
+      if (indexB !== -1) return 1;
+      return a?.name?.localeCompare(b?.name);
+    });
 
   return (
     <nav className="bg-white border-b border-gray-200 relative z-10">
@@ -32,9 +216,107 @@ const Navbar = () => {
           {/* Desktop Navigation - centered with more spacing */}
           <div className="hidden md:flex flex-1 justify-center items-center">
             <div className="flex space-x-12">
-              <Link href="/shop" className="text-black hover:text-[#9CB24D] transition-colors font-medium text-lg">
-                Shop
-              </Link>
+              <div 
+                ref={shopMenuRef}
+                className="relative group"
+                onMouseEnter={handleShopMouseEnter}
+                onMouseLeave={handleShopMouseLeave}
+              >
+                <Link href="/shop" className="text-black hover:text-[#9CB24D] transition-colors font-medium text-lg">
+                  Shop
+                </Link>
+                
+                {/* Shop Dropdown Menu */}
+                {isShopHovered && (
+                  <div className="absolute left-0 mt-1 w-52 bg-white border border-gray-200 rounded-md shadow-lg z-20 overflow-visible">
+                    {/* Create an invisible connector to prevent hover gap issues */}
+                    <div className="absolute w-full h-2 -top-2 left-0"></div>
+                    
+                    <div 
+                      ref={categoryRef}
+                      className="relative py-1 hover:bg-gray-50"
+                      onMouseEnter={handleCategoryMouseEnter}
+                      onMouseLeave={handleCategoryMouseLeave}
+                    >
+                      <Link 
+                        href="/categories" 
+                        className="block px-4 py-2 text-black hover:text-[#9CB24D] transition-colors w-full"
+                      >
+                        Categories
+                      </Link>
+                      
+                      {/* Categories Submenu */}
+                      {hoveredSection === 'categories' && (
+                        <div 
+                          ref={categorySubmenuRef}
+                          className="absolute left-full top-0 w-56 bg-white border border-gray-200 rounded-md shadow-lg max-h-80 overflow-y-auto"
+                          onMouseLeave={handleCategorySubmenuMouseLeave}
+                        >
+                          {/* Create an invisible connector to prevent hover gap issues */}
+                          <div className="absolute w-2 h-full -left-2 top-0"></div>
+                          {isLoadingCategories ? (
+                            <div className="px-4 py-3 text-gray-500">Loading...</div>
+                          ) : sortedCategories.length > 0 ? (
+                            sortedCategories.map((category) => (
+                              <Link 
+                                key={category.id}
+                                href={`/categories/${category.slug}`}
+                                className="block px-4 py-2 text-black hover:text-[#9CB24D] hover:bg-gray-50 transition-colors"
+                              >
+                                {category.name} ({category.count})
+                              </Link>
+                            ))
+                          ) : (
+                            <div className="px-4 py-3 text-gray-500">No categories found</div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div 
+                      ref={collectionRef}
+                      className="relative py-1 hover:bg-gray-50"
+                      onMouseEnter={handleCollectionMouseEnter}
+                      onMouseLeave={handleCollectionMouseLeave}
+                    >
+                      <Link 
+                        href="/collections" 
+                        className="block px-4 py-2 text-black hover:text-[#9CB24D] transition-colors w-full"
+                      >
+                        Collections
+                      </Link>
+                      
+                      {/* Collections Submenu */}
+                      {hoveredSection === 'collections' && (
+                        <div 
+                          ref={collectionSubmenuRef}
+                          className="absolute left-full top-0 w-56 bg-white border border-gray-200 rounded-md shadow-lg max-h-80 overflow-y-auto"
+                          onMouseLeave={handleCollectionSubmenuMouseLeave}
+                        >
+                          {/* Create an invisible connector to prevent hover gap issues */}
+                          <div className="absolute w-2 h-full -left-2 top-0"></div>
+                          {isLoadingCollections ? (
+                            <div className="px-4 py-3 text-gray-500">Loading...</div>
+                          ) : collections.length > 0 ? (
+                            collections.map((collection) => (
+                              <Link 
+                                key={collection.id}
+                                href={`/collections/${collection.slug}`}
+                                className="block px-4 py-2 text-black hover:text-[#9CB24D] hover:bg-gray-50 transition-colors"
+                              >
+                                {collection.name} ({collection.count})
+                              </Link>
+                            ))
+                          ) : (
+                            <div className="px-4 py-3 text-gray-500">No collections found</div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+              
               <Link href="/about" className="text-black hover:text-[#9CB24D] transition-colors font-medium text-lg">
                 About
               </Link>
@@ -87,6 +369,20 @@ const Navbar = () => {
               onClick={toggleMenu}
             >
               Shop
+            </Link>
+            <Link 
+              href="/categories" 
+              className="block px-3 py-2 text-black hover:text-[#9CB24D] hover:bg-gray-50 font-medium text-lg pl-6"
+              onClick={toggleMenu}
+            >
+              Categories
+            </Link>
+            <Link 
+              href="/collections" 
+              className="block px-3 py-2 text-black hover:text-[#9CB24D] hover:bg-gray-50 font-medium text-lg pl-6"
+              onClick={toggleMenu}
+            >
+              Collections
             </Link>
             <Link 
               href="/about" 
