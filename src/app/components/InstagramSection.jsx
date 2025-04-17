@@ -40,7 +40,7 @@ export default function InstagramSection() {
             Tag your photos with #MantleInTheWild for a chance to be featured on our page
           </p>
           <Link 
-            href="https://www.instagram.com/" 
+            href="https://www.instagram.com/mantle_clothing/" 
             target="_blank"
             rel="noopener noreferrer"
             style={{ 
@@ -55,7 +55,7 @@ export default function InstagramSection() {
             onMouseLeave={(e) => e.currentTarget.style.color = '#9CB24D'}
           >
             <Instagram size={20} style={{ marginRight: '0.5rem' }} />
-            Follow us @mantleclothing
+            Follow us @mantle_clothing
           </Link>
         </div>
 
