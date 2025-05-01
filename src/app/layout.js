@@ -3,6 +3,7 @@ import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ReactQueryProvider from "./lib/reactQuery";
+import { CartProvider } from "../context/CartContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -57,11 +58,13 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#f8f8f8] text-gray-900 min-h-screen relative flex flex-col`}
       >
         <ReactQueryProvider>
-          <Navbar />
-          <main className="relative flex-grow min-h-0">
-            {children}
-          </main>
-          <Footer />
+          <CartProvider>
+            <Navbar />
+            <main className="relative flex-grow min-h-0">
+              {children}
+            </main>
+            <Footer />
+          </CartProvider>
         </ReactQueryProvider>
       </body>
     </html>

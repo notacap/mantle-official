@@ -2,12 +2,15 @@
 
 import { useState } from 'react';
 import { formatPrice } from '@/app/services/woocommerce';
+import { useCart } from '@/context/CartContext'; // Import useCart hook
 
 export default function ProductActions({ productId, price, sizes, colors }) {
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState(sizes[0] || '');
   const [selectedColor, setSelectedColor] = useState(colors[0] || '');
-  const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [isAddingToCart, setIsAddingToCart] = useState(false); // Local loading state for the button
+  // Get context values, including isLoading and nonce
+  const { callCartApi, setIsLoading: setCartLoading, isLoading: isCartLoading, nonce } = useCart(); // Get context functions
   
   // Handle quantity change
   const handleQuantityChange = (e) => {
@@ -28,34 +31,55 @@ export default function ProductActions({ productId, price, sizes, colors }) {
     setQuantity(quantity + 1);
   };
   
-  // Add to cart handler
+  // Add to cart handler - Updated
   const handleAddToCart = async () => {
-    // In a real application, this would add the product to the cart
-    // For now, we'll just simulate the action
+    // Double-check nonce just before attempting the call
+    if (!nonce) {
+        console.error("Add to Cart aborted: Nonce not available.");
+        alert("Cannot add to cart. Please refresh the page or try again later.");
+        return;
+    }
+
     setIsAddingToCart(true);
+    setCartLoading(true); 
+
+    // Prepare variations if size or color are selected
+    const variation = [];
+    if (selectedSize) {
+        variation.push({ attribute: 'size', value: selectedSize }); // Adjust 'attribute' if needed
+    }
+    if (selectedColor) {
+        variation.push({ attribute: 'color', value: selectedColor }); // Adjust 'attribute' if needed
+    }
     
+    const itemData = {
+        id: productId,
+        quantity: quantity,
+        ...(variation.length > 0 && { variation: variation })
+    };
+
     try {
-      // console.log('Adding to cart:', {
-      //   productId,
-      //   quantity,
-      //   selectedSize,
-      //   selectedColor,
-      //   price
-      // });
+        // --- BEGIN LOG ---
+        console.log('[ProductActions] Attempting to add to cart. Current Nonce:', nonce);
+        // --- END LOG ---
+        console.log('Adding to cart with data:', itemData);
+        const updatedCart = await callCartApi('/wp-json/wc/store/v1/cart/add-item', 'POST', itemData);
+        console.log('Cart updated successfully:', updatedCart);
+        alert('Product added to cart!'); // Simple feedback
       
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Success message (could be replaced with a toast notification)
-      alert('Product added to cart!');
     } catch (error) {
-      console.error('Failed to add to cart:', error);
-      alert('Failed to add product to cart. Please try again.');
+        console.error('Failed to add to cart:', error);
+        // Error message is likely set in context, but show a generic alert too
+        alert(`Failed to add product to cart: ${error.message || 'Please try again.'}`); 
     } finally {
-      setIsAddingToCart(false);
+        setIsAddingToCart(false);
+        setCartLoading(false);
     }
   };
   
+  // Determine if the button should be disabled
+  const isButtonDisabled = isAddingToCart || isCartLoading || !nonce;
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       {/* Size Selector */}
@@ -141,6 +165,7 @@ export default function ProductActions({ productId, price, sizes, colors }) {
               cursor: quantity > 1 ? 'pointer' : 'not-allowed',
               opacity: quantity > 1 ? 1 : 0.5
             }}
+            disabled={quantity <= 1} // Disable button explicitly
           >
             -
           </button>
@@ -190,23 +215,23 @@ export default function ProductActions({ productId, price, sizes, colors }) {
       {/* Add to Cart Button */}
       <button
         onClick={handleAddToCart}
-        disabled={isAddingToCart}
+        disabled={isButtonDisabled} // Use combined disabled state
         style={{
           marginTop: '1rem',
           padding: '0.75rem 1.5rem',
-          backgroundColor: isAddingToCart ? '#bac989' : '#9CB24D',
+          backgroundColor: isButtonDisabled ? '#d1d5db' : '#9CB24D', // Grey out when disabled
           color: 'white',
           borderRadius: '0.375rem',
           fontWeight: '500',
-          cursor: isAddingToCart ? 'wait' : 'pointer',
+          cursor: isButtonDisabled ? 'not-allowed' : 'pointer', // Change cursor when disabled
           width: '100%',
-          transition: 'background-color 0.2s',
+          transition: 'background-color 0.2s, cursor 0.2s',
           border: 'none',
           boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
           position: 'relative'
         }}
       >
-        {isAddingToCart ? 'Adding to Cart...' : 'Add to Cart'}
+        {isAddingToCart ? 'Adding...' : (isCartLoading ? 'Loading...' : 'Add to Cart')}
       </button>
     </div>
   );
