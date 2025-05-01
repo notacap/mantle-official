@@ -36,15 +36,27 @@ function StarRating({ rating, count }) {
 
 // Function to safely parse product attributes
 function getProductAttributes(product) {
-  if (!product || !product.attributes) return { colors: [], sizes: [] };
+  if (!product || !product.attributes) return { colors: [], sizes: [], colorOptions: [], sizeOptions: [] };
   
-  const colors = product.attributes.find(attr => 
-    attr.name.toLowerCase() === 'color' || attr.name.toLowerCase() === 'colours')?.options || [];
+  const colorAttribute = product.attributes.find(attr => 
+    attr.name.toLowerCase() === 'color' || attr.name.toLowerCase() === 'colours');
   
-  const sizes = product.attributes.find(attr => 
-    attr.name.toLowerCase() === 'size')?.options || [];
+  const sizeAttribute = product.attributes.find(attr => 
+    attr.name.toLowerCase() === 'size');
   
-  return { colors, sizes };
+  const colors = colorAttribute?.options || [];
+  const sizes = sizeAttribute?.options || [];
+  
+  // Extract attribute IDs for fetching terms
+  const colorAttributeId = colorAttribute?.id;
+  const sizeAttributeId = sizeAttribute?.id;
+  
+  return { 
+    colors, 
+    sizes, 
+    colorAttributeId, 
+    sizeAttributeId 
+  };
 }
 
 // Breadcrumb navigation component
@@ -114,6 +126,51 @@ export default function SingleProduct({ productId }) {
     }
   });
 
+  // Extract attribute IDs
+  const { colors, sizes, colorAttributeId, sizeAttributeId } = getProductAttributes(product || {});
+  
+  // Fetch size attribute terms if available
+  const { 
+    data: sizeTermsData
+  } = useQuery({
+    queryKey: ['attribute-terms', sizeAttributeId],
+    queryFn: async () => {
+      const url = new URL('/api/product-attributes', window.location.origin);
+      url.searchParams.append('attribute_id', sizeAttributeId.toString());
+      
+      const response = await fetch(url.toString());
+      if (!response.ok) {
+        throw new Error('Failed to fetch size attribute terms');
+      }
+      
+      return response.json();
+    },
+    enabled: !!sizeAttributeId,
+  });
+  
+  // Fetch color attribute terms if available
+  const { 
+    data: colorTermsData
+  } = useQuery({
+    queryKey: ['attribute-terms', colorAttributeId],
+    queryFn: async () => {
+      const url = new URL('/api/product-attributes', window.location.origin);
+      url.searchParams.append('attribute_id', colorAttributeId.toString());
+      
+      const response = await fetch(url.toString());
+      if (!response.ok) {
+        throw new Error('Failed to fetch color attribute terms');
+      }
+      
+      return response.json();
+    },
+    enabled: !!colorAttributeId,
+  });
+  
+  // Extract terms data
+  const sizeOptions = sizeTermsData?.terms || [];
+  const colorOptions = colorTermsData?.terms || [];
+  
   // Error state
   if (productError) {
     return (
@@ -142,10 +199,19 @@ export default function SingleProduct({ productId }) {
     notFound();
   }
   
-  const { colors, sizes } = getProductAttributes(product);
   const rating = product.average_rating || 0;
   const reviewCount = product.rating_count || 0;
   const categories = categoriesData.categories || [];
+  
+  // Log the attribute options to help with debugging
+  console.log('Attribute options:', { 
+    colorAttributeId, 
+    sizeAttributeId,
+    colors, 
+    sizes, 
+    colorOptions, 
+    sizeOptions 
+  });
   
   return (
     <>
@@ -193,7 +259,9 @@ export default function SingleProduct({ productId }) {
             productId={product.id}
             price={product.price}
             sizes={sizes} 
-            colors={colors} 
+            colors={colors}
+            sizeOptions={sizeOptions}
+            colorOptions={colorOptions}
           />
         </div>
       </div>

@@ -1,15 +1,14 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { formatPrice } from '@/app/services/woocommerce';
 import { useCart } from '@/context/CartContext'; // Import useCart hook
 
-export default function ProductActions({ productId, price, sizes, colors }) {
+export default function ProductActions({ productId, price, sizes, colors, sizeOptions, colorOptions }) {
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState(sizes[0] || '');
   const [selectedColor, setSelectedColor] = useState(colors[0] || '');
   const [isAddingToCart, setIsAddingToCart] = useState(false); // Local loading state for the button
-  // Get context values, including isLoading and nonce
   const { callCartApi, setIsLoading: setCartLoading, isLoading: isCartLoading, nonce } = useCart(); // Get context functions
   
   // Handle quantity change
@@ -31,49 +30,98 @@ export default function ProductActions({ productId, price, sizes, colors }) {
     setQuantity(quantity + 1);
   };
   
-  // Add to cart handler - Updated
+  // Helper function to get slug from display name
+  const getSizeSlug = (sizeName) => {
+    if (!sizeOptions || !sizeName) return sizeName;
+    
+    // Find the option with matching name and return its slug
+    const option = sizeOptions.find(opt => 
+      opt.name.toLowerCase() === sizeName.toLowerCase());
+    
+    if (option) {
+      console.log(`Found size slug for "${sizeName}": "${option.slug}"`);
+      return option.slug;
+    }
+    
+    console.warn(`No size slug found for "${sizeName}"`);
+    return sizeName; // Fall back to name if no slug found
+  };
+  
+  const getColorSlug = (colorName) => {
+    if (!colorOptions || !colorName) return colorName;
+    
+    // Find the option with matching name and return its slug
+    const option = colorOptions.find(opt => 
+      opt.name.toLowerCase() === colorName.toLowerCase());
+    
+    if (option) {
+      console.log(`Found color slug for "${colorName}": "${option.slug}"`);
+      return option.slug;
+    }
+    
+    console.warn(`No color slug found for "${colorName}"`);
+    return colorName; // Fall back to name if no slug found
+  };
+  
+  // Log available options when component mounts or options change
+  useEffect(() => {
+    if (sizeOptions?.length) {
+      console.log('Available size options:', sizeOptions.map(opt => ({
+        name: opt.name,
+        slug: opt.slug
+      })));
+    }
+    
+    if (colorOptions?.length) {
+      console.log('Available color options:', colorOptions.map(opt => ({
+        name: opt.name,
+        slug: opt.slug
+      })));
+    }
+  }, [sizeOptions, colorOptions]);
+  
+  // Add to cart handler - Updated to use slugs
   const handleAddToCart = async () => {
-    // Double-check nonce just before attempting the call
     if (!nonce) {
-        console.error("Add to Cart aborted: Nonce not available.");
-        alert("Cannot add to cart. Please refresh the page or try again later.");
-        return;
+      console.error("Add to Cart aborted: Nonce not available.");
+      alert("Cannot add to cart. Please refresh the page or try again later.");
+      return;
     }
 
     setIsAddingToCart(true);
-    setCartLoading(true); 
+    setCartLoading(true);
 
-    // Prepare variations if size or color are selected
+    // Prepare variation as an array of objects with slugs instead of display names
     const variation = [];
     if (selectedSize) {
-        variation.push({ attribute: 'size', value: selectedSize }); // Adjust 'attribute' if needed
-    }
-    if (selectedColor) {
-        variation.push({ attribute: 'color', value: selectedColor }); // Adjust 'attribute' if needed
+      const sizeSlug = getSizeSlug(selectedSize);
+      variation.push({ attribute: 'size', value: sizeSlug });
     }
     
+    if (selectedColor) {
+      const colorSlug = getColorSlug(selectedColor);
+      variation.push({ attribute: 'color', value: colorSlug });
+    }
+
     const itemData = {
-        id: productId,
-        quantity: quantity,
-        ...(variation.length > 0 && { variation: variation })
+      id: productId,
+      quantity: quantity,
+      ...(variation.length > 0 && { variation })
     };
 
     try {
-        // --- BEGIN LOG ---
-        console.log('[ProductActions] Attempting to add to cart. Current Nonce:', nonce);
-        // --- END LOG ---
-        console.log('Adding to cart with data:', itemData);
-        const updatedCart = await callCartApi('/wp-json/wc/store/v1/cart/add-item', 'POST', itemData);
-        console.log('Cart updated successfully:', updatedCart);
-        alert('Product added to cart!'); // Simple feedback
-      
+      console.log('[ProductActions] Attempting to add to cart. Current Nonce:', nonce);
+      console.log('Adding to cart with data:', itemData);
+      const updatedCart = await callCartApi('/wp-json/wc/store/v1/cart/add-item', 'POST', itemData);
+      console.log('Cart updated successfully:', updatedCart);
+      alert('Product added to cart!');
     } catch (error) {
-        console.error('Failed to add to cart:', error);
-        // Error message is likely set in context, but show a generic alert too
-        alert(`Failed to add product to cart: ${error.message || 'Please try again.'}`); 
+      console.error('Failed to add to cart:', error);
+      console.error('Error details:', error.response?.data || error.message);
+      alert(`Failed to add product to cart: ${error.message || 'Please try again.'}`);
     } finally {
-        setIsAddingToCart(false);
-        setCartLoading(false);
+      setIsAddingToCart(false);
+      setCartLoading(false);
     }
   };
   
