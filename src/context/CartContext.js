@@ -58,7 +58,7 @@ export function CartProvider({ children }) {
         response.headers.get('Nonce');
       const cartData = await response.json();
       
-      console.log('[CartContext] Fetched initial cart. Nonce Header:', newNonce);
+      // console.log('[CartContext] Fetched initial cart. Nonce Header:', newNonce);
 
       setCart(cartData);
       if (newNonce) {

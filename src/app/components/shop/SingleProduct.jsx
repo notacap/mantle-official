@@ -204,14 +204,14 @@ export default function SingleProduct({ productId }) {
   const categories = categoriesData.categories || [];
   
   // Log the attribute options to help with debugging
-  console.log('Attribute options:', { 
-    colorAttributeId, 
-    sizeAttributeId,
-    colors, 
-    sizes, 
-    colorOptions, 
-    sizeOptions 
-  });
+  // console.log('Attribute options:', { 
+  //   colorAttributeId, 
+  //   sizeAttributeId,
+  //   colors, 
+  //   sizes, 
+  //   colorOptions, 
+  //   sizeOptions 
+  // });
   
   return (
     <>

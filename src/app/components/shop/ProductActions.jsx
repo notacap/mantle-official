@@ -39,7 +39,7 @@ export default function ProductActions({ productId, price, sizes, colors, sizeOp
       opt.name.toLowerCase() === sizeName.toLowerCase());
     
     if (option) {
-      console.log(`Found size slug for "${sizeName}": "${option.slug}"`);
+      // console.log(`Found size slug for "${sizeName}": "${option.slug}"`);
       return option.slug;
     }
     
@@ -55,7 +55,7 @@ export default function ProductActions({ productId, price, sizes, colors, sizeOp
       opt.name.toLowerCase() === colorName.toLowerCase());
     
     if (option) {
-      console.log(`Found color slug for "${colorName}": "${option.slug}"`);
+      // console.log(`Found color slug for "${colorName}": "${option.slug}"`);
       return option.slug;
     }
     
@@ -64,21 +64,21 @@ export default function ProductActions({ productId, price, sizes, colors, sizeOp
   };
   
   // Log available options when component mounts or options change
-  useEffect(() => {
-    if (sizeOptions?.length) {
-      console.log('Available size options:', sizeOptions.map(opt => ({
-        name: opt.name,
-        slug: opt.slug
-      })));
-    }
+  // useEffect(() => {
+  //   if (sizeOptions?.length) {
+  //     console.log('Available size options:', sizeOptions.map(opt => ({
+  //       name: opt.name,
+  //       slug: opt.slug
+  //     })));
+  //   }
     
-    if (colorOptions?.length) {
-      console.log('Available color options:', colorOptions.map(opt => ({
-        name: opt.name,
-        slug: opt.slug
-      })));
-    }
-  }, [sizeOptions, colorOptions]);
+  //   if (colorOptions?.length) {
+  //     console.log('Available color options:', colorOptions.map(opt => ({
+  //       name: opt.name,
+  //       slug: opt.slug
+  //     })));
+  //   }
+  // }, [sizeOptions, colorOptions]);
   
   // Add to cart handler - Updated to use slugs
   const handleAddToCart = async () => {
@@ -110,10 +110,10 @@ export default function ProductActions({ productId, price, sizes, colors, sizeOp
     };
 
     try {
-      console.log('[ProductActions] Attempting to add to cart. Current Nonce:', nonce);
-      console.log('Adding to cart with data:', itemData);
+      // console.log('[ProductActions] Attempting to add to cart. Current Nonce:', nonce);
+      // console.log('Adding to cart with data:', itemData);
       const updatedCart = await callCartApi('/wp-json/wc/store/v1/cart/add-item', 'POST', itemData);
-      console.log('Cart updated successfully:', updatedCart);
+      // console.log('Cart updated successfully:', updatedCart);
       alert('Product added to cart!');
     } catch (error) {
       console.error('Failed to add to cart:', error);
