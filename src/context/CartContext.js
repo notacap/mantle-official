@@ -93,58 +93,59 @@ export function CartProvider({ children }) {
   // Function to handle generic cart API calls
   const callCartApi = useCallback(async (endpoint, method = 'POST', body = null) => {
     if (!nonce) {
-      // This check remains important
       console.error("Nonce is not available for API call.");
       throw new Error("Cannot perform cart operation: Authentication token missing.");
     }
     
     const baseUrl = getApiBaseUrl();
-     if (!baseUrl) {
-       throw new Error("Configuration error: WordPress URL not set.");
+    if (!baseUrl) {
+      throw new Error("Configuration error: WordPress URL not set.");
     }
-
+  
     setIsLoading(true); 
     setError(null);
     const apiUrl = `${baseUrl}${endpoint}`;
-
+  
     try {
+      console.log('Making API call to:', apiUrl);
+      console.log('Request body:', body);
       const response = await fetch(apiUrl, {
         method: method,
         headers: {
           'Content-Type': 'application/json',
           'Nonce': nonce,
-      },
+        },
         body: body ? JSON.stringify(body) : null,
-        credentials: 'include', // Uncommented as CORS allows credentials
+        credentials: 'include',
       });
-
+  
       const responseNonce = response.headers.get('Nonce');
       
       if (!response.ok) {
+        const errorBodyText = await response.text();
+        console.error(`API Error Response for ${method} ${apiUrl}:`, errorBodyText);
         let errorData;
-        let errorBodyText = await response.text();
         try {
-            errorData = JSON.parse(errorBodyText);
-        } catch (parseError) {
-             console.error(`API Error Response (non-JSON) for ${method} ${apiUrl}:`, errorBodyText);
-             throw new Error(`HTTP error! status: ${response.status} ${response.statusText}. Raw Response: ${errorBodyText}`);
+          errorData = JSON.parse(errorBodyText);
+        } catch {
+          throw new Error(`HTTP error! status: ${response.status} ${response.statusText}. Raw Response: ${errorBodyText}`);
         }
-        console.error(`API Error Response (JSON) for ${method} ${apiUrl}:`, errorData);
         throw new Error(errorData.message || `API Error: ${response.status} - ${errorData.code || 'Unknown error code'}`);
       }
-
+  
       const data = await response.json();
+      console.log('API Response Data:', data);
       updateCartAndNonce(data, responseNonce);
       return data;
-
+  
     } catch (err) {
       console.error(`Failed to call cart API endpoint ${apiUrl}:`, err);
       setError(err.message || `An error occurred while updating the cart via ${apiUrl}.`);
-      throw err; // Re-throw error to be caught by the calling component
+      throw err;
     } finally {
-       setIsLoading(false); 
+      setIsLoading(false);
     }
-  }, [nonce]); // Removed updateCartAndNonce dependency as it doesn't change, kept nonce
+  }, [nonce]);// Removed updateCartAndNonce dependency as it doesn't change, kept nonce
 
 
   return (

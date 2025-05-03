@@ -10,31 +10,25 @@ import { useCart } from '@/context/CartContext';
 import { formatPrice } from '@/app/services/woocommerce';
 
 export default function Cart() {
-  const { cart, isLoading, error, callCartApi, setIsLoading: setCartLoading } = useCart();
-  const [isUpdating, setIsUpdating] = useState(false);
+  const { cart, isLoading, error, callCartApi, setIsLoading } = useCart();
 
   const updateQuantity = async (itemKey, newQuantity) => {
-    if (newQuantity < 1 || isUpdating) return;
-    setIsUpdating(true);
-    setCartLoading(true);
+    if (newQuantity < 1 || isLoading) return;
+    console.log('Attempting to update quantity - Item Key:', itemKey, 'New Quantity:', newQuantity);
     try {
-      await callCartApi('/wp-json/wc/store/v1/cart/update-item', 'POST', {
+      const updatedCart = await callCartApi('/wp-json/wc/store/v1/cart/update-item', 'POST', {
         key: itemKey,
         quantity: newQuantity,
       });
+      console.log('API Response - Updated Cart:', updatedCart);
     } catch (err) {
       console.error("Failed to update quantity:", err);
       alert(`Error updating quantity: ${err.message}`);
-    } finally {
-      setIsUpdating(false);
-      setCartLoading(false);
     }
   };
 
   const removeItem = async (itemKey) => {
-    if (isUpdating) return;
-    setIsUpdating(true);
-    setCartLoading(true);
+    if (isLoading) return;
     try {
       await callCartApi('/wp-json/wc/store/v1/cart/remove-item', 'POST', {
         key: itemKey,
@@ -42,9 +36,6 @@ export default function Cart() {
     } catch (err) {
       console.error("Failed to remove item:", err);
       alert(`Error removing item: ${err.message}`);
-    } finally {
-      setIsUpdating(false);
-      setCartLoading(false);
     }
   };
 
@@ -109,7 +100,7 @@ export default function Cart() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <h1 className="text-3xl font-bold mb-8">Your Cart</h1>
       
-      { (isLoading || isUpdating) && 
+      { isLoading && 
          <div className="fixed inset-0 bg-white bg-opacity-75 flex items-center justify-center z-50">
            <p>Updating cart...</p>
          </div>
@@ -126,6 +117,7 @@ export default function Cart() {
             </div>
             
             {cartItems.map((item) => {
+              console.log('Rendering Item - Key:', item.key, 'Quantity:', item.quantity);
               const imageUrl = item.images && item.images.length > 0 ? item.images[0].src : '/placeholder.png';
               const itemTotal = item.totals?.line_total ? parseFloat(item.totals.line_total) / (10**cart.totals.currency_minor_unit) : 0;
               const itemPrice = item.prices?.price ? parseFloat(item.prices.price) / (10**cart.totals.currency_minor_unit) : 0;
@@ -151,7 +143,7 @@ export default function Cart() {
                       }
                       <button 
                         onClick={() => removeItem(item.key)}
-                        disabled={isUpdating} 
+                        disabled={isLoading}
                         className="mt-2 inline-flex items-center text-sm text-[#9CB24D] hover:text-black md:hidden disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <FiTrash2 className="mr-1 h-4 w-4" />
@@ -170,7 +162,7 @@ export default function Cart() {
                     <div className="flex items-center border border-gray-300 rounded-md">
                       <button 
                         onClick={() => updateQuantity(item.key, item.quantity - 1)}
-                        disabled={item.quantity <= 1 || isUpdating}
+                        disabled={item.quantity <= 1 || isLoading}
                         className="p-2 text-gray-600 hover:text-[#9CB24D] disabled:opacity-50 disabled:cursor-not-allowed"
                         aria-label="Decrease quantity"
                       >
@@ -179,7 +171,7 @@ export default function Cart() {
                       <span className="px-3 py-1 text-center w-10">{item.quantity}</span>
                       <button 
                         onClick={() => updateQuantity(item.key, item.quantity + 1)}
-                        disabled={isUpdating}
+                        disabled={isLoading}
                         className="p-2 text-gray-600 hover:text-[#9CB24D] disabled:opacity-50 disabled:cursor-not-allowed"
                         aria-label="Increase quantity"
                       >
@@ -195,7 +187,7 @@ export default function Cart() {
                   
                   <button 
                     onClick={() => removeItem(item.key)}
-                    disabled={isUpdating}
+                    disabled={isLoading}
                     className="ml-2 hidden md:block text-gray-400 hover:text-[#9CB24D] disabled:opacity-50 disabled:cursor-not-allowed"
                     aria-label="Remove item"
                   >
@@ -206,7 +198,7 @@ export default function Cart() {
             })}
           </div>
         </div>
-        
+
         <div className="lg:col-span-1">
           <div className="bg-white rounded-lg shadow-sm p-6">
             <h2 className="text-lg font-medium text-gray-900 mb-4">Order Summary</h2>
@@ -230,7 +222,7 @@ export default function Cart() {
             
             <div className="mt-6 space-y-4">
               <button 
-                disabled={isUpdating || isLoading || cartItems.length === 0}
+                disabled={isLoading || cartItems.length === 0}
                 className="w-full bg-[#9CB24D] hover:bg-[#8CA23D] text-white py-3 px-4 rounded-md font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Proceed to Checkout
@@ -276,4 +268,4 @@ export default function Cart() {
       <NewsletterSignup />
     </div>
   );
-} 
+}
