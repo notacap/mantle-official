@@ -60,6 +60,15 @@ export function CartProvider({ children }) {
       
       // console.log('[CartContext] Fetched initial cart. Nonce Header:', newNonce);
 
+      // Extract and log Cart-Token
+      let cartToken = response.headers.get('Cart-Token');
+      if (!cartToken) cartToken = response.headers.get('cart-token');
+      if (cartToken) {
+        console.log('[CartContext] Fetched initial cart. Cart-Token Header:', cartToken);
+      } else {
+        console.warn('[CartContext] Cart-Token header was missing in the response from', apiUrl);
+      }
+
       setCart(cartData);
       if (newNonce) {
         setNonce(newNonce);
@@ -136,6 +145,16 @@ export function CartProvider({ children }) {
       const data = await response.json();
       console.log('API Response Data:', data);
       updateCartAndNonce(data, responseNonce);
+
+      // Extract and log Cart-Token
+      let cartTokenFromApiCall = response.headers.get('Cart-Token');
+      if (!cartTokenFromApiCall) cartTokenFromApiCall = response.headers.get('cart-token');
+      if (cartTokenFromApiCall) {
+        console.log('[CartContext] API call successful. Cart-Token Header:', cartTokenFromApiCall);
+      } else {
+        console.warn('[CartContext] Cart-Token header was missing in the API response from', apiUrl);
+      }
+      
       return data;
   
     } catch (err) {
