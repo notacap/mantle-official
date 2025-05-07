@@ -26,6 +26,7 @@ export function CartProvider({ children }) {
   const [error, setError] = useState(null);
   const [lastKnownCartUpdateTimestamp, setLastKnownCartUpdateTimestamp] = useState(null);
   const thisTabLastUpdateTimestampRef = useRef(null);
+  const [isTokenLoadAttempted, setIsTokenLoadAttempted] = useState(false);
 
   useEffect(() => {
     const storedCartToken = localStorage.getItem('wooCartToken');
@@ -33,6 +34,7 @@ export function CartProvider({ children }) {
       setCartToken(storedCartToken);
       // console.log('[CartContext] Loaded Cart-Token from localStorage:', storedCartToken);
     }
+    setIsTokenLoadAttempted(true);
   }, []);
 
   const persistCartToken = useCallback((newToken) => {
@@ -48,6 +50,10 @@ export function CartProvider({ children }) {
   }, [cartToken]);
 
   const fetchCartAndNonce = useCallback(async () => {
+    if (!isTokenLoadAttempted) {
+      // console.log('[CartContext] fetchCartAndNonce called before token load attempted, skipping.');
+      return;
+    }
     setIsLoading(true);
     setError(null);
     const baseUrl = getApiBaseUrl();
@@ -121,11 +127,13 @@ export function CartProvider({ children }) {
     } finally {
       setIsLoading(false);
     }
-  }, [cartToken, persistCartToken]); // Added cartToken and persistCartToken dependencies
+  }, [cartToken, persistCartToken, isTokenLoadAttempted]);
 
   useEffect(() => {
-    fetchCartAndNonce();
-  }, [fetchCartAndNonce]);
+    if (isTokenLoadAttempted) {
+      fetchCartAndNonce();
+    }
+  }, [isTokenLoadAttempted, fetchCartAndNonce]);
 
   // Function to update cart and nonce, typically after an API call
   const updateCartAndNonce = (newCartData, newNonceValue) => {
@@ -239,7 +247,9 @@ export function CartProvider({ children }) {
         // console.log('[CartContext] Detected cart update from another source. Refreshing cart...');
         setLastKnownCartUpdateTimestamp(newTimestampFromStorage);
         thisTabLastUpdateTimestampRef.current = newTimestampFromStorage;
-        fetchCartAndNonce(); // Re-fetch cart data
+        if (isTokenLoadAttempted) {
+          fetchCartAndNonce(); // Re-fetch cart data
+        }
       }
     };
 
@@ -247,7 +257,7 @@ export function CartProvider({ children }) {
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
-  }, [fetchCartAndNonce]); // Only depends on fetchCartAndNonce (which is stable)
+  }, [isTokenLoadAttempted, fetchCartAndNonce]); // Only depends on fetchCartAndNonce (which is stable)
 
   return (
     <CartContext.Provider value={{ cart, nonce, cartToken, isLoading, error, fetchCartAndNonce, updateCartAndNonce, callCartApi, setIsLoading, lastKnownCartUpdateTimestamp }}>
