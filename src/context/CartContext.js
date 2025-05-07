@@ -24,12 +24,13 @@ export function CartProvider({ children }) {
   const [cartToken, setCartToken] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [lastCartUpdateTimestamp, setLastCartUpdateTimestamp] = useState(null);
 
   useEffect(() => {
     const storedCartToken = localStorage.getItem('wooCartToken');
     if (storedCartToken) {
       setCartToken(storedCartToken);
-      console.log('[CartContext] Loaded Cart-Token from localStorage:', storedCartToken);
+      // console.log('[CartContext] Loaded Cart-Token from localStorage:', storedCartToken);
     }
   }, []);
 
@@ -37,15 +38,13 @@ export function CartProvider({ children }) {
     if (newToken && newToken !== cartToken) {
       setCartToken(newToken);
       localStorage.setItem('wooCartToken', newToken);
-      console.log('[CartContext] Saved new Cart-Token to localStorage:', newToken);
+      // console.log('[CartContext] Saved new Cart-Token to localStorage:', newToken);
     } else if (!newToken && cartToken) { // Clearing an existing token
       setCartToken(null);
       localStorage.removeItem('wooCartToken');
-      console.log('[CartContext] Cleared Cart-Token from localStorage.');
-    } else if (newToken && newToken === cartToken) {
-      // console.log('[CartContext] Received same Cart-Token, no update needed:', newToken);
+      // console.log('[CartContext] Cleared Cart-Token from localStorage.');
     }
-  }, [cartToken]); // Depends on current cartToken to avoid unnecessary updates
+  }, [cartToken]);
 
   const fetchCartAndNonce = useCallback(async () => {
     setIsLoading(true);
@@ -64,7 +63,7 @@ export function CartProvider({ children }) {
 
     if (cartToken) {
       requestHeaders['Cart-Token'] = cartToken;
-      console.log('[CartContext] Sending Cart-Token in initial fetch headers:', cartToken);
+      // console.log('[CartContext] Sending Cart-Token in initial fetch headers:', cartToken);
     }
 
     try {
@@ -79,6 +78,14 @@ export function CartProvider({ children }) {
         try {
             errorBody = await response.text();
         } catch {}
+        // If the request was made with a cartToken and failed, especially with 401/403, clear the token
+        if (cartToken && (response.status === 401 || response.status === 403)) {
+          console.warn(`[CartContext] Initial cart fetch failed with status ${response.status} and a Cart-Token. Clearing the token.`);
+          persistCartToken(null);
+        } else if (cartToken && !response.ok) {
+          console.warn('[CartContext] Initial cart fetch failed with a Cart-Token. Token kept for now, but inspect error.');
+          // We already have a general error throw, specific token clearing for 401/403 is above
+        }
         throw new Error(`HTTP error! status: ${response.status} fetching ${apiUrl}. Body: ${errorBody}`);
       }
 
@@ -94,7 +101,6 @@ export function CartProvider({ children }) {
       let extractedCartToken = response.headers.get('Cart-Token');
       if (!extractedCartToken) extractedCartToken = response.headers.get('cart-token');
       if (extractedCartToken) {
-        // console.log('[CartContext] Fetched initial cart. Cart-Token Header:', extractedCartToken);
         persistCartToken(extractedCartToken); 
       } else {
         // console.warn('[CartContext] Cart-Token header was missing in the response from initial fetch', apiUrl);
@@ -156,13 +162,12 @@ export function CartProvider({ children }) {
 
     if (cartToken) {
       requestHeaders['Cart-Token'] = cartToken;
-      // console.log('[CartContext] Sending Cart-Token in request header:', cartToken);
     }
   
     try {
-      console.log('Making API call to:', apiUrl);
-      console.log('Request body:', body);
-      console.log('Request headers:', requestHeaders);
+      // console.log('Making API call to:', apiUrl);
+      // console.log('Request body:', body);
+      // console.log('Request headers:', requestHeaders);
       const response = await fetch(apiUrl, {
         method: method,
         headers: requestHeaders,
@@ -179,24 +184,35 @@ export function CartProvider({ children }) {
         try {
           errorData = JSON.parse(errorBodyText);
         } catch {
+          // If parsing fails, throw with raw text. Check for token-specific errors first.
+          if (cartToken && (response.status === 401 || response.status === 403)) {
+            console.warn(`[CartContext] API call to ${apiUrl} failed with status ${response.status} and a Cart-Token. Clearing the token.`);
+            persistCartToken(null);
+          }
           throw new Error(`HTTP error! status: ${response.status} ${response.statusText}. Raw Response: ${errorBodyText}`);
+        }
+        // If parsed, check for token-specific errors.
+        if (cartToken && (response.status === 401 || response.status === 403)) {
+          console.warn(`[CartContext] API call to ${apiUrl} failed with status ${response.status} (parsed) and a Cart-Token. Clearing the token.`);
+          persistCartToken(null);
         }
         throw new Error(errorData.message || `API Error: ${response.status} - ${errorData.code || 'Unknown error code'}`);
       }
   
       const data = await response.json();
-      console.log('API Response Data:', data);
+      // console.log('API Response Data:', data);
       updateCartAndNonce(data, responseNonce);
 
-      // Extract, log, and persist Cart-Token from API call response
+      // After a successful user-initiated API call that modifies the cart, update localStorage for cross-tab sync
+      const currentTimestamp = Date.now();
+      localStorage.setItem('wooCartLastUserUpdate', currentTimestamp.toString());
+      setLastCartUpdateTimestamp(currentTimestamp); // Update state for current tab to avoid self-trigger
+
       let cartTokenFromApiCall = response.headers.get('Cart-Token');
       if (!cartTokenFromApiCall) cartTokenFromApiCall = response.headers.get('cart-token');
       if (cartTokenFromApiCall) {
-        // console.log('[CartContext] API call successful. Cart-Token Header:', cartTokenFromApiCall);
         persistCartToken(cartTokenFromApiCall); 
       } else {
-        // If Cart-Token is not in this specific response, we keep the existing one.
-        // It might only be sent when it changes or is first issued.
         // console.warn('[CartContext] Cart-Token header was missing in the API response from', apiUrl);
       }
       
@@ -211,6 +227,26 @@ export function CartProvider({ children }) {
     }
   }, [nonce, cartToken, persistCartToken]); // Added cartToken and persistCartToken to dependencies
 
+  // Effect for cross-tab synchronization
+  useEffect(() => {
+    const handleStorageChange = (event) => {
+      if (event.key === 'wooCartLastUserUpdate') {
+        const newTimestamp = parseInt(event.newValue, 10);
+        // Check if the update was from another tab (newValue exists and is different from our last known update)
+        // Or if our local timestamp is null (meaning this tab hasn't made an update yet in this session)
+        if (event.newValue && (!lastCartUpdateTimestamp || newTimestamp !== lastCartUpdateTimestamp)) {
+          console.log('[CartContext] Detected cart update from another tab. Refreshing cart...');
+          setLastCartUpdateTimestamp(newTimestamp); // Update our timestamp to this new one
+          fetchCartAndNonce(); // Re-fetch cart data
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [fetchCartAndNonce, lastCartUpdateTimestamp]); // Depend on fetchCartAndNonce and lastCartUpdateTimestamp
 
   return (
     <CartContext.Provider value={{ cart, nonce, cartToken, isLoading, error, fetchCartAndNonce, updateCartAndNonce, callCartApi, setIsLoading }}>
