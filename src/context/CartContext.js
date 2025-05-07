@@ -25,29 +25,28 @@ export function CartProvider({ children }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Effect to load cartToken from localStorage on initial mount
   useEffect(() => {
     const storedCartToken = localStorage.getItem('wooCartToken');
     if (storedCartToken) {
       setCartToken(storedCartToken);
-      // console.log('[CartContext] Loaded Cart-Token from localStorage:', storedCartToken);
+      console.log('[CartContext] Loaded Cart-Token from localStorage:', storedCartToken);
     }
   }, []);
 
-  // Helper function to update cartToken state and localStorage
-  const persistCartToken = (newToken) => {
-    if (newToken) {
+  const persistCartToken = useCallback((newToken) => {
+    if (newToken && newToken !== cartToken) {
       setCartToken(newToken);
       localStorage.setItem('wooCartToken', newToken);
-      // console.log('[CartContext] Saved Cart-Token to localStorage:', newToken);
-    } else {
+      console.log('[CartContext] Saved new Cart-Token to localStorage:', newToken);
+    } else if (!newToken && cartToken) { // Clearing an existing token
       setCartToken(null);
       localStorage.removeItem('wooCartToken');
-      // console.log('[CartContext] Cleared Cart-Token from localStorage.');
+      console.log('[CartContext] Cleared Cart-Token from localStorage.');
+    } else if (newToken && newToken === cartToken) {
+      // console.log('[CartContext] Received same Cart-Token, no update needed:', newToken);
     }
-  };
+  }, [cartToken]); // Depends on current cartToken to avoid unnecessary updates
 
-  // Fetch initial cart state and Nonce
   const fetchCartAndNonce = useCallback(async () => {
     setIsLoading(true);
     setError(null);
@@ -57,14 +56,22 @@ export function CartProvider({ children }) {
         setIsLoading(false);
         return;
     }
+    const apiUrl = `${baseUrl}/wp-json/wc/store/v1/cart`;
+    
+    const requestHeaders = {
+      'Content-Type': 'application/json',
+    };
+
+    if (cartToken) {
+      requestHeaders['Cart-Token'] = cartToken;
+      console.log('[CartContext] Sending Cart-Token in initial fetch headers:', cartToken);
+    }
+
     try {
-      const apiUrl = `${baseUrl}/wp-json/wc/store/v1/cart`;
       const response = await fetch(apiUrl, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include', // Uncommented as CORS allows credentials
+        headers: requestHeaders, // Use updated headers
+        credentials: 'include',
       });
 
       if (!response.ok) {
@@ -83,14 +90,14 @@ export function CartProvider({ children }) {
       
       // console.log('[CartContext] Fetched initial cart. Nonce Header:', newNonce);
 
-      // Extract and log Cart-Token
+      // Extract and persist Cart-Token
       let extractedCartToken = response.headers.get('Cart-Token');
       if (!extractedCartToken) extractedCartToken = response.headers.get('cart-token');
       if (extractedCartToken) {
-        console.log('[CartContext] Fetched initial cart. Cart-Token Header:', extractedCartToken);
-        persistCartToken(extractedCartToken);
+        // console.log('[CartContext] Fetched initial cart. Cart-Token Header:', extractedCartToken);
+        persistCartToken(extractedCartToken); 
       } else {
-        console.warn('[CartContext] Cart-Token header was missing in the response from', apiUrl);
+        // console.warn('[CartContext] Cart-Token header was missing in the response from initial fetch', apiUrl);
       }
 
       setCart(cartData);
@@ -107,7 +114,7 @@ export function CartProvider({ children }) {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [cartToken, persistCartToken]); // Added cartToken and persistCartToken dependencies
 
   useEffect(() => {
     fetchCartAndNonce();
@@ -129,6 +136,9 @@ export function CartProvider({ children }) {
       console.error("Nonce is not available for API call.");
       throw new Error("Cannot perform cart operation: Authentication token missing.");
     }
+    // cartToken might be null if not yet set or cleared, which is fine for some endpoints perhaps
+    // but add-item, update-item, remove-item will likely need it.
+    // The check `if (cartToken)` for adding header handles this.
     
     const baseUrl = getApiBaseUrl();
     if (!baseUrl) {
@@ -182,10 +192,12 @@ export function CartProvider({ children }) {
       let cartTokenFromApiCall = response.headers.get('Cart-Token');
       if (!cartTokenFromApiCall) cartTokenFromApiCall = response.headers.get('cart-token');
       if (cartTokenFromApiCall) {
-        console.log('[CartContext] API call successful. Cart-Token Header:', cartTokenFromApiCall);
-        persistCartToken(cartTokenFromApiCall);
+        // console.log('[CartContext] API call successful. Cart-Token Header:', cartTokenFromApiCall);
+        persistCartToken(cartTokenFromApiCall); 
       } else {
-        console.warn('[CartContext] Cart-Token header was missing in the API response from', apiUrl);
+        // If Cart-Token is not in this specific response, we keep the existing one.
+        // It might only be sent when it changes or is first issued.
+        // console.warn('[CartContext] Cart-Token header was missing in the API response from', apiUrl);
       }
       
       return data;
@@ -197,7 +209,7 @@ export function CartProvider({ children }) {
     } finally {
       setIsLoading(false);
     }
-  }, [nonce, cartToken]);
+  }, [nonce, cartToken, persistCartToken]); // Added cartToken and persistCartToken to dependencies
 
 
   return (
