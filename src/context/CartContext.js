@@ -21,8 +21,31 @@ const getApiBaseUrl = () => {
 export function CartProvider({ children }) {
   const [cart, setCart] = useState(null);
   const [nonce, setNonce] = useState(null);
+  const [cartToken, setCartToken] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Effect to load cartToken from localStorage on initial mount
+  useEffect(() => {
+    const storedCartToken = localStorage.getItem('wooCartToken');
+    if (storedCartToken) {
+      setCartToken(storedCartToken);
+      // console.log('[CartContext] Loaded Cart-Token from localStorage:', storedCartToken);
+    }
+  }, []);
+
+  // Helper function to update cartToken state and localStorage
+  const persistCartToken = (newToken) => {
+    if (newToken) {
+      setCartToken(newToken);
+      localStorage.setItem('wooCartToken', newToken);
+      // console.log('[CartContext] Saved Cart-Token to localStorage:', newToken);
+    } else {
+      setCartToken(null);
+      localStorage.removeItem('wooCartToken');
+      // console.log('[CartContext] Cleared Cart-Token from localStorage.');
+    }
+  };
 
   // Fetch initial cart state and Nonce
   const fetchCartAndNonce = useCallback(async () => {
@@ -61,10 +84,11 @@ export function CartProvider({ children }) {
       // console.log('[CartContext] Fetched initial cart. Nonce Header:', newNonce);
 
       // Extract and log Cart-Token
-      let cartToken = response.headers.get('Cart-Token');
-      if (!cartToken) cartToken = response.headers.get('cart-token');
-      if (cartToken) {
-        console.log('[CartContext] Fetched initial cart. Cart-Token Header:', cartToken);
+      let extractedCartToken = response.headers.get('Cart-Token');
+      if (!extractedCartToken) extractedCartToken = response.headers.get('cart-token');
+      if (extractedCartToken) {
+        console.log('[CartContext] Fetched initial cart. Cart-Token Header:', extractedCartToken);
+        persistCartToken(extractedCartToken);
       } else {
         console.warn('[CartContext] Cart-Token header was missing in the response from', apiUrl);
       }
@@ -114,16 +138,24 @@ export function CartProvider({ children }) {
     setIsLoading(true); 
     setError(null);
     const apiUrl = `${baseUrl}${endpoint}`;
+
+    const requestHeaders = {
+      'Content-Type': 'application/json',
+      'Nonce': nonce,
+    };
+
+    if (cartToken) {
+      requestHeaders['Cart-Token'] = cartToken;
+      // console.log('[CartContext] Sending Cart-Token in request header:', cartToken);
+    }
   
     try {
       console.log('Making API call to:', apiUrl);
       console.log('Request body:', body);
+      console.log('Request headers:', requestHeaders);
       const response = await fetch(apiUrl, {
         method: method,
-        headers: {
-          'Content-Type': 'application/json',
-          'Nonce': nonce,
-        },
+        headers: requestHeaders,
         body: body ? JSON.stringify(body) : null,
         credentials: 'include',
       });
@@ -146,11 +178,12 @@ export function CartProvider({ children }) {
       console.log('API Response Data:', data);
       updateCartAndNonce(data, responseNonce);
 
-      // Extract and log Cart-Token
+      // Extract, log, and persist Cart-Token from API call response
       let cartTokenFromApiCall = response.headers.get('Cart-Token');
       if (!cartTokenFromApiCall) cartTokenFromApiCall = response.headers.get('cart-token');
       if (cartTokenFromApiCall) {
         console.log('[CartContext] API call successful. Cart-Token Header:', cartTokenFromApiCall);
+        persistCartToken(cartTokenFromApiCall);
       } else {
         console.warn('[CartContext] Cart-Token header was missing in the API response from', apiUrl);
       }
@@ -164,11 +197,11 @@ export function CartProvider({ children }) {
     } finally {
       setIsLoading(false);
     }
-  }, [nonce]);// Removed updateCartAndNonce dependency as it doesn't change, kept nonce
+  }, [nonce, cartToken]);
 
 
   return (
-    <CartContext.Provider value={{ cart, nonce, isLoading, error, fetchCartAndNonce, updateCartAndNonce, callCartApi, setIsLoading }}>
+    <CartContext.Provider value={{ cart, nonce, cartToken, isLoading, error, fetchCartAndNonce, updateCartAndNonce, callCartApi, setIsLoading }}>
       {children}
     </CartContext.Provider>
   );
