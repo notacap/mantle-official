@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useState, useEffect, useRef } from 'react';
 import { FiShoppingCart, FiMenu, FiX } from 'react-icons/fi';
 import { useQuery } from '@tanstack/react-query';
+import { useCart } from '@/context/CartContext';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -16,6 +17,9 @@ const Navbar = () => {
   const collectionRef = useRef(null);
   const categorySubmenuRef = useRef(null);
   const collectionSubmenuRef = useRef(null);
+
+  const { cart } = useCart();
+  const itemCount = cart?.items_count || 0;
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -335,9 +339,14 @@ const Navbar = () => {
           {/* Cart icon and mobile menu button */}
           <div className="flex items-center">
             {/* Cart Icon (always visible) */}
-            <Link href="/cart" className="text-[#9CB24D] hover:text-black transition-colors mr-6">
+            <Link href="/cart" className="text-[#9CB24D] hover:text-black transition-colors mr-6 relative">
               <span className="flex items-center">
                 <FiShoppingCart className="h-6 w-6" />
+                {itemCount > 0 && (
+                  <span className="absolute -top-2 -right-2 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-600 rounded-full">
+                    {itemCount}
+                  </span>
+                )}
               </span>
             </Link>
             
@@ -414,12 +423,17 @@ const Navbar = () => {
             </Link>
             <Link 
               href="/cart" 
-              className="block px-3 py-2 text-[#9CB24D] hover:text-black hover:bg-gray-50 font-medium text-lg md:hidden"
+              className="block px-3 py-2 text-[#9CB24D] hover:text-black hover:bg-gray-50 font-medium text-lg md:hidden relative"
               onClick={toggleMenu}
             >
               <span className="flex items-center">
                 <FiShoppingCart className="h-6 w-6 mr-2" />
                 Shopping Cart
+                {itemCount > 0 && (
+                  <span className="absolute top-1 left-6 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-600 rounded-full">
+                    {itemCount}
+                  </span>
+                )}
               </span>
             </Link>
           </div>

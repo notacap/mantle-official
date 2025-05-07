@@ -12,6 +12,52 @@ import { formatPrice } from '@/app/services/woocommerce';
 export default function Cart() {
   const { cart, isLoading, error, callCartApi } = useCart();
   const [isUpdatingCartItems, setIsUpdatingCartItems] = useState(false);
+  const [editableQuantities, setEditableQuantities] = useState({});
+
+  // Effect to initialize/synchronize editableQuantities when cart items change
+  useEffect(() => {
+    if (cart?.items) {
+      const initialQuantities = {};
+      cart.items.forEach(item => {
+        // Only update if not already being actively edited or if the cart quantity truly differs
+        // This helps prevent user input from being overwritten during minor re-renders unless cart.item.quantity changed
+        if (editableQuantities[item.key] === undefined || parseInt(editableQuantities[item.key], 10) !== item.quantity) {
+          initialQuantities[item.key] = item.quantity.toString();
+        }
+      });
+      // Only set state if there are actual changes to avoid potential loops with other effects
+      if (Object.keys(initialQuantities).length > 0) {
+         setEditableQuantities(prev => ({ ...prev, ...initialQuantities }));
+      }
+    }
+  }, [cart?.items]); // Removed editableQuantities from deps to avoid loops, sync is one-way from cart.items
+
+  const handleQuantityInputChange = (itemKey, value) => {
+    setEditableQuantities(prev => ({ ...prev, [itemKey]: value }));
+  };
+
+  const handleQuantityInputBlur = async (itemKey) => {
+    const currentInputValue = editableQuantities[itemKey];
+    const originalQuantity = cart.items.find(item => item.key === itemKey)?.quantity;
+
+    if (currentInputValue === undefined || originalQuantity === undefined) return; // Should not happen
+
+    const newQuantity = parseInt(currentInputValue, 10);
+
+    if (isNaN(newQuantity) || newQuantity < 1) {
+      // If invalid, revert to original quantity in the input field
+      setEditableQuantities(prev => ({ ...prev, [itemKey]: originalQuantity.toString() }));
+      alert("Quantity must be a number greater than or equal to 1.");
+      return;
+    }
+
+    if (newQuantity !== originalQuantity) {
+      await updateQuantity(itemKey, newQuantity);
+    }
+    // If valid but same, or after successful update, ensure the input reflects the confirmed quantity (string form)
+    // This is important if updateQuantity internally modifies the cart and triggers a re-sync
+    // We rely on the useEffect above to re-sync from cart.items if the actual quantity was updated by API successfully.
+  };
 
   const updateQuantity = async (itemKey, newQuantity) => {
     if (newQuantity < 1 || isUpdatingCartItems || isLoading) return;
@@ -174,16 +220,24 @@ export default function Cart() {
                       <button 
                         onClick={() => updateQuantity(item.key, item.quantity - 1)}
                         disabled={item.quantity <= 1 || isUpdatingCartItems || isLoading}
-                        className="p-2 text-gray-600 hover:text-[#9CB24D] disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="p-2 text-gray-600 hover:text-[#9CB24D] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                         aria-label="Decrease quantity"
                       >
                         <FiMinus className="h-3 w-3" />
                       </button>
-                      <span className="px-3 py-1 text-center w-10">{item.quantity}</span>
+                      <input 
+                        type="number"
+                        value={editableQuantities[item.key] || item.quantity.toString()}
+                        onChange={(e) => handleQuantityInputChange(item.key, e.target.value)}
+                        onBlur={() => handleQuantityInputBlur(item.key)}
+                        disabled={isUpdatingCartItems || isLoading}
+                        className="px-1 py-1 text-center w-12 border-none focus:ring-0 focus:outline-none text-sm rounded-md tabular-nums"
+                        min="1"
+                      />
                       <button 
                         onClick={() => updateQuantity(item.key, item.quantity + 1)}
                         disabled={isUpdatingCartItems || isLoading}
-                        className="p-2 text-gray-600 hover:text-[#9CB24D] disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="p-2 text-gray-600 hover:text-[#9CB24D] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                         aria-label="Increase quantity"
                       >
                         <FiPlus className="h-3 w-3" />
