@@ -24,7 +24,3 @@ This document provides a summary of the purpose for each API route located withi
 *   **`category/route.js`**: Fetches published, in-stock products belonging to a specific category ID from WooCommerce, with a limit parameter.
 *   **`featured/route.js`**: Fetches featured, published, in-stock products from WooCommerce, with a limit. If no featured products are found, it fetches regular products instead and returns a flag `isFeatured: false`. Uses `fetchWithCache` and revalidates every 5 minutes.
 *   **`tag/route.js`**: Fetches published, in-stock products associated with a specific tag (collection) slug or ID from WooCommerce, with a limit. Includes a basic mapping from slugs to known tag IDs.
-
-## `/api/woocommerce`
-
-*   **`[...path]/`**: This directory structure exists but currently contains no active API routes. 

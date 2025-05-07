@@ -9,6 +9,29 @@ import NewsletterSignup from '../components/NewsletterSignup';
 import { useCart } from '@/context/CartContext';
 import { formatPrice } from '@/app/services/woocommerce';
 
+// Helper function to decode HTML entities
+function decodeHtmlEntities(text) {
+  if (typeof window === 'undefined') {
+    // Fallback for server-side or environments without DOMParser
+    // This might not be perfect but handles common cases.
+    // For &#xxxx; entities
+    let decodedText = text?.replace(/&#(\\d+);/g, (match, dec) => String.fromCharCode(dec));
+    // For &mdash;, &ndash;, etc. (add more as needed)
+    decodedText = decodedText?.replace(/&#8211;/g, '–'); // En dash
+    decodedText = decodedText?.replace(/&mdash;/g, '—');  // Em dash
+    decodedText = decodedText?.replace(/&amp;/g, '&');    // Ampersand
+    // Add other common named entities if necessary
+    return decodedText || '';
+  }
+  try {
+    const doc = new DOMParser().parseFromString(text || '', 'text/html');
+    return doc.body.textContent || '';
+  } catch (e) {
+    console.error("Error decoding HTML entities:", e);
+    return text || ''; // Fallback to original text on error
+  }
+}
+
 export default function Cart() {
   const { cart, isLoading, error, callCartApi } = useCart();
   const [isUpdatingCartItems, setIsUpdatingCartItems] = useState(false);
@@ -192,7 +215,7 @@ export default function Cart() {
                       />
                     </div>
                     <div className="ml-4 flex-1">
-                      <h3 className="text-lg font-medium text-gray-900">{item.name}</h3>
+                      <h3 className="text-lg font-medium text-gray-900">{decodeHtmlEntities(item.name)}</h3>
                       {variationText && 
                         <p className="mt-1 text-sm text-gray-500">
                           {variationText}
