@@ -10,11 +10,13 @@ import { useCart } from '@/context/CartContext';
 import { formatPrice } from '@/app/services/woocommerce';
 
 export default function Cart() {
-  const { cart, isLoading, error, callCartApi, setIsLoading } = useCart();
+  const { cart, isLoading, error, callCartApi } = useCart();
+  const [isUpdatingCartItems, setIsUpdatingCartItems] = useState(false);
 
   const updateQuantity = async (itemKey, newQuantity) => {
-    if (newQuantity < 1 || isLoading) return;
+    if (newQuantity < 1 || isUpdatingCartItems || isLoading) return;
     console.log('Attempting to update quantity - Item Key:', itemKey, 'New Quantity:', newQuantity);
+    setIsUpdatingCartItems(true);
     try {
       const updatedCart = await callCartApi('/wp-json/wc/store/v1/cart/update-item', 'POST', {
         key: itemKey,
@@ -24,11 +26,14 @@ export default function Cart() {
     } catch (err) {
       console.error("Failed to update quantity:", err);
       alert(`Error updating quantity: ${err.message}`);
+    } finally {
+      setIsUpdatingCartItems(false);
     }
   };
 
   const removeItem = async (itemKey) => {
-    if (isLoading) return;
+    if (isUpdatingCartItems || isLoading) return;
+    setIsUpdatingCartItems(true);
     try {
       await callCartApi('/wp-json/wc/store/v1/cart/remove-item', 'POST', {
         key: itemKey,
@@ -36,6 +41,8 @@ export default function Cart() {
     } catch (err) {
       console.error("Failed to remove item:", err);
       alert(`Error removing item: ${err.message}`);
+    } finally {
+      setIsUpdatingCartItems(false);
     }
   };
 
@@ -100,9 +107,13 @@ export default function Cart() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <h1 className="text-3xl font-bold mb-8">Your Cart</h1>
       
-      { isLoading && 
-         <div className="fixed inset-0 bg-white bg-opacity-75 flex items-center justify-center z-50">
-           <p>Updating cart...</p>
+      { (isUpdatingCartItems) && 
+         <div className="fixed inset-0 bg-white bg-opacity-75 flex flex-col items-center justify-center z-50">
+           <svg className="animate-spin h-10 w-10 text-[#9CB24D] mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+           </svg>
+           <p className="text-lg text-gray-700">Updating cart...</p>
          </div>
       }
 
@@ -143,7 +154,7 @@ export default function Cart() {
                       }
                       <button 
                         onClick={() => removeItem(item.key)}
-                        disabled={isLoading}
+                        disabled={isUpdatingCartItems || isLoading}
                         className="mt-2 inline-flex items-center text-sm text-[#9CB24D] hover:text-black md:hidden disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <FiTrash2 className="mr-1 h-4 w-4" />
@@ -162,7 +173,7 @@ export default function Cart() {
                     <div className="flex items-center border border-gray-300 rounded-md">
                       <button 
                         onClick={() => updateQuantity(item.key, item.quantity - 1)}
-                        disabled={item.quantity <= 1 || isLoading}
+                        disabled={item.quantity <= 1 || isUpdatingCartItems || isLoading}
                         className="p-2 text-gray-600 hover:text-[#9CB24D] disabled:opacity-50 disabled:cursor-not-allowed"
                         aria-label="Decrease quantity"
                       >
@@ -171,7 +182,7 @@ export default function Cart() {
                       <span className="px-3 py-1 text-center w-10">{item.quantity}</span>
                       <button 
                         onClick={() => updateQuantity(item.key, item.quantity + 1)}
-                        disabled={isLoading}
+                        disabled={isUpdatingCartItems || isLoading}
                         className="p-2 text-gray-600 hover:text-[#9CB24D] disabled:opacity-50 disabled:cursor-not-allowed"
                         aria-label="Increase quantity"
                       >
@@ -187,7 +198,7 @@ export default function Cart() {
                   
                   <button 
                     onClick={() => removeItem(item.key)}
-                    disabled={isLoading}
+                    disabled={isUpdatingCartItems || isLoading}
                     className="ml-2 hidden md:block text-gray-400 hover:text-[#9CB24D] disabled:opacity-50 disabled:cursor-not-allowed"
                     aria-label="Remove item"
                   >
@@ -222,7 +233,7 @@ export default function Cart() {
             
             <div className="mt-6 space-y-4">
               <button 
-                disabled={isLoading || cartItems.length === 0}
+                disabled={isLoading || isUpdatingCartItems || cartItems.length === 0}
                 className="w-full bg-[#9CB24D] hover:bg-[#8CA23D] text-white py-3 px-4 rounded-md font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Proceed to Checkout

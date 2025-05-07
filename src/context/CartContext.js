@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useState, useEffect, useContext, useCallback } from 'react';
+import React, { createContext, useState, useEffect, useContext, useCallback, useRef } from 'react';
 
 const CartContext = createContext();
 
@@ -24,7 +24,8 @@ export function CartProvider({ children }) {
   const [cartToken, setCartToken] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [lastCartUpdateTimestamp, setLastCartUpdateTimestamp] = useState(null);
+  const [lastKnownCartUpdateTimestamp, setLastKnownCartUpdateTimestamp] = useState(null);
+  const thisTabLastUpdateTimestampRef = useRef(null);
 
   useEffect(() => {
     const storedCartToken = localStorage.getItem('wooCartToken');
@@ -151,7 +152,6 @@ export function CartProvider({ children }) {
       throw new Error("Configuration error: WordPress URL not set.");
     }
   
-    setIsLoading(true); 
     setError(null);
     const apiUrl = `${baseUrl}${endpoint}`;
 
@@ -203,10 +203,10 @@ export function CartProvider({ children }) {
       // console.log('API Response Data:', data);
       updateCartAndNonce(data, responseNonce);
 
-      // After a successful user-initiated API call that modifies the cart, update localStorage for cross-tab sync
       const currentTimestamp = Date.now();
       localStorage.setItem('wooCartLastUserUpdate', currentTimestamp.toString());
-      setLastCartUpdateTimestamp(currentTimestamp); // Update state for current tab to avoid self-trigger
+      thisTabLastUpdateTimestampRef.current = currentTimestamp;
+      setLastKnownCartUpdateTimestamp(currentTimestamp);
 
       let cartTokenFromApiCall = response.headers.get('Cart-Token');
       if (!cartTokenFromApiCall) cartTokenFromApiCall = response.headers.get('cart-token');
@@ -222,23 +222,24 @@ export function CartProvider({ children }) {
       console.error(`Failed to call cart API endpoint ${apiUrl}:`, err);
       setError(err.message || `An error occurred while updating the cart via ${apiUrl}.`);
       throw err;
-    } finally {
-      setIsLoading(false);
     }
   }, [nonce, cartToken, persistCartToken]); // Added cartToken and persistCartToken to dependencies
 
   // Effect for cross-tab synchronization
   useEffect(() => {
     const handleStorageChange = (event) => {
-      if (event.key === 'wooCartLastUserUpdate') {
-        const newTimestamp = parseInt(event.newValue, 10);
-        // Check if the update was from another tab (newValue exists and is different from our last known update)
-        // Or if our local timestamp is null (meaning this tab hasn't made an update yet in this session)
-        if (event.newValue && (!lastCartUpdateTimestamp || newTimestamp !== lastCartUpdateTimestamp)) {
-          console.log('[CartContext] Detected cart update from another tab. Refreshing cart...');
-          setLastCartUpdateTimestamp(newTimestamp); // Update our timestamp to this new one
-          fetchCartAndNonce(); // Re-fetch cart data
+      if (event.key === 'wooCartLastUserUpdate' && event.newValue) {
+        const newTimestampFromStorage = parseInt(event.newValue, 10);
+
+        if (thisTabLastUpdateTimestampRef.current !== null && newTimestampFromStorage === thisTabLastUpdateTimestampRef.current) {
+          // console.log('[CartContext] Storage event was from this tab, ignoring for re-fetch.');
+          return; 
         }
+
+        // console.log('[CartContext] Detected cart update from another source. Refreshing cart...');
+        setLastKnownCartUpdateTimestamp(newTimestampFromStorage);
+        thisTabLastUpdateTimestampRef.current = newTimestampFromStorage;
+        fetchCartAndNonce(); // Re-fetch cart data
       }
     };
 
@@ -246,10 +247,10 @@ export function CartProvider({ children }) {
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
-  }, [fetchCartAndNonce, lastCartUpdateTimestamp]); // Depend on fetchCartAndNonce and lastCartUpdateTimestamp
+  }, [fetchCartAndNonce]); // Only depends on fetchCartAndNonce (which is stable)
 
   return (
-    <CartContext.Provider value={{ cart, nonce, cartToken, isLoading, error, fetchCartAndNonce, updateCartAndNonce, callCartApi, setIsLoading }}>
+    <CartContext.Provider value={{ cart, nonce, cartToken, isLoading, error, fetchCartAndNonce, updateCartAndNonce, callCartApi, setIsLoading, lastKnownCartUpdateTimestamp }}>
       {children}
     </CartContext.Provider>
   );
