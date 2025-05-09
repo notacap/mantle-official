@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useProductReviews, useSubmitReview } from '@/app/hooks/useWooCommerce';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -156,9 +156,101 @@ function ReviewForm({ productId, onSuccess }) {
   );
 }
 
+// Component to display review statistics and allow filtering
+function ReviewStats({ stats, onSelectStar, currentFilter }) {
+  if (!stats || stats.totalReviews === 0) {
+    return null;
+  }
+
+  return (
+    <div className="mb-8 p-4 border rounded-lg">
+      <h3 className="text-xl font-semibold mb-4">Review Summary</h3>
+      <div className="flex items-center mb-4">
+        <StarRatingDisplay rating={stats.averageRating} size={24} />
+        <span className="ml-2 text-lg font-medium">{stats.averageRating.toFixed(1)} out of 5</span>
+      </div>
+      <p className="mb-4 text-sm text-gray-600">Based on {stats.totalReviews} review{stats.totalReviews === 1 ? '' : 's'}</p>
+      
+      <div className="space-y-1">
+        {[5, 4, 3, 2, 1].map(star => {
+          const count = stats.ratingCounts[star] || 0;
+          const percentage = stats.totalReviews > 0 ? (count / stats.totalReviews) * 100 : 0;
+          const isCurrentFilter = currentFilter === star;
+          return (
+            <div 
+              key={star} 
+              className={`flex items-center cursor-pointer p-2 rounded-md hover:bg-gray-100 ${isCurrentFilter ? 'bg-gray-200 font-semibold' : ''}`}
+              onClick={() => onSelectStar(star)}
+            >
+              <span className="text-sm w-12">{star} star{star === 1 ? '' : 's'}</span>
+              <div className="w-full bg-gray-200 rounded-full h-2.5 mx-2">
+                <div 
+                  className="bg-yellow-400 h-2.5 rounded-full"
+                  style={{ width: `${percentage}%` }}
+                ></div>
+              </div>
+              <span className="text-sm w-12 text-right">{count}</span>
+            </div>
+          );
+        })}
+      </div>
+      {currentFilter !== null && (
+        <Button variant="link" onClick={() => onSelectStar(null)} className="mt-4 p-0 h-auto text-sm">
+          Show all reviews
+        </Button>
+      )}
+    </div>
+  );
+}
+
 export default function ProductReviewsSection({ productId }) {
   const queryClient = useQueryClient();
   const { data: reviewsData, isLoading, isError, error } = useProductReviews(productId);
+  const [selectedStarFilter, setSelectedStarFilter] = useState(null); // For filtering reviews
+
+  const reviews = reviewsData || [];
+
+  // Calculate review statistics
+  const reviewStats = useMemo(() => {
+    if (!reviews || reviews.length === 0) {
+      return {
+        totalReviews: 0,
+        averageRating: 0,
+        ratingCounts: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+      };
+    }
+
+    const ratingCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    let totalRatingSum = 0;
+
+    reviews.forEach(review => {
+      const rating = Math.round(review.rating);
+      if (rating >= 1 && rating <= 5) {
+        ratingCounts[rating]++;
+        totalRatingSum += review.rating; // Use original rating for sum for more precise average
+      }
+    });
+
+    const totalReviews = reviews.length;
+    const averageRating = totalReviews > 0 ? totalRatingSum / totalReviews : 0;
+
+    return {
+      totalReviews,
+      averageRating,
+      ratingCounts,
+    };
+  }, [reviews]);
+
+  const handleSelectStarFilter = (star) => {
+    setSelectedStarFilter(prevFilter => prevFilter === star ? null : star);
+  };
+
+  const filteredReviews = useMemo(() => {
+    if (selectedStarFilter === null) {
+      return reviews;
+    }
+    return reviews.filter(review => Math.round(review.rating) === selectedStarFilter);
+  }, [reviews, selectedStarFilter]);
 
   const handleReviewSuccess = () => {
     // Refetch reviews after a new one is successfully submitted and approved (eventually)
@@ -170,16 +262,24 @@ export default function ProductReviewsSection({ productId }) {
   // Error display can be more nuanced, checking if error is an object with a message property
   if (isError) return <p>Error loading reviews: {typeof error === 'string' ? error : (error?.message || 'Unknown error')}</p>; 
 
-  const reviews = reviewsData || []; // reviewsData could be an array of review objects
-
   return (
     <div className="mt-12 py-8 border-t">
       <h2 className="text-2xl font-bold mb-6">Customer Reviews</h2>
-      {reviews.length === 0 ? (
+      
+      <ReviewStats stats={reviewStats} onSelectStar={handleSelectStarFilter} currentFilter={selectedStarFilter} />
+
+      {filteredReviews.length === 0 && selectedStarFilter !== null && (
+        <p>No reviews match your filter. <Button variant="link" onClick={() => handleSelectStarFilter(null)} className="p-0 h-auto">Show all reviews</Button></p>
+      )}
+      {filteredReviews.length === 0 && selectedStarFilter === null && reviews.length > 0 && (
+         <p>No reviews found for this filter.</p> // Should ideally not happen if reviews exist and filter is null
+      )}
+      {reviews.length === 0 && (
         <p>No reviews yet. Be the first to review this product!</p>
-      ) : (
-        reviews.map(review => (
-          <ReviewCard key={review.id || review.date_created} review={review} /> // Ensure review has a unique key like id
+      )}
+      {filteredReviews.length > 0 && (
+         filteredReviews.map(review => (
+          <ReviewCard key={review.id || review.date_created} review={review} />
         ))
       )}
       <ReviewForm productId={productId} onSuccess={handleReviewSuccess} />
