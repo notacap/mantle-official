@@ -21,6 +21,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import ProductReviewsSection from './ProductReviewsSection';
 
 // Star rating component
 function StarRating({ rating, count }) {
@@ -415,6 +416,9 @@ export default function SingleProduct({ productId }) {
           />
         </div>
       </div>
+
+      {/* Customer Reviews Section */}
+      {product && <ProductReviewsSection productId={product.id} />}
     </>
   );
 }
