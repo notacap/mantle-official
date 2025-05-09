@@ -110,6 +110,7 @@ export default function SingleProduct({ productId }) {
   const [selectedImageForModal, setSelectedImageForModal] = useState(null);
   const [isAllPhotosModalOpen, setIsAllPhotosModalOpen] = useState(false);
   const [processedImages, setProcessedImages] = useState([]);
+  const [isProductNotFound, setIsProductNotFound] = useState(false);
   
   // Fetch product data
   const { 
@@ -192,49 +193,6 @@ export default function SingleProduct({ productId }) {
   const sizeOptions = sizeTermsData?.terms || [];
   const colorOptions = colorTermsData?.terms || [];
   
-  // Error state
-  if (productError) {
-    return (
-      <div className="text-center py-10">
-        <h2 className="text-xl font-medium text-gray-600">Failed to load product</h2>
-        <p className="mt-2 text-gray-500">{productError.message}</p>
-        <div className="mt-6">
-          <Link 
-            href="/shop" 
-            className="px-5 py-2 bg-black text-white hover:bg-gray-800 rounded-md inline-block"
-          >
-            Back to Shop
-          </Link>
-        </div>
-      </div>
-    );
-  }
-  
-  // Loading state
-  if (isLoadingProduct || isLoadingCategories) {
-    return <ProductLoadingSkeleton />;
-  }
-
-  // No product found or out of stock
-  if (!product || product.error || product.stock_status === 'outofstock') {
-    notFound();
-  }
-  
-  const rating = product.average_rating || 0;
-  const reviewCount = product.rating_count || 0;
-  const categories = categoriesData.categories || [];
-  
-  // Log the attribute options to help with debugging
-  console.log('Attribute options and product images:', {
-    colorAttributeId, 
-    sizeAttributeId,
-    colors, 
-    sizes, 
-    colorOptions, 
-    sizeOptions,
-    productImages: product?.images
-  });
-  
   useEffect(() => {
     if (product && product.images && product.images.length > 0) {
       const uniqueImages = [];
@@ -255,6 +213,16 @@ export default function SingleProduct({ productId }) {
       setCurrentImage(null);
     }
   }, [product, currentImage]);
+
+  useEffect(() => {
+    if (product && (product.error || product.stock_status === 'outofstock')) {
+      setIsProductNotFound(true);
+    } else if (!product && !isLoadingProduct && productId) {
+      setIsProductNotFound(true);
+    } else {
+      setIsProductNotFound(false);
+    }
+  }, [product, isLoadingProduct, productId]);
   
   const handleThumbnailClick = (image) => {
     setCurrentImage(image);
@@ -264,6 +232,41 @@ export default function SingleProduct({ productId }) {
     setSelectedImageForModal(currentImage);
     setIsModalOpen(true);
   };
+  
+  // Early returns for loading and critical errors handled by useQuery error state
+  if (productError) {
+    return (
+      <div className="text-center py-10">
+        <h2 className="text-xl font-medium text-gray-600">Failed to load product data</h2>
+        <p className="mt-2 text-gray-500">{productError.message}</p>
+      </div>
+    );
+  }
+
+  if (isLoadingProduct || isLoadingCategories) {
+    return <ProductLoadingSkeleton />;
+  }
+
+  // Handle not found after all hooks and loading states
+  if (isProductNotFound) {
+    notFound();
+    return null;
+  }
+  
+  const rating = product?.average_rating || 0;
+  const reviewCount = product?.rating_count || 0;
+  const categories = categoriesData.categories || [];
+  
+  // Log the attribute options to help with debugging
+  console.log('Attribute options and product images:', {
+    colorAttributeId, 
+    sizeAttributeId,
+    colors, 
+    sizes, 
+    colorOptions, 
+    sizeOptions,
+    productImages: product?.images
+  });
   
   return (
     <>
