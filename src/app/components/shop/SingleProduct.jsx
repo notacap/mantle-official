@@ -1,11 +1,26 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getProductImageUrl, formatPrice } from '@/app/services/woocommerce';
 import ProductActions from './ProductActions';
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 // Star rating component
 function StarRating({ rating, count }) {
@@ -90,6 +105,12 @@ function Breadcrumbs({ product, categories }) {
 }
 
 export default function SingleProduct({ productId }) {
+  const [currentImage, setCurrentImage] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedImageForModal, setSelectedImageForModal] = useState(null);
+  const [isAllPhotosModalOpen, setIsAllPhotosModalOpen] = useState(false);
+  const [processedImages, setProcessedImages] = useState([]);
+  
   // Fetch product data
   const { 
     data: product, 
@@ -204,14 +225,45 @@ export default function SingleProduct({ productId }) {
   const categories = categoriesData.categories || [];
   
   // Log the attribute options to help with debugging
-  // console.log('Attribute options:', { 
-  //   colorAttributeId, 
-  //   sizeAttributeId,
-  //   colors, 
-  //   sizes, 
-  //   colorOptions, 
-  //   sizeOptions 
-  // });
+  console.log('Attribute options and product images:', {
+    colorAttributeId, 
+    sizeAttributeId,
+    colors, 
+    sizes, 
+    colorOptions, 
+    sizeOptions,
+    productImages: product?.images
+  });
+  
+  useEffect(() => {
+    if (product && product.images && product.images.length > 0) {
+      const uniqueImages = [];
+      const seenSources = new Set();
+      for (const img of product.images) {
+        if (img && img.src && !seenSources.has(img.src)) {
+          seenSources.add(img.src);
+          uniqueImages.push(img);
+        }
+      }
+      setProcessedImages(uniqueImages);
+      if (uniqueImages.length > 0 && !currentImage) {
+        setCurrentImage(uniqueImages[0]);
+      }
+    } else if (product && (!product.images || product.images.length === 0)) {
+      // Handle case where product exists but has no images
+      setProcessedImages([]);
+      setCurrentImage(null);
+    }
+  }, [product, currentImage]);
+  
+  const handleThumbnailClick = (image) => {
+    setCurrentImage(image);
+  };
+
+  const handleMainImageClick = () => {
+    setSelectedImageForModal(currentImage);
+    setIsModalOpen(true);
+  };
   
   return (
     <>
@@ -219,22 +271,117 @@ export default function SingleProduct({ productId }) {
       <Breadcrumbs product={product} categories={categories} />
       
       <div className="product-layout">
-        {/* Product Image */}
-        <div className="product-image-container" style={{ 
-          position: 'relative', 
-          height: '500px',
-          backgroundColor: '#f9fafb',
-          borderRadius: '0.5rem',
-          overflow: 'hidden',
-        }}>
-          <Image
-            src={getProductImageUrl(product)}
-            alt={product.name}
-            fill
-            style={{ objectFit: 'contain' }}
-            priority
-            sizes="(max-width: 768px) 100vw, 50vw"
-          />
+        {/* Product Image Section */}
+        <div className="product-image-section">
+          {/* Main Product Image */}
+          <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+            <DialogTrigger asChild>
+              <div 
+                className="product-image-container cursor-pointer" 
+                style={{ 
+                  position: 'relative', 
+                  height: '500px',
+                  backgroundColor: '#f9fafb',
+                  borderRadius: '0.5rem',
+                  overflow: 'hidden',
+                }}
+                onClick={handleMainImageClick}
+              >
+                {currentImage && currentImage.src && (
+                  <Image
+                    src={currentImage.src}
+                    alt={currentImage.alt || product.name}
+                    fill
+                    style={{ objectFit: 'contain' }}
+                    priority
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                )}
+              </div>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[80vw] md:max-w-[70vw] lg:max-w-[60vw] xl:max-w-[50vw] p-0">
+              {selectedImageForModal && (
+                <>
+                  <VisuallyHidden>
+                    <DialogTitle>
+                      {`Enlarged product image: ${product?.name || 'Product Image'}`}
+                    </DialogTitle>
+                  </VisuallyHidden>
+                  <Image
+                    src={selectedImageForModal.src}
+                    alt={selectedImageForModal.alt || product.name}
+                    width={1200} 
+                    height={1200}
+                    style={{ objectFit: 'contain', width: '100%', height: 'auto', maxHeight: '80vh' }}
+                  />
+                </>
+              )}
+            </DialogContent>
+          </Dialog>
+
+          {/* Thumbnail Gallery */}
+          {processedImages && processedImages.length > 1 && (
+            <div className="thumbnail-gallery mt-4 grid grid-cols-4 gap-2">
+              {processedImages.slice(0, 4).map((img) => (
+                <div
+                  key={img.src}
+                  className={`thumbnail-item cursor-pointer border-2 ${currentImage && currentImage.src === img.src ? 'border-black' : 'border-transparent'} rounded-md overflow-hidden relative aspect-square`}
+                  onClick={() => handleThumbnailClick(img)}
+                  style={{ height: '100px' }} 
+                >
+                  <Image
+                    src={img.src} 
+                    alt={img.alt || `Thumbnail of ${product.name}`}
+                    fill
+                    style={{ objectFit: 'cover' }}
+                    sizes="100px"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+          {processedImages && processedImages.length > 4 && (
+            <Dialog open={isAllPhotosModalOpen} onOpenChange={setIsAllPhotosModalOpen}>
+              <DialogTrigger asChild>
+                <button 
+                  onClick={() => setIsAllPhotosModalOpen(true)} 
+                  className="mt-2 text-sm text-blue-600 hover:underline"
+                >
+                  View more photos ({processedImages.length - 4} more)
+                </button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[90vw] md:max-w-[80vw] lg:max-w-[70vw] xl:max-w-[60vw] p-4">
+                <VisuallyHidden>
+                  <DialogTitle>
+                    {`Product image gallery: ${product?.name || 'All Product Images'}`}
+                  </DialogTitle>
+                </VisuallyHidden>
+                <Carousel className="w-full">
+                  <CarouselContent>
+                    {processedImages.map((img, index) => (
+                      <CarouselItem key={img.src} className="flex justify-center items-center">
+                        <div className="p-1 relative aspect-square w-full max-w-[500px] max-h-[70vh]">
+                          <Image
+                            src={img.src}
+                            alt={img.alt || `${product.name} - Image ${index + 1}`}
+                            fill
+                            style={{ objectFit: 'contain' }}
+                            sizes="(max-width: 768px) 80vw, 50vw"
+                          />
+                        </div>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  {processedImages.length > 1 && (
+                    <>
+                      <CarouselPrevious className="absolute left-[-50px] top-1/2 -translate-y-1/2" />
+                      <CarouselNext className="absolute right-[-50px] top-1/2 -translate-y-1/2" />
+                    </>
+                  )}
+                </Carousel>
+              </DialogContent>
+            </Dialog>
+          )}
         </div>
         
         {/* Product Details */}
