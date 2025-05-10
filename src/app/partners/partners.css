@@ -1,6 +1,7 @@
 .partners-page {
   background-color: #F8F8F8;
   position: relative;
+  padding-top: 6rem; /* Accommodate h-24 (6rem) navbar */
 }
 
 /* Hero Section */
