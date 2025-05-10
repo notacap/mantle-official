@@ -330,6 +330,9 @@ const Navbar = () => {
               <Link href="/in-the-wild" className="text-black hover:text-[#9CB24D] transition-colors font-medium text-lg">
                 In the Wild
               </Link>
+              <Link href="/blog" className="text-black hover:text-[#9CB24D] transition-colors font-medium text-lg">
+                Blog
+              </Link>
               <Link href="/contact" className="text-black hover:text-[#9CB24D] transition-colors font-medium text-lg">
                 Contact
               </Link>
@@ -413,6 +416,13 @@ const Navbar = () => {
               onClick={toggleMenu}
             >
               In the Wild
+            </Link>
+            <Link 
+              href="/blog" 
+              className="block px-3 py-2 text-black hover:text-[#9CB24D] hover:bg-gray-50 font-medium text-lg"
+              onClick={toggleMenu}
+            >
+              Blog
             </Link>
             <Link 
               href="/contact" 
