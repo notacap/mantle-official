@@ -2,74 +2,40 @@
 
 import { useState, useEffect } from 'react';
 
+const MIN_SUBMISSION_TIME_MS = 3000; // 3 seconds
+
 export default function ContactForm() {
   const [formType, setFormType] = useState('general'); // 'general' or 'order'
-  const [mathQuestion, setMathQuestion] = useState({ num1: 0, num2: 0, answer: '' });
-  const [generalAnswer, setGeneralAnswer] = useState('');
-  const [orderAnswer, setOrderAnswer] = useState('');
-  const [isGeneralHuman, setIsGeneralHuman] = useState(false);
-  const [isOrderHuman, setIsOrderHuman] = useState(false);
+  const [formLoadTime, setFormLoadTime] = useState(0);
   
-  // Generate a simple math question
   useEffect(() => {
-    generateMathQuestion();
-  }, []);
+    setFormLoadTime(Date.now());
+  }, [formType]); // Reset load time when form type changes
   
-  const generateMathQuestion = () => {
-    const num1 = Math.floor(Math.random() * 10);
-    const num2 = Math.floor(Math.random() * 10);
-    setMathQuestion({
-      num1,
-      num2,
-      answer: String(num1 + num2)
-    });
-    setGeneralAnswer('');
-    setOrderAnswer('');
-    setIsGeneralHuman(false);
-    setIsOrderHuman(false);
-  };
-  
-  const handleGeneralAnswerChange = (e) => {
-    const value = e.target.value;
-    setGeneralAnswer(value);
-    setIsGeneralHuman(value === mathQuestion.answer);
-  };
-  
-  const handleOrderAnswerChange = (e) => {
-    const value = e.target.value;
-    setOrderAnswer(value);
-    setIsOrderHuman(value === mathQuestion.answer);
-  };
-  
-  // Switch form type
   const handleFormTypeChange = (type) => {
     setFormType(type);
   };
   
-  // Form handling (placeholder for now)
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    // Check if the honeypot field is empty (bots will likely fill it)
+    const submissionTime = Date.now();
+    if (submissionTime - formLoadTime < MIN_SUBMISSION_TIME_MS) {
+      console.log('Bot detected: Form submitted too quickly.');
+      alert('Form submission too fast. Please try again.'); // User-facing message
+      return;
+    }
+
     const honeypotValue = e.target.website.value;
     if (honeypotValue) {
       console.log('Bot detected via honeypot');
-      return;
+      return; // Silently fail for honeypot
     }
     
-    // Check if the CAPTCHA was completed correctly
-    const isHuman = formType === 'general' ? isGeneralHuman : isOrderHuman;
-    if (!isHuman) {
-      alert('Please correctly answer the math question to verify you are human.');
-      return;
-    }
+    console.log('Form submitted by a human (passed time check and honeypot)');
     
-    // Will handle form submission later
-    console.log('Form submitted by a human');
-    
-    // Reset the form and CAPTCHA after submission
     e.target.reset();
-    generateMathQuestion();
+    setFormLoadTime(Date.now()); // Reset load time for the next interaction on the same form type
   };
   
   return (
@@ -77,7 +43,6 @@ export default function ContactForm() {
       <div className="form-header">
         <h2 className="form-title">What would you like to contact us about?</h2>
         
-        {/* Form Type Selection */}
         <div className="form-selector">
           <button 
             type="button" 
@@ -96,10 +61,8 @@ export default function ContactForm() {
         </div>
       </div>
       
-      {/* Form Content */}
       {formType === 'general' ? (
-        <form className="contact-form" onSubmit={handleSubmit}>
-          {/* Honeypot field - hidden from users but bots will fill it */}
+        <form key="general" className="contact-form" onSubmit={handleSubmit}>
           <div className="honeypot-field">
             <input 
               type="text" 
@@ -142,24 +105,7 @@ export default function ContactForm() {
             ></textarea>
           </div>
           
-          {/* Simple CAPTCHA */}
-          <div className="form-group captcha-group">
-            <label htmlFor="captcha">
-              Please solve this math problem: {mathQuestion.num1} + {mathQuestion.num2} = ?
-            </label>
-            <input 
-              type="text" 
-              id="captcha" 
-              name="captcha" 
-              value={generalAnswer}
-              onChange={handleGeneralAnswerChange}
-              required 
-              placeholder="Enter the answer"
-              className={generalAnswer ? (isGeneralHuman ? 'valid-captcha' : 'invalid-captcha') : ''}
-            />
-          </div>
-          
-          <button type="submit" className="submit-button" disabled={!isGeneralHuman}>
+          <button type="submit" className="submit-button">
             Send Message
           </button>
           
@@ -168,8 +114,7 @@ export default function ContactForm() {
           </div>
         </form>
       ) : (
-        <form className="contact-form" onSubmit={handleSubmit}>
-          {/* Honeypot field - hidden from users but bots will fill it */}
+        <form key="order" className="contact-form" onSubmit={handleSubmit}>
           <div className="honeypot-field">
             <input 
               type="text" 
@@ -246,24 +191,7 @@ export default function ContactForm() {
             ></textarea>
           </div>
           
-          {/* Simple CAPTCHA */}
-          <div className="form-group captcha-group">
-            <label htmlFor="orderCaptcha">
-              Please solve this math problem: {mathQuestion.num1} + {mathQuestion.num2} = ?
-            </label>
-            <input 
-              type="text" 
-              id="orderCaptcha" 
-              name="captcha" 
-              value={orderAnswer}
-              onChange={handleOrderAnswerChange}
-              required 
-              placeholder="Enter the answer"
-              className={orderAnswer ? (isOrderHuman ? 'valid-captcha' : 'invalid-captcha') : ''}
-            />
-          </div>
-          
-          <button type="submit" className="submit-button" disabled={!isOrderHuman}>
+          <button type="submit" className="submit-button">
             Submit Request
           </button>
           

@@ -8,10 +8,8 @@ import SinglePostLoadingSkeleton from './loading'; // Will use the sibling loadi
 // Assuming /wp/v2/posts?slug=<slug_here>&_embed will work.
 async function getPost(slug) {
   const baseUrl = 'https://mantle-clothing.com/wp-json'; // Hardcoded for testing
-  // console.log('Attempting to fetch single post from hardcoded baseUrl:', baseUrl, 'for slug:', slug);
 
   const fetchUrl = `${baseUrl}/wp/v2/posts?slug=${slug}&_embed`;
-  // console.log('Fetching single post URL:', fetchUrl);
 
   const response = await fetch(fetchUrl, {
     next: { revalidate: 3600 } // Revalidate every hour
