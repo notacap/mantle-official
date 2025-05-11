@@ -309,12 +309,18 @@ export default function Cart() {
             </div>
             
             <div className="mt-6 space-y-4">
-              <button 
-                disabled={isLoading || isUpdatingCartItems || cartItems.length === 0}
-                className="w-full bg-[#9CB24D] hover:bg-[#8CA23D] text-white py-3 px-4 rounded-md font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              <Link 
+                href="/checkout"
+                passHref
+                legacyBehavior
               >
-                Proceed to Checkout
-              </button>
+                <button 
+                  disabled={isLoading || isUpdatingCartItems || cartItems.length === 0}
+                  className="w-full bg-[#9CB24D] hover:bg-[#8CA23D] text-white py-3 px-4 rounded-md font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Proceed to Checkout
+                </button>
+              </Link>
               
               <Link 
                 href="/shop" 

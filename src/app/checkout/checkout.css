@@ -1,0 +1,33 @@
+/* General Input Styling for Checkout Page */
+.checkout-input {
+  display: block;
+  width: 100%;
+  border-radius: 0.375rem; /* rounded-md */
+  border-width: 1px;
+  border-color: #D1D5DB; /* border-gray-300 */
+  padding: 0.5rem 0.75rem; /* py-2 px-3 */
+  font-size: 0.875rem; /* text-sm */
+  line-height: 1.25rem;
+  color: #111827; /* text-gray-900 */
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+}
+
+.checkout-input:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  border-color: #9CB24D; /* focus:border-[#9CB24D] */
+  box-shadow: 0 0 0 2px #9CB24D; /* focus:ring-[#9CB24D] */
+}
+
+/* Styling for required field indicator */
+.checkout-input ~ label .text-red-600 {
+  margin-left: 0.25rem;
+}
+
+/* Responsive adjustments if needed */
+@media (min-width: 1024px) { /* lg breakpoint */
+  /* Example: .lg\:col-start-2 for order notes might need specific margin adjustments 
+     if the default grid spacing isn't perfect when shipping address is hidden. 
+     The current JS solution using lg:col-start-2 should handle this, but CSS is an option.
+  */
+} 
