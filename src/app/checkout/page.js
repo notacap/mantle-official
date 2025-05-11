@@ -128,7 +128,7 @@ export default function CheckoutPage() {
             <h2 className="text-lg font-medium text-gray-900 mb-6">Billing details</h2>
             <AddressForm type="billing" formData={formData} handleChange={handleChange} />
             
-            <div className="mt-8 relative flex items-start">
+            <div className="mt-10 relative flex items-start">
               <div className="flex h-6 items-center">
                 <input
                   id="shipToDifferentAddress"
@@ -159,7 +159,7 @@ export default function CheckoutPage() {
           <div className={`mt-10 pt-10 ${shipToDifferentAddress ? 'lg:col-span-2' : 'lg:col-start-2'}`}>
              <div className={shipToDifferentAddress ? "" : "lg:mt-0 lg:border-t lg:border-gray-200" }>
                 { !shipToDifferentAddress &&  <div className="mb-6 hidden lg:block">&nbsp;</div> } {/* Spacer to align with billing header when no shipping form */}
-                <div>
+                <div className="mt-8">
                     <label htmlFor="orderNotes" className="block text-sm font-medium leading-6 text-gray-900">Order notes (optional)</label>
                     <textarea id="orderNotes" name="orderNotes" rows="4" placeholder="Notes about your order, e.g. special notes for delivery." className="checkout-input"></textarea>
                 </div>
