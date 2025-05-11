@@ -316,7 +316,7 @@ export default function Cart() {
               >
                 <button 
                   disabled={isLoading || isUpdatingCartItems || cartItems.length === 0}
-                  className="w-full bg-[#9CB24D] hover:bg-[#8CA23D] text-white py-3 px-4 rounded-md font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-[#9CB24D] hover:bg-[#8CA23D] text-white py-3 px-4 rounded-md font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 >
                   Proceed to Checkout
                 </button>
