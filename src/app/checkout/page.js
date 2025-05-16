@@ -226,12 +226,10 @@ export default function CheckoutPage() {
 
         // Add paymentMethod.id to dataToSend for the final checkout call
         dataToSend.payment_data = [
-          { key: 'wc-stripe-payment-token', value: paymentMethod.id }, // Common for Stripe
-          { key: 'is_stripe_hosted_checkout', value: '0' }
-          // Potentially other Stripe-specific data from payment_requirements
+          { key: 'stripe_token', value: paymentMethod.id }
         ];
         
-        console.log("Payment method created:", paymentMethod.id);
+        console.log("Payment method created (pm_...):", paymentMethod.id);
         console.log("Data for final checkout:", dataToSend);
 
       } else if (formData.payment_method === 'stripe_paypal') {
