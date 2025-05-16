@@ -1,0 +1,10 @@
+/* Basic styling for the order confirmation page */
+
+.order-confirmation-page {
+  /* You can add specific page container styles here if needed,
+     but Tailwind CSS classes are handling most of it directly in the JSX. */
+}
+
+/* Add any additional custom styles if the Tailwind classes aren't sufficient
+   or for more complex selectors. For instance, if you had a specific component
+   you wanted to style that wasn't easily targetable with Tailwind alone. */ 

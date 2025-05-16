@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import './checkout.css';
 import { useCart } from '../../context/CartContext';
 import { loadStripe } from '@stripe/stripe-js';
@@ -105,8 +106,9 @@ function AddressForm({ type, formData, handleChange }) {
 }
 
 export default function CheckoutPage() {
+  const router = useRouter();
   const [shipToDifferentAddress, setShipToDifferentAddress] = useState(false);
-  const { cart, callCartApi, isLoading: isCartLoading, error: cartError } = useCart();
+  const { cart, callCartApi, isLoading: isCartLoading, error: cartError, fetchCartAndNonce } = useCart();
   const [formData, setFormData] = useState({
     billing_address: { country: 'US' },
     shipping_address: { country: 'US' },
@@ -245,9 +247,17 @@ export default function CheckoutPage() {
       console.log("Calling /wc/store/v1/checkout with:", dataToSend);
       const orderResult = await callCartApi('/wp-json/wc/store/v1/checkout', 'POST', dataToSend);
       console.log("Order placement result:", orderResult);
-      alert("Order placed! (Further actions like redirect needed)");
-      // TODO: Handle successful order (e.g., clear cart, redirect to thank you page)
-      // router.push('/thank-you?order_id=' + orderResult.order_id);
+
+      if (orderResult && (orderResult.order_id || orderResult.order_number)) {
+        await fetchCartAndNonce();
+
+        const orderNumber = orderResult.order_number || orderResult.order_id;
+        const orderKey = orderResult.order_key || '';
+        router.push(`/order-confirmation?order_number=${orderNumber}&order_key=${orderKey}`);
+      } else {
+        console.error("Checkout was successful but order data is missing in the response:", orderResult);
+        setSubmissionError("Checkout was successful, but there was an issue retrieving your order details. Please check your email or contact support.");
+      }
 
     } catch (error) {
       console.error("Checkout error:", error);
