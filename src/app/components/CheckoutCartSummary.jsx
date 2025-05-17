@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
 
 // Helper function to decode HTML entities (can be moved to a utility file later if not already present)
@@ -65,17 +66,21 @@ export default function CheckoutCartSummary() {
 
           return (
             <div key={item.key} className="flex items-start space-x-4 py-3 border-b border-gray-200 last:border-b-0">
-              <div className="w-20 h-20 relative flex-shrink-0 rounded-md overflow-hidden border border-gray-200 bg-white">
-                <Image
-                  src={imageUrl}
-                  alt={decodeHtmlEntities(item.name)}
-                  fill
-                  style={{ objectFit: 'cover' }}
-                  sizes="(max-width: 768px) 20vw, 80px"
-                />
-              </div>
+              <Link href={`/shop/product/${item.id}`} legacyBehavior>
+                <a className="w-20 h-20 relative flex-shrink-0 rounded-md overflow-hidden border border-gray-200 bg-white cursor-pointer">
+                  <Image
+                    src={imageUrl}
+                    alt={decodeHtmlEntities(item.name)}
+                    fill
+                    style={{ objectFit: 'cover' }}
+                    sizes="(max-width: 768px) 20vw, 80px"
+                  />
+                </a>
+              </Link>
               <div className="flex-grow">
-                <h3 className="text-md font-medium text-gray-800">{decodeHtmlEntities(item.name)}</h3>
+                <Link href={`/shop/product/${item.id}`} legacyBehavior>
+                  <a className="text-md font-medium text-gray-800 hover:text-[#9CB24D] cursor-pointer">{decodeHtmlEntities(item.name)}</a>
+                </Link>
                 {variationText && <p className="text-xs text-gray-500 mt-0.5">{variationText}</p>}
                 <p className="text-sm text-gray-600 mt-1">Quantity: {item.quantity}</p>
               </div>

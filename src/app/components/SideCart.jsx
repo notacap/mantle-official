@@ -111,16 +111,20 @@ export default function SideCart() {
 
               return (
                 <div key={item.key} className="flex items-start space-x-3 pb-4 border-b border-gray-100 last:border-b-0">
-                  <div className="w-20 h-20 relative flex-shrink-0 rounded-md overflow-hidden border border-gray-200">
-                    <Image
-                      src={imageUrl}
-                      alt={decodeHtmlEntities(item.name)}
-                      fill
-                      style={{ objectFit: 'cover' }}
-                    />
-                  </div>
+                  <Link href={`/shop/product/${item.id}`} legacyBehavior>
+                    <a className="w-20 h-20 relative flex-shrink-0 rounded-md overflow-hidden border border-gray-200 cursor-pointer">
+                      <Image
+                        src={imageUrl}
+                        alt={decodeHtmlEntities(item.name)}
+                        fill
+                        style={{ objectFit: 'cover' }}
+                      />
+                    </a>
+                  </Link>
                   <div className="flex-grow">
-                    <h3 className="text-sm font-medium text-gray-800">{decodeHtmlEntities(item.name)}</h3>
+                    <Link href={`/shop/product/${item.id}`} legacyBehavior>
+                     <a className="text-sm font-medium text-gray-800 hover:text-[#9CB24D] cursor-pointer">{decodeHtmlEntities(item.name)}</a>
+                    </Link>
                     {variationText && <p className="text-xs text-gray-500 mt-0.5">{variationText}</p>}
                     <p className="text-sm font-semibold text-gray-900 mt-1">{currencySymbol}{itemPrice.toFixed(2)}</p>
                     

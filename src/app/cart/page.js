@@ -206,16 +206,20 @@ export default function Cart() {
               return (
                 <div key={item.key} className="p-4 md:p-6 border-b border-gray-200 grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
                   <div className="md:col-span-6 flex items-center">
-                    <div className="w-24 h-24 relative flex-shrink-0 rounded-md overflow-hidden border border-gray-200">
-                      <Image
-                        src={imageUrl}
-                        alt={item.name}
-                        fill
-                        style={{ objectFit: 'cover' }}
-                      />
-                    </div>
+                    <Link href={`/shop/product/${item.id}`} legacyBehavior>
+                      <a className="w-24 h-24 relative flex-shrink-0 rounded-md overflow-hidden border border-gray-200 cursor-pointer">
+                        <Image
+                          src={imageUrl}
+                          alt={item.name}
+                          fill
+                          style={{ objectFit: 'cover' }}
+                        />
+                      </a>
+                    </Link>
                     <div className="ml-4 flex-1">
-                      <h3 className="text-lg font-medium text-gray-900">{decodeHtmlEntities(item.name)}</h3>
+                      <Link href={`/shop/product/${item.id}`} legacyBehavior>
+                        <a className="text-lg font-medium text-gray-900 hover:text-[#9CB24D] cursor-pointer">{decodeHtmlEntities(item.name)}</a>
+                      </Link>
                       {variationText && 
                         <p className="mt-1 text-sm text-gray-500">
                           {variationText}
