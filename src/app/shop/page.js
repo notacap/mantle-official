@@ -50,21 +50,28 @@ export default function Shop() {
           <button 
             onClick={() => setIsMobileNavOpen(true)}
             style={{
-              padding: '0.5rem 1rem',
+              padding: '0.75rem 2.5rem',
               fontSize: '1rem',
               fontWeight: '500',
               color: '#fff',
-              backgroundColor: '#9CB24D', // Using theme color
+              backgroundColor: '#9CB24D',
               border: 'none',
               borderRadius: '0.375rem',
               cursor: 'pointer',
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '0.5rem'
+              gap: '0.5rem',
+              boxShadow: 'none',
+              transition: 'background-color 0.3s ease, box-shadow 0.3s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.boxShadow = 'none';
             }}
           >
-            {/* Icon can be added here later e.g. <FiFilter /> */}
-            Filters
+            Categories
           </button>
         </div>
       )}
