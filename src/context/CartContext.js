@@ -22,6 +22,7 @@ export function CartProvider({ children }) {
   const [cart, setCart] = useState(null);
   const [nonce, setNonce] = useState(null);
   const [cartToken, setCartToken] = useState(null);
+  const cartTokenRef = useRef(cartToken); // Ref to hold current cartToken
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [lastKnownCartUpdateTimestamp, setLastKnownCartUpdateTimestamp] = useState(null);
@@ -38,17 +39,22 @@ export function CartProvider({ children }) {
     setIsTokenLoadAttempted(true);
   }, []);
 
+  // Effect to keep cartTokenRef in sync with cartToken state
+  useEffect(() => {
+    cartTokenRef.current = cartToken;
+  }, [cartToken]);
+
   const persistCartToken = useCallback((newToken) => {
-    if (newToken && newToken !== cartToken) {
+    if (newToken && newToken !== cartTokenRef.current) { // Compare with ref's current value
       setCartToken(newToken);
       localStorage.setItem('wooCartToken', newToken);
       // console.log('[CartContext] Saved new Cart-Token to localStorage:', newToken);
-    } else if (!newToken && cartToken) { // Clearing an existing token
+    } else if (!newToken && cartTokenRef.current) { // Clearing an existing token
       setCartToken(null);
       localStorage.removeItem('wooCartToken');
       // console.log('[CartContext] Cleared Cart-Token from localStorage.');
     }
-  }, [cartToken]);
+  }, []); // Removed cartToken from dependency array, relies on ref
 
   const fetchCartAndNonce = useCallback(async () => {
     if (!isTokenLoadAttempted) {
@@ -69,9 +75,10 @@ export function CartProvider({ children }) {
       'Content-Type': 'application/json',
     };
 
-    if (cartToken) {
-      requestHeaders['Cart-Token'] = cartToken;
-      // console.log('[CartContext] Sending Cart-Token in initial fetch headers:', cartToken);
+    // Use cartTokenRef.current for sending the token
+    if (cartTokenRef.current) {
+      requestHeaders['Cart-Token'] = cartTokenRef.current;
+      // console.log('[CartContext] Sending Cart-Token in initial fetch headers:', cartTokenRef.current);
     }
 
     try {
@@ -87,10 +94,11 @@ export function CartProvider({ children }) {
             errorBody = await response.text();
         } catch {}
         // If the request was made with a cartToken and failed, especially with 401/403, clear the token
-        if (cartToken && (response.status === 401 || response.status === 403)) {
+        // Check against cartTokenRef.current
+        if (cartTokenRef.current && (response.status === 401 || response.status === 403)) {
           console.warn(`[CartContext] Initial cart fetch failed with status ${response.status} and a Cart-Token. Clearing the token.`);
-          persistCartToken(null);
-        } else if (cartToken && !response.ok) {
+          persistCartToken(null); // persistCartToken will now use the ref internally too or just setCartToken
+        } else if (cartTokenRef.current && !response.ok) {
           console.warn('[CartContext] Initial cart fetch failed with a Cart-Token. Token kept for now, but inspect error.');
           // We already have a general error throw, specific token clearing for 401/403 is above
         }
@@ -105,14 +113,22 @@ export function CartProvider({ children }) {
       
       // console.log('[CartContext] Fetched initial cart. Nonce Header:', newNonce);
 
-      // Extract and persist Cart-Token
+      // Extract Cart-Token from GET response, but DO NOT persist it here.
+      // persistCartToken is primarily handled by callCartApi or initial load.
+      // If a token is returned by a GET, it's more of an affirmation or a new session token
+      // if the old one was invalid. callCartApi will handle persistence if it makes a change.
       let extractedCartToken = response.headers.get('Cart-Token');
       if (!extractedCartToken) extractedCartToken = response.headers.get('cart-token');
-      if (extractedCartToken) {
-        persistCartToken(extractedCartToken); 
-      } else {
-        // console.warn('[CartContext] Cart-Token header was missing in the response from initial fetch', apiUrl);
+      if (extractedCartToken && extractedCartToken !== cartTokenRef.current) {
+        // If the GET request returns a *different* token than what we sent,
+        // it might mean the server invalidated the old one and issued a new one.
+        // We should update our state and ref, and persist it.
+        // This scenario is less common for GET but possible if the token expired mid-session
+        // and the GET endpoint itself provides a new one.
+        // console.log('[CartContext] GET request returned a new Cart-Token. Updating and persisting:', extractedCartToken);
+        persistCartToken(extractedCartToken);
       }
+      // Removed persistCartToken(extractedCartToken) from here to avoid re-triggering due to token change from GET itself
 
       setCart(cartData);
       if (newNonce) {
@@ -128,7 +144,7 @@ export function CartProvider({ children }) {
     } finally {
       setIsLoading(false);
     }
-  }, [cartToken, persistCartToken, isTokenLoadAttempted]);
+  }, [isTokenLoadAttempted, persistCartToken, setCart, setNonce, setError, setIsLoading]); // Removed cartToken, persistCartToken. Added setters. persistCartToken is stable.
 
   useEffect(() => {
     if (isTokenLoadAttempted) {
@@ -169,8 +185,9 @@ export function CartProvider({ children }) {
       'Nonce': nonce,
     };
 
-    if (cartToken) {
-      requestHeaders['Cart-Token'] = cartToken;
+    // Use cartTokenRef.current for sending the token
+    if (cartTokenRef.current) {
+      requestHeaders['Cart-Token'] = cartTokenRef.current;
     }
   
     try {
@@ -194,14 +211,16 @@ export function CartProvider({ children }) {
           errorData = JSON.parse(errorBodyText);
         } catch {
           // If parsing fails, throw with raw text. Check for token-specific errors first.
-          if (cartToken && (response.status === 401 || response.status === 403)) {
+          // Check against cartTokenRef.current
+          if (cartTokenRef.current && (response.status === 401 || response.status === 403)) {
             console.warn(`[CartContext] API call to ${apiUrl} failed with status ${response.status} and a Cart-Token. Clearing the token.`);
             persistCartToken(null);
           }
           throw new Error(`HTTP error! status: ${response.status} ${response.statusText}. Raw Response: ${errorBodyText}`);
         }
         // If parsed, check for token-specific errors.
-        if (cartToken && (response.status === 401 || response.status === 403)) {
+        // Check against cartTokenRef.current
+        if (cartTokenRef.current && (response.status === 401 || response.status === 403)) {
           console.warn(`[CartContext] API call to ${apiUrl} failed with status ${response.status} (parsed) and a Cart-Token. Clearing the token.`);
           persistCartToken(null);
         }
@@ -232,7 +251,7 @@ export function CartProvider({ children }) {
       setError(err.message || `An error occurred while updating the cart via ${apiUrl}.`);
       throw err;
     }
-  }, [nonce, cartToken, persistCartToken]); // Added cartToken and persistCartToken to dependencies
+  }, [nonce, persistCartToken, setCart, setNonce, setError, setLastKnownCartUpdateTimestamp]); // Removed cartToken, relies on cartTokenRef.current internally. Added setters.
 
   // Effect for cross-tab synchronization
   useEffect(() => {
