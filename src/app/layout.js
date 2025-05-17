@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ReactQueryProvider from "./lib/reactQuery";
 import { CartProvider } from "../context/CartContext";
+import SideCart from "./components/SideCart";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -60,10 +61,14 @@ export default function RootLayout({ children }) {
         <ReactQueryProvider>
           <CartProvider>
             <Navbar />
-            <main className="relative flex-grow min-h-0">
+            <main 
+              className="relative flex-grow min-h-0"
+              style={{ position: 'relative', zIndex: 1 }}
+            >
               {children}
             </main>
             <Footer />
+            <SideCart />
           </CartProvider>
         </ReactQueryProvider>
       </body>

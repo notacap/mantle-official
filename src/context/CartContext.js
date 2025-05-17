@@ -27,6 +27,7 @@ export function CartProvider({ children }) {
   const [lastKnownCartUpdateTimestamp, setLastKnownCartUpdateTimestamp] = useState(null);
   const thisTabLastUpdateTimestampRef = useRef(null);
   const [isTokenLoadAttempted, setIsTokenLoadAttempted] = useState(false);
+  const [isSideCartOpen, setIsSideCartOpen] = useState(false);
 
   useEffect(() => {
     const storedCartToken = localStorage.getItem('wooCartToken');
@@ -259,8 +260,30 @@ export function CartProvider({ children }) {
     };
   }, [isTokenLoadAttempted, fetchCartAndNonce]); // Only depends on fetchCartAndNonce (which is stable)
 
+  const openSideCart = useCallback(() => {
+    setIsSideCartOpen(true);
+  }, []);
+
+  const closeSideCart = useCallback(() => {
+    setIsSideCartOpen(false);
+  }, []);
+
   return (
-    <CartContext.Provider value={{ cart, nonce, cartToken, isLoading, error, fetchCartAndNonce, updateCartAndNonce, callCartApi, setIsLoading, lastKnownCartUpdateTimestamp }}>
+    <CartContext.Provider value={{ 
+      cart, 
+      nonce, 
+      cartToken, 
+      isLoading, 
+      error, 
+      fetchCartAndNonce, 
+      updateCartAndNonce, 
+      callCartApi, 
+      setIsLoading, 
+      lastKnownCartUpdateTimestamp,
+      isSideCartOpen,
+      openSideCart,
+      closeSideCart
+    }}>
       {children}
     </CartContext.Provider>
   );

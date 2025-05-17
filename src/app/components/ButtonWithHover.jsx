@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-export default function ButtonWithHover({ href, children, variant = "outline" }) {
+export default function ButtonWithHover({ href, children, variant = "outline", onClick }) {
   const baseStyles = {
     display: 'inline-block',
     padding: '0.75rem 1.5rem',
@@ -39,6 +39,7 @@ export default function ButtonWithHover({ href, children, variant = "outline" })
     <Link 
       href={href} 
       style={{ ...baseStyles, ...variants[variant] }}
+      onClick={onClick}
       onMouseEnter={(e) => {
         Object.entries(hoverVariants[variant]).forEach(([key, value]) => {
           e.currentTarget.style[key] = value;

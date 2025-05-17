@@ -9,7 +9,7 @@ export default function ProductActions({ productId, price, sizes, colors, sizeOp
   const [selectedSize, setSelectedSize] = useState(sizes[0] || '');
   const [selectedColor, setSelectedColor] = useState(colors[0] || '');
   const [isAddingToCart, setIsAddingToCart] = useState(false); // Local loading state for the button
-  const { callCartApi, setIsLoading: setCartLoading, isLoading: isCartLoading, nonce } = useCart(); // Get context functions
+  const { callCartApi, setIsLoading: setCartLoading, isLoading: isCartLoading, nonce, openSideCart } = useCart(); // Get context functions
   
   // Handle quantity change
   const handleQuantityChange = (e) => {
@@ -89,7 +89,7 @@ export default function ProductActions({ productId, price, sizes, colors, sizeOp
     }
 
     setIsAddingToCart(true);
-    setCartLoading(true);
+    setCartLoading(true); // Uncommented: Set global loading state
 
     // Prepare variation as an array of objects with slugs instead of display names
     const variation = [];
@@ -114,14 +114,15 @@ export default function ProductActions({ productId, price, sizes, colors, sizeOp
       // console.log('Adding to cart with data:', itemData);
       const updatedCart = await callCartApi('/wp-json/wc/store/v1/cart/add-item', 'POST', itemData);
       // console.log('Cart updated successfully:', updatedCart);
-      alert('Product added to cart!');
+      // alert('Product added to cart!'); // Remove existing alert
+      openSideCart(); // Open the side cart instead
     } catch (error) {
       console.error('Failed to add to cart:', error);
       console.error('Error details:', error.response?.data || error.message);
       alert(`Failed to add product to cart: ${error.message || 'Please try again.'}`);
     } finally {
       setIsAddingToCart(false);
-      setCartLoading(false);
+      setCartLoading(false); // Uncommented: Clear global loading state
     }
   };
   
