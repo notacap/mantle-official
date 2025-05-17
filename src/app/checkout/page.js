@@ -7,6 +7,7 @@ import './checkout.css';
 import { useCart } from '../../context/CartContext';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import CheckoutCartSummary from '../components/CheckoutCartSummary';
 
 // Make sure to set this in your .env.local file
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
@@ -313,43 +314,45 @@ function CheckoutFormContent({
         </Link>
         <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl mb-10 text-center">Checkout</h1>
 
-        <form onSubmit={localHandleSubmit} className="lg:grid lg:grid-cols-2 lg:gap-x-12 xl:gap-x-16">
-          {/* Billing Details Form */}
-          <div className="mt-10 border-t border-gray-200 pt-10">
-            <h2 className="text-lg font-medium text-gray-900 mb-6">Billing details</h2>
-            <AddressForm type="billing" formData={formData} handleChange={handleChange} />
-            
-            <div className="mt-10 relative flex items-start">
-              <div className="flex h-6 items-center">
-                <input
-                  id="shipToDifferentAddress"
-                  name="shipToDifferentAddress"
-                  type="checkbox"
-                  checked={shipToDifferentAddress}
-                  onChange={(e) => setShipToDifferentAddress(e.target.checked)}
-                  className="h-4 w-4 rounded border-gray-300 text-[#9CB24D] focus:ring-[#9CB24D]"
-                />
-              </div>
-              <div className="ml-3 text-sm leading-6">
-                <label htmlFor="shipToDifferentAddress" className="font-medium text-gray-900">
-                  Ship to a different address?
-                </label>
+        {/* Main grid for form and summary */}
+        <div className="lg:grid lg:grid-cols-12 lg:gap-x-12 xl:gap-x-16 items-start">
+          {/* Form Section - Spans 7 columns on large screens */}
+          <form onSubmit={localHandleSubmit} className="lg:col-span-7 space-y-12">
+            {/* Billing Details Form */}
+            <div className="border-t border-gray-200 pt-10">
+              <h2 className="text-lg font-medium text-gray-900 mb-6">Billing details</h2>
+              <AddressForm type="billing" formData={formData} handleChange={handleChange} />
+              
+              <div className="mt-10 relative flex items-start">
+                <div className="flex h-6 items-center">
+                  <input
+                    id="shipToDifferentAddress"
+                    name="shipToDifferentAddress"
+                    type="checkbox"
+                    checked={shipToDifferentAddress}
+                    onChange={(e) => setShipToDifferentAddress(e.target.checked)}
+                    className="h-4 w-4 rounded border-gray-300 text-[#9CB24D] focus:ring-[#9CB24D]"
+                  />
+                </div>
+                <div className="ml-3 text-sm leading-6">
+                  <label htmlFor="shipToDifferentAddress" className="font-medium text-gray-900">
+                    Ship to a different address?
+                  </label>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Shipping Details Form (Conditional) */}
-          {shipToDifferentAddress && (
-            <div className="mt-10 border-t border-gray-200 pt-10 lg:mt-0">
-              <h2 className="text-lg font-medium text-gray-900 mb-6">Shipping details</h2>
-              <AddressForm type="shipping" formData={formData} handleChange={handleChange} />
-            </div>
-          )}
+            {/* Shipping Details Form (Conditional) */}
+            {shipToDifferentAddress && (
+              <div className="border-t border-gray-200 pt-10">
+                <h2 className="text-lg font-medium text-gray-900 mb-6">Shipping details</h2>
+                <AddressForm type="shipping" formData={formData} handleChange={handleChange} />
+              </div>
+            )}
 
-          {/* Order Notes and Submit (Adjust grid span if shipping form is hidden) */}
-          <div className={`mt-10 pt-10 ${shipToDifferentAddress ? 'lg:col-span-2' : 'lg:col-start-2'}`}>
-             <div className={shipToDifferentAddress ? "" : "lg:mt-0 lg:border-t lg:border-gray-200" }>
-                { !shipToDifferentAddress &&  <div className="mb-6 hidden lg:block">&nbsp;</div> } {/* Spacer to align with billing header when no shipping form */}
+            {/* Order Notes and Payment Section (within the form) */}
+            <div> 
+                { !shipToDifferentAddress &&  <div className="mb-6 hidden lg:block">&nbsp;</div> } 
                 <div className="mt-8">
                     <label htmlFor="orderNotes" className="block text-sm font-medium leading-6 text-gray-900">Order notes (optional)</label>
                     <textarea id="orderNotes" name="orderNotes" rows="4" placeholder="Notes about your order, e.g. special notes for delivery." value={formData.order_notes || ''} onChange={handleChange} className="checkout-input"></textarea>
@@ -428,8 +431,13 @@ function CheckoutFormContent({
                     </button>
                 </div>
             </div>
+          </form>
+
+          {/* Order Summary Section - Spans 5 columns on large screens */}
+          <div className="lg:col-span-5 mt-10 lg:mt-0">
+            <CheckoutCartSummary />
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );
