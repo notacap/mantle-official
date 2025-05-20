@@ -4,10 +4,11 @@ import { useState, useEffect } from 'react';
 import { formatPrice } from '@/app/services/woocommerce';
 import { useCart } from '@/context/CartContext'; // Import useCart hook
 
-export default function ProductActions({ productId, price, sizes, colors, sizeOptions, colorOptions }) {
+export default function ProductActions({ productId, price, sizes, colors, amounts, sizeOptions, colorOptions, amountOptions }) {
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState(sizes[0] || '');
   const [selectedColor, setSelectedColor] = useState(colors[0] || '');
+  const [selectedAmount, setSelectedAmount] = useState(amounts[0] || '');
   const [isAddingToCart, setIsAddingToCart] = useState(false); // Local loading state for the button
   const { callCartApi, setIsLoading: setCartLoading, isLoading: isCartLoading, nonce, openSideCart } = useCart(); // Get context functions
   
@@ -63,6 +64,20 @@ export default function ProductActions({ productId, price, sizes, colors, sizeOp
     return colorName; // Fall back to name if no slug found
   };
   
+  const getAmountSlug = (amountName) => {
+    if (!amountOptions || !amountName) return amountName;
+    
+    const option = amountOptions.find(opt =>
+      opt.name.toLowerCase() === amountName.toLowerCase());
+      
+    if (option) {
+      return option.slug;
+    }
+    
+    console.warn(`No amount slug found for "${amountName}"`);
+    return amountName; // Fall back to name if no slug found
+  };
+  
   // Log available options when component mounts or options change
   // useEffect(() => {
   //   if (sizeOptions?.length) {
@@ -101,6 +116,11 @@ export default function ProductActions({ productId, price, sizes, colors, sizeOp
     if (selectedColor) {
       const colorSlug = getColorSlug(selectedColor);
       variation.push({ attribute: 'color', value: colorSlug });
+    }
+
+    if (selectedAmount) {
+      const amountSlug = getAmountSlug(selectedAmount);
+      variation.push({ attribute: 'amount', value: amountSlug });
     }
 
     const itemData = {
@@ -183,6 +203,35 @@ export default function ProductActions({ productId, price, sizes, colors, sizeOp
                 }}
               >
                 {color}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+      
+      {/* Amount Selector */}
+      {amounts.length > 0 && (
+        <div>
+          <h3 style={{ fontSize: '1rem', fontWeight: '500', marginBottom: '0.75rem' }}>
+            Amount
+          </h3>
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+            {amounts.map((amount) => (
+              <button
+                key={amount}
+                onClick={() => setSelectedAmount(amount)}
+                style={{
+                  padding: '0.5rem 1rem',
+                  border: `1px solid ${selectedAmount === amount ? '#9CB24D' : '#e5e7eb'}`,
+                  borderRadius: '0.375rem',
+                  backgroundColor: selectedAmount === amount ? '#f3f6e8' : 'white',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  color: selectedAmount === amount ? '#9CB24D' : 'inherit',
+                  fontWeight: selectedAmount === amount ? '500' : 'normal'
+                }}
+              >
+                {amount}
               </button>
             ))}
           </div>

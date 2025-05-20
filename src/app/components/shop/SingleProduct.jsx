@@ -52,26 +52,33 @@ function StarRating({ rating, count }) {
 
 // Function to safely parse product attributes
 function getProductAttributes(product) {
-  if (!product || !product.attributes) return { colors: [], sizes: [], colorOptions: [], sizeOptions: [] };
+  if (!product || !product.attributes) return { colors: [], sizes: [], amounts: [], colorOptions: [], sizeOptions: [], amountOptions: [] };
   
   const colorAttribute = product.attributes.find(attr => 
     attr.name.toLowerCase() === 'color' || attr.name.toLowerCase() === 'colours');
   
   const sizeAttribute = product.attributes.find(attr => 
     attr.name.toLowerCase() === 'size');
+
+  const amountAttribute = product.attributes.find(attr =>
+    attr.name.toLowerCase() === 'amount');
   
   const colors = colorAttribute?.options || [];
   const sizes = sizeAttribute?.options || [];
+  const amounts = amountAttribute?.options || [];
   
   // Extract attribute IDs for fetching terms
   const colorAttributeId = colorAttribute?.id;
   const sizeAttributeId = sizeAttribute?.id;
+  const amountAttributeId = amountAttribute?.id;
   
   return { 
     colors, 
-    sizes, 
+    sizes,
+    amounts,
     colorAttributeId, 
-    sizeAttributeId 
+    sizeAttributeId,
+    amountAttributeId
   };
 }
 
@@ -150,7 +157,7 @@ export default function SingleProduct({ productId }) {
   });
 
   // Extract attribute IDs
-  const { colors, sizes, colorAttributeId, sizeAttributeId } = getProductAttributes(product || {});
+  const { colors, sizes, amounts, colorAttributeId, sizeAttributeId, amountAttributeId } = getProductAttributes(product || {});
   
   // Fetch size attribute terms if available
   const { 
@@ -190,9 +197,29 @@ export default function SingleProduct({ productId }) {
     enabled: !!colorAttributeId,
   });
   
+  // Fetch amount attribute terms if available
+  const {
+    data: amountTermsData
+  } = useQuery({
+    queryKey: ['attribute-terms', amountAttributeId],
+    queryFn: async () => {
+      const url = new URL('/api/product-attributes', window.location.origin);
+      url.searchParams.append('attribute_id', amountAttributeId.toString());
+      
+      const response = await fetch(url.toString());
+      if (!response.ok) {
+        throw new Error('Failed to fetch amount attribute terms');
+      }
+      
+      return response.json();
+    },
+    enabled: !!amountAttributeId,
+  });
+
   // Extract terms data
   const sizeOptions = sizeTermsData?.terms || [];
   const colorOptions = colorTermsData?.terms || [];
+  const amountOptions = amountTermsData?.terms || [];
   
   useEffect(() => {
     if (product && product.images && product.images.length > 0) {
@@ -262,10 +289,13 @@ export default function SingleProduct({ productId }) {
   console.log('Attribute options and product images:', {
     colorAttributeId, 
     sizeAttributeId,
+    amountAttributeId,
     colors, 
     sizes, 
+    amounts,
     colorOptions, 
     sizeOptions,
+    amountOptions,
     productImages: product?.images
   });
   
@@ -411,8 +441,10 @@ export default function SingleProduct({ productId }) {
             price={product.price}
             sizes={sizes} 
             colors={colors}
+            amounts={amounts}
             sizeOptions={sizeOptions}
             colorOptions={colorOptions}
+            amountOptions={amountOptions}
           />
         </div>
       </div>

@@ -191,9 +191,9 @@ export function CartProvider({ children }) {
     }
   
     try {
-      // console.log('Making API call to:', apiUrl);
-      // console.log('Request body:', body);
-      // console.log('Request headers:', requestHeaders);
+      console.log('Making API call to:', apiUrl);
+      console.log('Request body:', body);
+      console.log('Request headers:', requestHeaders);
       const response = await fetch(apiUrl, {
         method: method,
         headers: requestHeaders,
@@ -228,7 +228,7 @@ export function CartProvider({ children }) {
       }
   
       const data = await response.json();
-      // console.log('API Response Data:', data);
+      console.log('API Response Data:', data);
       updateCartAndNonce(data, responseNonce);
 
       const currentTimestamp = Date.now();
