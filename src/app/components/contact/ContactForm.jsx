@@ -7,35 +7,90 @@ const MIN_SUBMISSION_TIME_MS = 3000; // 3 seconds
 export default function ContactForm() {
   const [formType, setFormType] = useState('general'); // 'general' or 'order'
   const [formLoadTime, setFormLoadTime] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState({ error: '', success: '' });
   
   useEffect(() => {
     setFormLoadTime(Date.now());
-  }, [formType]); // Reset load time when form type changes
+    setSubmitStatus({ error: '', success: '' }); // Reset status on form type change
+  }, [formType]);
   
   const handleFormTypeChange = (type) => {
     setFormType(type);
   };
   
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
+    setSubmitStatus({ error: '', success: '' });
+    setIsSubmitting(true);
+
     const submissionTime = Date.now();
     if (submissionTime - formLoadTime < MIN_SUBMISSION_TIME_MS) {
       console.log('Bot detected: Form submitted too quickly.');
-      alert('Form submission too fast. Please try again.'); // User-facing message
+      setSubmitStatus({ error: 'Form submission too fast. Please try again.', success: '' });
+      setIsSubmitting(false);
       return;
     }
 
-    const honeypotValue = e.target.website.value;
-    if (honeypotValue) {
+    const honeypotInput = e.target.website;
+    if (honeypotInput && honeypotInput.value) {
       console.log('Bot detected via honeypot');
-      return; // Silently fail for honeypot
+      // Silently fail for honeypot, or show a generic success message
+      // For now, we'll just stop and not show an error to the bot.
+      setIsSubmitting(false);
+      return;
     }
-    
-    console.log('Form submitted by a human (passed time check and honeypot)');
-    
-    e.target.reset();
-    setFormLoadTime(Date.now()); // Reset load time for the next interaction on the same form type
+
+    const formElement = e.target;
+    const formData = new FormData(formElement);
+    let submissionData = {};
+    let currentFormId = '';
+
+    if (formType === 'general') {
+      currentFormId = '2';
+      submissionData = {
+        input_1_3: formData.get('firstName'), // First Name
+        input_1_6: formData.get('lastName'),  // Last Name
+        input_2: formData.get('email'),
+        input_4: formData.get('message'),
+      };
+    } else { // 'order' form
+      currentFormId = '3';
+      submissionData = {
+        input_1_3: formData.get('firstName'),
+        input_1_6: formData.get('lastName'),
+        input_2: formData.get('orderEmail'), 
+        input_4: formData.get('phone'),
+        input_3: formData.get('message'), 
+        input_5: formData.get('orderNumber'),
+      };
+    }
+
+    try {
+      const response = await fetch('/api/submit-contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ formId: currentFormId, submissionData }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setSubmitStatus({ error: '', success: 'Your message has been sent successfully!' });
+        formElement.reset();
+        setFormLoadTime(Date.now()); // Reset load time for the next interaction
+        setTimeout(() => setSubmitStatus({ error: '', success: '' }), 5000); // Clear success message
+      } else {
+        setSubmitStatus({ error: result.error || 'An error occurred. Please try again.', success: '' });
+      }
+    } catch (err) {
+      console.error('Contact form submission error:', err);
+      setSubmitStatus({ error: 'An error occurred. Please try again.', success: '' });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   
   return (
@@ -73,22 +128,35 @@ export default function ContactForm() {
             />
           </div>
           
-          <div className="form-group">
-            <label htmlFor="name">Name</label>
-            <input 
-              type="text" 
-              id="name" 
-              name="name" 
-              required 
-              placeholder="Your name"
-            />
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="generalFirstName">First Name</label>
+              <input 
+                type="text" 
+                id="generalFirstName" 
+                name="firstName" 
+                required 
+                placeholder="Your first name"
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="generalLastName">Last Name</label>
+              <input 
+                type="text" 
+                id="generalLastName" 
+                name="lastName" 
+                required 
+                placeholder="Your last name"
+              />
+            </div>
           </div>
           
           <div className="form-group">
-            <label htmlFor="email">Email</label>
+            <label htmlFor="generalEmail">Email</label>
             <input 
               type="email" 
-              id="email" 
+              id="generalEmail" 
               name="email" 
               required 
               placeholder="your.email@example.com"
@@ -96,18 +164,21 @@ export default function ContactForm() {
           </div>
           
           <div className="form-group">
-            <label htmlFor="message">Message</label>
+            <label htmlFor="generalMessage">Message</label>
             <textarea 
-              id="message" 
+              id="generalMessage" 
               name="message" 
               required 
               placeholder="How can we help you?"
             ></textarea>
           </div>
           
-          <button type="submit" className="submit-button">
-            Send Message
+          <button type="submit" className="submit-button" disabled={isSubmitting}>
+            {isSubmitting ? 'Sending...' : 'Send Message'}
           </button>
+          
+          {submitStatus.error && <p className="form-message error">{submitStatus.error}</p>}
+          {submitStatus.success && <p className="form-message success">{submitStatus.success}</p>}
           
           <div className="form-info">
             For agency or department purchases, please email <a href="mailto:info@mantle-clothing.com">info@mantle-clothing.com</a>.
@@ -127,10 +198,10 @@ export default function ContactForm() {
           
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="firstName">First Name</label>
+              <label htmlFor="orderFirstName">First Name</label>
               <input 
                 type="text" 
-                id="firstName" 
+                id="orderFirstName" 
                 name="firstName" 
                 required 
                 placeholder="Your first name"
@@ -138,10 +209,10 @@ export default function ContactForm() {
             </div>
             
             <div className="form-group">
-              <label htmlFor="lastName">Last Name</label>
+              <label htmlFor="orderLastName">Last Name</label>
               <input 
                 type="text" 
-                id="lastName" 
+                id="orderLastName" 
                 name="lastName" 
                 required 
                 placeholder="Your last name"
@@ -154,7 +225,7 @@ export default function ContactForm() {
             <input 
               type="email" 
               id="orderEmail" 
-              name="email" 
+              name="orderEmail" 
               required 
               placeholder="your.email@example.com"
             />
@@ -191,9 +262,12 @@ export default function ContactForm() {
             ></textarea>
           </div>
           
-          <button type="submit" className="submit-button">
-            Submit Request
+          <button type="submit" className="submit-button" disabled={isSubmitting}>
+            {isSubmitting ? 'Submitting...' : 'Submit Request'}
           </button>
+          
+          {submitStatus.error && <p className="form-message error">{submitStatus.error}</p>}
+          {submitStatus.success && <p className="form-message success">{submitStatus.success}</p>}
           
           <div className="form-info">
             For agency or department purchases, please email <a href="mailto:info@mantle-clothing.com">info@mantle-clothing.com</a>.
