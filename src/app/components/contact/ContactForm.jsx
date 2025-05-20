@@ -130,7 +130,7 @@ export default function ContactForm() {
           
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="generalFirstName">First Name</label>
+              <label htmlFor="generalFirstName">First Name<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
               <input 
                 type="text" 
                 id="generalFirstName" 
@@ -141,7 +141,7 @@ export default function ContactForm() {
             </div>
             
             <div className="form-group">
-              <label htmlFor="generalLastName">Last Name</label>
+              <label htmlFor="generalLastName">Last Name<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
               <input 
                 type="text" 
                 id="generalLastName" 
@@ -153,7 +153,7 @@ export default function ContactForm() {
           </div>
           
           <div className="form-group">
-            <label htmlFor="generalEmail">Email</label>
+            <label htmlFor="generalEmail">Email<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
             <input 
               type="email" 
               id="generalEmail" 
@@ -164,7 +164,7 @@ export default function ContactForm() {
           </div>
           
           <div className="form-group">
-            <label htmlFor="generalMessage">Message</label>
+            <label htmlFor="generalMessage">Message<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
             <textarea 
               id="generalMessage" 
               name="message" 
@@ -198,7 +198,7 @@ export default function ContactForm() {
           
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="orderFirstName">First Name</label>
+              <label htmlFor="orderFirstName">First Name<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
               <input 
                 type="text" 
                 id="orderFirstName" 
@@ -209,7 +209,7 @@ export default function ContactForm() {
             </div>
             
             <div className="form-group">
-              <label htmlFor="orderLastName">Last Name</label>
+              <label htmlFor="orderLastName">Last Name<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
               <input 
                 type="text" 
                 id="orderLastName" 
@@ -221,7 +221,7 @@ export default function ContactForm() {
           </div>
           
           <div className="form-group">
-            <label htmlFor="orderEmail">Email</label>
+            <label htmlFor="orderEmail">Email<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
             <input 
               type="email" 
               id="orderEmail" 
@@ -242,7 +242,7 @@ export default function ContactForm() {
           </div>
           
           <div className="form-group">
-            <label htmlFor="orderNumber">Order Number</label>
+            <label htmlFor="orderNumber">Order Number<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
             <input 
               type="text" 
               id="orderNumber" 
@@ -253,7 +253,7 @@ export default function ContactForm() {
           </div>
           
           <div className="form-group">
-            <label htmlFor="orderMessage">Message</label>
+            <label htmlFor="orderMessage">Message<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
             <textarea 
               id="orderMessage" 
               name="message" 
