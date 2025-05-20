@@ -6,11 +6,26 @@ import { useCart } from '@/context/CartContext'; // Import useCart hook
 
 export default function ProductActions({ productId, price, sizes, colors, amounts, sizeOptions, colorOptions, amountOptions }) {
   const [quantity, setQuantity] = useState(1);
-  const [selectedSize, setSelectedSize] = useState(sizes[0] || '');
-  const [selectedColor, setSelectedColor] = useState(colors[0] || '');
-  const [selectedAmount, setSelectedAmount] = useState(amounts[0] || '');
+  const [selectedSize, setSelectedSize] = useState(sizes?.[0] || '');
+  const [selectedColor, setSelectedColor] = useState(colors?.[0] || '');
+  const [selectedAmount, setSelectedAmount] = useState(amounts?.[0] || '');
+  const [unitPrice, setUnitPrice] = useState(parseFloat(price) || 0);
   const [isAddingToCart, setIsAddingToCart] = useState(false); // Local loading state for the button
   const { callCartApi, setIsLoading: setCartLoading, isLoading: isCartLoading, nonce, openSideCart } = useCart(); // Get context functions
+  
+  useEffect(() => {
+    if (selectedAmount && amounts && amounts.length > 0) {
+      // Assuming selectedAmount might be like "$25.00" or "25.00" or "25"
+      const parsedAmount = parseFloat(String(selectedAmount).replace(/[^\d.-]/g, ''));
+      if (!isNaN(parsedAmount)) {
+        setUnitPrice(parsedAmount);
+      } else {
+        setUnitPrice(parseFloat(price) || 0); // Fallback to base price if parsing fails
+      }
+    } else {
+      setUnitPrice(parseFloat(price) || 0); // Fallback to base price if no amounts/selection
+    }
+  }, [selectedAmount, price, amounts]);
   
   // Handle quantity change
   const handleQuantityChange = (e) => {
@@ -306,7 +321,7 @@ export default function ProductActions({ productId, price, sizes, colors, amount
           Total
         </h3>
         <p style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#9CB24D' }}>
-          {formatPrice((parseFloat(price) * quantity).toString())}
+          {formatPrice((unitPrice * quantity).toString())}
         </p>
       </div>
       
