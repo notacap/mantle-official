@@ -9,7 +9,7 @@ export default function NewsletterSignup() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     
@@ -21,17 +21,34 @@ export default function NewsletterSignup() {
     
     setIsSubmitting(true);
     
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const response = await fetch('/api/submit-newsletter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setIsSubmitted(true);
+        setEmail('');
+        
+        // Reset success message after 5 seconds
+        setTimeout(() => {
+          setIsSubmitted(false);
+        }, 5000);
+      } else {
+        setError(result.error || 'An error occurred. Please try again.');
+      }
+    } catch (err) {
+      setError('An error occurred. Please try again.');
+      console.error('Submission error:', err);
+    } finally {
       setIsSubmitting(false);
-      setIsSubmitted(true);
-      setEmail('');
-      
-      // Reset success message after 5 seconds
-      setTimeout(() => {
-        setIsSubmitted(false);
-      }, 5000);
-    }, 1000);
+    }
   };
 
   return (
