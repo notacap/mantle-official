@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { getProductImageUrl, getProductSecondaryImageUrl, formatPrice } from '@/app/services/woocommerce';
 import '@/app/shop/products.css'; // Import the CSS file for animations
 import ProductSkeleton from './ProductSkeleton';
+import StarRating from './StarRating'; // Import StarRating
 
 // Function to strip HTML tags from description
 function stripHtml(html) {
@@ -115,6 +116,9 @@ export default function ProductGrid({ products }) {
                 <p style={{ color: '#4b5563', marginBottom: '1rem', flexGrow: 1 }}>
                   {getShortDescription(product)}
                 </p>
+                <div style={{ marginBottom: '0.75rem' }}>
+                  <StarRating rating={product.average_rating || 0} count={product.rating_count || 0} />
+                </div>
                 <p style={{ fontWeight: 'bold', color: '#9CB24D' }}>
                   {(() => {
                     const minPriceValue = parseFloat(product.price);
