@@ -23,6 +23,18 @@ import {
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import ProductReviewsSection from './ProductReviewsSection';
 
+// Function to strip HTML tags
+function stripHtml(html) {
+  if (typeof window === 'undefined') {
+    // Server-side rendering fallback
+    return html?.replace(/<[^>]*>?/gm, '') || '';
+  }
+  
+  // Client-side rendering
+  const doc = new DOMParser().parseFromString(html || '', 'text/html');
+  return doc.body.textContent || '';
+}
+
 // Star rating component
 function StarRating({ rating, count }) {
   return (
@@ -429,7 +441,18 @@ export default function SingleProduct({ productId }) {
           </div>
           
           <p style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#9CB24D' }}>
-            {formatPrice(product.price)}
+            {(() => {
+              const minPriceValue = parseFloat(product.price);
+              const maxPriceValue = product.max_price ? parseFloat(product.max_price) : null;
+
+              if (maxPriceValue !== null && !isNaN(minPriceValue) && !isNaN(maxPriceValue) && maxPriceValue > minPriceValue) {
+                return `${formatPrice(product.price)} – ${formatPrice(product.max_price)}`;
+              } else if (product.price_html && (product.price_html.includes('–') || product.price_html.includes('-'))) {
+                return stripHtml(product.price_html);
+              } else {
+                return formatPrice(product.price);
+              }
+            })()}
           </p>
           
           <div dangerouslySetInnerHTML={{ __html: product.description }} 
