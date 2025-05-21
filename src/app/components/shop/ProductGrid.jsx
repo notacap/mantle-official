@@ -116,7 +116,18 @@ export default function ProductGrid({ products }) {
                   {getShortDescription(product)}
                 </p>
                 <p style={{ fontWeight: 'bold', color: '#9CB24D' }}>
-                  {formatPrice(product.price)}
+                  {(() => {
+                    const minPriceValue = parseFloat(product.price);
+                    const maxPriceValue = product.max_price ? parseFloat(product.max_price) : null;
+
+                    if (maxPriceValue !== null && !isNaN(minPriceValue) && !isNaN(maxPriceValue) && maxPriceValue > minPriceValue) {
+                      return `${formatPrice(product.price)} – ${formatPrice(product.max_price)}`;
+                    } else if (product.price_html && (product.price_html.includes('–') || product.price_html.includes('-'))) {
+                      return stripHtml(product.price_html);
+                    } else {
+                      return formatPrice(product.price);
+                    }
+                  })()}
                 </p>
               </div>
             </div>
