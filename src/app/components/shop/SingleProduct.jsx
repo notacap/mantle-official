@@ -209,21 +209,32 @@ export default function SingleProduct({ productId }) {
   
   useEffect(() => {
     if (product && product.images && product.images.length > 0) {
-      const uniqueImages = [];
+      const newUniqueImages = [];
       const seenSources = new Set();
       for (const img of product.images) {
         if (img && img.src && !seenSources.has(img.src)) {
           seenSources.add(img.src);
-          uniqueImages.push(img);
+          newUniqueImages.push(img);
         }
       }
-      setProcessedImages(uniqueImages);
-      if (uniqueImages.length > 0 && !currentImage) {
-        setCurrentImage(uniqueImages[0]);
+
+      setProcessedImages(prevImages => {
+        if (prevImages.length === newUniqueImages.length &&
+            prevImages.every((img, idx) => img.src === newUniqueImages[idx].src && img.alt === newUniqueImages[idx].alt)) {
+          return prevImages;
+        }
+        return newUniqueImages;
+      });
+
+      if (newUniqueImages.length > 0 && !currentImage) {
+        setCurrentImage(newUniqueImages[0]);
       }
     } else if (product && (!product.images || product.images.length === 0)) {
       // Handle case where product exists but has no images
-      setProcessedImages([]);
+      setProcessedImages(prevImages => {
+        if (prevImages.length === 0) return prevImages;
+        return [];
+      });
       setCurrentImage(null);
     }
   }, [product, currentImage]);
@@ -272,18 +283,18 @@ export default function SingleProduct({ productId }) {
   const categories = categoriesData.categories || [];
   
   // Log the attribute options to help with debugging
-  console.log('Attribute options and product images:', {
-    colorAttributeId, 
-    sizeAttributeId,
-    amountAttributeId,
-    colors, 
-    sizes, 
-    amounts,
-    colorOptions, 
-    sizeOptions,
-    amountOptions,
-    productImages: product?.images
-  });
+  // console.log('Attribute options and product images:', {
+  //   colorAttributeId, 
+  //   sizeAttributeId,
+  //   amountAttributeId,
+  //   colors, 
+  //   sizes, 
+  //   amounts,
+  //   colorOptions, 
+  //   sizeOptions,
+  //   amountOptions,
+  //   productImages: product?.images
+  // });
   
   return (
     <>

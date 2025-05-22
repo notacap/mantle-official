@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 import { formatPrice, getProductImageUrl, getProductSecondaryImageUrl } from '../services/woocommerce';
+import StarRating from './shop/StarRating';
 
 export default function FeaturedProducts() {
   const scrollContainerRef = useRef(null);
@@ -388,6 +389,9 @@ export default function FeaturedProducts() {
                       <p style={{ color: '#4b5563', marginBottom: '1rem', flexGrow: 1 }}>
                         {getShortDescription(product)}
                       </p>
+                      <div style={{ marginBottom: '0.75rem' }}>
+                        <StarRating rating={product.average_rating || 0} count={product.rating_count || 0} />
+                      </div>
                       <p style={{ fontWeight: 'bold', color: '#9CB24D' }}>
                         {formatPrice(product.price)}
                       </p>
