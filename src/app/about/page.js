@@ -79,13 +79,22 @@ export default function About() {
               <h2>The Team</h2>
               <div className="team-members">
                 <div className="team-member">
-                  <div className="team-member-image">
+                  <div
+                    className="team-member-image"
+                    style={{
+                      width: 250,
+                      height: 250,
+                      borderRadius: '50%',
+                      overflow: 'hidden',
+                      position: 'relative'
+                    }}
+                  >
                     <Image 
                       src="/images/piggy.jpg" 
                       alt="Cait - CEO" 
                       width={250}
                       height={250}
-                      style={{ objectFit: 'cover', borderRadius: '50%' }}
+                      style={{ objectFit: 'cover' }}
                     />
                   </div>
                   <h3>Cait</h3>
@@ -93,13 +102,22 @@ export default function About() {
                 </div>
                 
                 <div className="team-member">
-                  <div className="team-member-image">
+                  <div
+                    className="team-member-image"
+                    style={{
+                      width: 250,
+                      height: 250,
+                      borderRadius: '50%',
+                      overflow: 'hidden',
+                      position: 'relative'
+                    }}
+                  >
                     <Image 
                       src="/images/chris.jpg" 
                       alt="Chris - Web Dev / Digital Marketing" 
                       width={250}
                       height={250}
-                      style={{ objectFit: 'cover', borderRadius: '50%' }}
+                      style={{ objectFit: 'cover' }}
                     />
                   </div>
                   <h3>Chris</h3>
@@ -107,13 +125,22 @@ export default function About() {
                 </div>
                 
                 <div className="team-member">
-                  <div className="team-member-image">
+                  <div
+                    className="team-member-image"
+                    style={{
+                      width: 250,
+                      height: 250,
+                      borderRadius: '50%',
+                      overflow: 'hidden',
+                      position: 'relative'
+                    }}
+                  >
                     <Image 
                       src="/images/will.jpg" 
                       alt="Will - Social Media" 
                       width={250}
                       height={250}
-                      style={{ objectFit: 'cover', borderRadius: '50%' }}
+                      style={{ objectFit: 'cover' }}
                     />
                   </div>
                   <h3>Will</h3>
