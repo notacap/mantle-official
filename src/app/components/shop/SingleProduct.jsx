@@ -282,6 +282,16 @@ export default function SingleProduct({ productId }) {
   const reviewCount = product?.rating_count || 0;
   const categories = categoriesData.categories || [];
   
+  // Extract care_info and fabric_technology from meta_data
+  const metaData = product?.meta_data || [];
+  const careInfoString = metaData.find(meta => meta.key === 'care_info')?.value || '';
+  const fabricTechnologyString = metaData.find(meta => meta.key === 'fabric_technology')?.value || '';
+
+  const careInfoList = careInfoString.split(',').map(item => item.trim()).filter(item => item);
+  const fabricTechnologyList = fabricTechnologyString.split(',').map(item => item.trim()).filter(item => item);
+
+  const ogDescriptionValue = metaData.find(meta => meta.key === 'description')?.value || '';
+  
   // Log the attribute options to help with debugging
   // console.log('Attribute options and product images:', {
   //   colorAttributeId, 
@@ -440,7 +450,7 @@ export default function SingleProduct({ productId }) {
             })()}
           </p>
           
-          <div dangerouslySetInnerHTML={{ __html: product.description }} 
+          <div dangerouslySetInnerHTML={{ __html: ogDescriptionValue }} 
             style={{ color: '#4b5563', lineHeight: '1.5' }} />
           
           {/* Client Component for interactive product actions */}
@@ -456,6 +466,57 @@ export default function SingleProduct({ productId }) {
           />
         </div>
       </div>
+
+      {/* Product Details: Features, Care Info, Fabric Technology */}
+      {(product.description || careInfoList.length > 0 || fabricTechnologyList.length > 0) && (
+        <div className="mt-10 py-6 border-t border-gray-200 space-y-6">
+          {/* Product Features (from original product.description) */}
+          {product.description && (() => {
+            if (typeof window === 'undefined') return null; // DOMParser is not available on the server
+
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(product.description, 'text/html');
+            const listItems = Array.from(doc.querySelectorAll('li'));
+
+            if (listItems.length === 0) return null;
+
+            return (
+              <div>
+                <h3 className="text-xl font-semibold mb-3 text-gray-800">Product Features</h3>
+                <ul className="list-disc list-inside text-gray-600 space-y-1">
+                  {listItems.map((item, index) => (
+                    <li key={index} dangerouslySetInnerHTML={{ __html: item.innerHTML }} />
+                  ))}
+                </ul>
+              </div>
+            );
+          })()}
+
+          {/* Care Info */}
+          {careInfoList.length > 0 && (
+            <div>
+              <h3 className="text-xl font-semibold mb-3 text-gray-800">Care Information</h3>
+              <ul className="list-disc list-inside text-gray-600 space-y-1">
+                {careInfoList.map((item, index) => (
+                  <li key={index}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Fabric Technology */}
+          {fabricTechnologyList.length > 0 && (
+            <div>
+              <h3 className="text-xl font-semibold mb-3 text-gray-800">Fabric Technology</h3>
+              <ul className="list-disc list-inside text-gray-600 space-y-1">
+                {fabricTechnologyList.map((item, index) => (
+                  <li key={index}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Customer Reviews Section */}
       {product && <ProductReviewsSection productId={product.id} />}
