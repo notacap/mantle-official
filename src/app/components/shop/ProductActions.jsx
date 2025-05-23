@@ -253,76 +253,61 @@ export default function ProductActions({ productId, price, sizes, colors, amount
         </div>
       )}
       
-      {/* Quantity Selector */}
-      <div>
-        <h3 style={{ fontSize: '1rem', fontWeight: '500', marginBottom: '0.75rem' }}>
-          Quantity
-        </h3>
-        <div style={{ 
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-          width: 'fit-content'
-        }}>
-          <button
-            onClick={decreaseQuantity}
+      {/* Quantity Selector and Total Price */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
+        {/* Quantity Selector */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <h3 style={{ fontSize: '1rem', fontWeight: '500', marginRight: '0.5rem' }}>Quantity</h3>
+          <button 
+            onClick={decreaseQuantity} 
             style={{
-              width: '2.5rem',
-              height: '2.5rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              padding: '0.5rem 0.75rem',
               border: '1px solid #e5e7eb',
               borderRadius: '0.375rem',
               backgroundColor: 'white',
-              cursor: quantity > 1 ? 'pointer' : 'not-allowed',
-              opacity: quantity > 1 ? 1 : 0.5
+              cursor: 'pointer',
+              lineHeight: '1'
             }}
-            disabled={quantity <= 1} // Disable button explicitly
+            aria-label="Decrease quantity"
           >
             -
           </button>
-          <input
-            type="number"
-            value={quantity}
-            onChange={handleQuantityChange}
-            min={1}
+          <input 
+            type="number" 
+            value={quantity} 
+            onChange={handleQuantityChange} 
             style={{
-              width: '3.5rem',
-              height: '2.5rem',
+              width: '4rem',
+              textAlign: 'center',
               padding: '0.5rem',
               border: '1px solid #e5e7eb',
-              borderRadius: '0.375rem',
-              textAlign: 'center'
-            }}
+              borderRadius: '0.375rem'
+            }} 
+            aria-label="Current quantity"
           />
-          <button
-            onClick={increaseQuantity}
+          <button 
+            onClick={increaseQuantity} 
             style={{
-              width: '2.5rem',
-              height: '2.5rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              padding: '0.5rem 0.75rem',
               border: '1px solid #e5e7eb',
               borderRadius: '0.375rem',
               backgroundColor: 'white',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              lineHeight: '1'
             }}
+            aria-label="Increase quantity"
           >
             +
           </button>
         </div>
-      </div>
-      
-      {/* Total Price */}
-      <div>
-        <h3 style={{ fontSize: '1rem', fontWeight: '500', marginBottom: '0.5rem' }}>
-          Total
-        </h3>
-        <p style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#9CB24D' }}>
-          {formatPrice((unitPrice * quantity).toString())}
-        </p>
+
+        {/* Total Price Display */}
+        <div style={{ textAlign: 'right' }}>
+          <h3 style={{ fontSize: '1rem', fontWeight: '500', marginBottom: '0.25rem' }}>Total</h3>
+          <p style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#9CB24D' }}>
+            {formatPrice(unitPrice * quantity)}
+          </p>
+        </div>
       </div>
       
       {/* Add to Cart Button */}
