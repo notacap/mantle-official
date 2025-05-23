@@ -336,6 +336,56 @@ export default function SingleProduct({ productId }) {
 
   const ogDescriptionValue = metaData.find(meta => meta.key === 'description')?.value || '';
   
+  // Prepare content for Product Features, Care Info, and Fabric Technology sections
+  let productFeaturesContent = null;
+  if (product.description && typeof window !== 'undefined') {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(product.description, 'text/html');
+    const listItems = Array.from(doc.querySelectorAll('li'));
+    if (listItems.length > 0) {
+      productFeaturesContent = (
+        <ul className="list-disc list-inside text-gray-600 space-y-1">
+          {listItems.map((item, index) => (
+            <li key={index} dangerouslySetInnerHTML={{ __html: item.innerHTML }} />
+          ))}
+        </ul>
+      );
+    }
+  }
+
+  let careInfoContent = null;
+  if (careInfoList.length > 0) {
+    careInfoContent = (
+      <ul className="list-disc list-inside text-gray-600 space-y-1">
+        {careInfoList.map((item, index) => (
+          <li key={index}>{item}</li>
+        ))}
+      </ul>
+    );
+  }
+
+  let fabricTechnologyContent = null;
+  if (fabricTechnologyList.length > 0) {
+    fabricTechnologyContent = (
+      <ul className="list-disc list-inside text-gray-600 space-y-1">
+        {fabricTechnologyList.map((item, index) => (
+          <li key={index}>{item}</li>
+        ))}
+      </ul>
+    );
+  }
+
+  const detailSections = [];
+  if (productFeaturesContent) {
+    detailSections.push({ title: 'Product Features', content: productFeaturesContent });
+  }
+  if (careInfoContent) {
+    detailSections.push({ title: 'Care Information', content: careInfoContent });
+  }
+  if (fabricTechnologyContent) {
+    detailSections.push({ title: 'Fabric Technology', content: fabricTechnologyContent });
+  }
+
   // Log the attribute options to help with debugging
   // console.log('Attribute options and product images:', {
   //   colorAttributeId, 
@@ -512,53 +562,19 @@ export default function SingleProduct({ productId }) {
       </div>
 
       {/* Product Details: Features, Care Info, Fabric Technology */}
-      {(product.description || careInfoList.length > 0 || fabricTechnologyList.length > 0) && (
-        <div className="mt-10 py-6 border-t border-gray-200 space-y-6">
-          {/* Product Features (from original product.description) */}
-          {product.description && (() => {
-            if (typeof window === 'undefined') return null; // DOMParser is not available on the server
-
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(product.description, 'text/html');
-            const listItems = Array.from(doc.querySelectorAll('li'));
-
-            if (listItems.length === 0) return null;
-
-            return (
-              <div>
-                <h3 className="text-xl font-semibold mb-3 text-gray-800">Product Features</h3>
-                <ul className="list-disc list-inside text-gray-600 space-y-1">
-                  {listItems.map((item, index) => (
-                    <li key={index} dangerouslySetInnerHTML={{ __html: item.innerHTML }} />
-                  ))}
-                </ul>
+      {detailSections.length > 0 && (
+        <div className="mt-10 py-6 border-t border-gray-200">
+          <div className="flex flex-col md:flex-row">
+            {detailSections.map((section, index) => (
+              <div
+                key={section.title}
+                className={`flex-1 mb-6 md:mb-0 ${index > 0 ? 'md:pl-6' : ''} ${index < detailSections.length - 1 ? 'md:border-r md:border-gray-300 md:pr-6' : ''}`}
+              >
+                <h3 className="text-xl font-semibold mb-3 text-gray-800 text-center">{section.title}</h3>
+                {section.content}
               </div>
-            );
-          })()}
-
-          {/* Care Info */}
-          {careInfoList.length > 0 && (
-            <div>
-              <h3 className="text-xl font-semibold mb-3 text-gray-800">Care Information</h3>
-              <ul className="list-disc list-inside text-gray-600 space-y-1">
-                {careInfoList.map((item, index) => (
-                  <li key={index}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {/* Fabric Technology */}
-          {fabricTechnologyList.length > 0 && (
-            <div>
-              <h3 className="text-xl font-semibold mb-3 text-gray-800">Fabric Technology</h3>
-              <ul className="list-disc list-inside text-gray-600 space-y-1">
-                {fabricTechnologyList.map((item, index) => (
-                  <li key={index}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          )}
+            ))}
+          </div>
         </div>
       )}
 
