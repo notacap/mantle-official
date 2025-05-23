@@ -105,6 +105,9 @@ export default function SingleProduct({ productId }) {
   const [isAllPhotosModalOpen, setIsAllPhotosModalOpen] = useState(false);
   const [processedImages, setProcessedImages] = useState([]);
   const [isProductNotFound, setIsProductNotFound] = useState(false);
+  const [sizeChartData, setSizeChartData] = useState(null);
+  const [sizeChartError, setSizeChartError] = useState(null);
+  const [sizeChartFootnote, setSizeChartFootnote] = useState('');
   
   // Fetch product data
   const { 
@@ -248,6 +251,47 @@ export default function SingleProduct({ productId }) {
       setIsProductNotFound(false);
     }
   }, [product, isLoadingProduct, productId]);
+  
+  useEffect(() => {
+    if (product?.meta_data) {
+      const tableShortcodeMeta = product.meta_data.find(meta => meta.key === 'table_shortcode');
+      if (tableShortcodeMeta && tableShortcodeMeta.value) {
+        const match = tableShortcodeMeta.value.match(/\[supsystic-tables id=(\d+)\]/);
+        if (match && match[1]) {
+          const tableId = match[1];
+          // For now, hardcode footnote for table ID 1, can be made dynamic later
+          if (tableId === '1') {
+            setSizeChartFootnote('These are BODY MEASUREMENTS - Use a tape!');
+          } else {
+            setSizeChartFootnote(''); // Clear footnote for other tables or implement dynamic logic
+          }
+
+          fetch(`/csv/table-${tableId}.tsv`)
+            .then(response => {
+              if (!response.ok) {
+                throw new Error(`Failed to fetch sizing table: ${response.statusText}`);
+              }
+              return response.text();
+            })
+            .then(textData => {
+              const rows = textData.trim().split('\n');
+              const parsedData = rows.map(row => row.split('\t'));
+              if (parsedData.length > 0) {
+                setSizeChartData(parsedData);
+                setSizeChartError(null);
+              } else {
+                throw new Error('Sizing table data is empty or invalid.');
+              }
+            })
+            .catch(err => {
+              console.error("Error fetching or parsing size chart:", err);
+              setSizeChartError('Sizing chart is currently unavailable.');
+              setSizeChartData(null);
+            });
+        }
+      }
+    }
+  }, [product]);
   
   const handleThumbnailClick = (image) => {
     setCurrentImage(image);
@@ -515,6 +559,48 @@ export default function SingleProduct({ productId }) {
               </ul>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Sizing Chart Section */}
+      {sizeChartData && (
+        <div className="mt-10 py-6 border-t border-gray-200">
+          <h3 className="text-xl font-semibold mb-4 text-gray-800">Sizing Chart</h3>
+          <div className="overflow-x-auto">
+            <table className="min-w-full border border-gray-300 text-sm">
+              <thead>
+                {sizeChartData[0] && (
+                  <tr className="bg-gray-100">
+                    {sizeChartData[0].map((header, index) => (
+                      <th key={index} className="p-2 border-b border-gray-300 text-left font-medium text-gray-700">
+                        {header}
+                      </th>
+                    ))}
+                  </tr>
+                )}
+              </thead>
+              <tbody>
+                {sizeChartData.slice(1).map((row, rowIndex) => (
+                  <tr key={rowIndex} className={rowIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                    {row.map((cell, cellIndex) => (
+                      <td key={cellIndex} className="p-2 border-b border-gray-300 text-gray-600">
+                        {cell}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {sizeChartFootnote && (
+            <p className="mt-3 text-xs text-gray-500 italic">{sizeChartFootnote}</p>
+          )}
+        </div>
+      )}
+      {sizeChartError && (
+        <div className="mt-10 py-6 border-t border-gray-200">
+          <h3 className="text-xl font-semibold mb-2 text-gray-800">Sizing Chart</h3>
+          <p className="text-red-600">{sizeChartError}</p>
         </div>
       )}
 
