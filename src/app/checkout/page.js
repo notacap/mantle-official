@@ -9,6 +9,10 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import CheckoutCartSummary from '../components/CheckoutCartSummary';
 
+// START PAYPAL IMPORTS
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+// END PAYPAL IMPORTS
+
 // Make sure to set this in your .env.local file
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
 
@@ -114,10 +118,15 @@ export default function CheckoutPage() {
     billing_address: { country: 'US' },
     shipping_address: { country: 'US' },
     payment_method: '', // For selected payment method
+    order_notes: '',
   });
   const [isProcessing, setIsProcessing] = useState(false);
   const [submissionError, setSubmissionError] = useState(null);
   const [availablePaymentMethods, setAvailablePaymentMethods] = useState([]);
+  
+  // START PAYPAL STATE
+  const [createdWooOrder, setCreatedWooOrder] = useState(null);
+  // END PAYPAL STATE
 
   useEffect(() => {
     console.log("[CheckoutPage] Cart data received:", cart);
@@ -140,6 +149,7 @@ export default function CheckoutPage() {
   }, [cart]);
 
   const handlePaymentMethodChange = (e) => {
+    setSubmissionError(null); // Clear previous errors when changing payment method
     setFormData(prev => ({ ...prev, payment_method: e.target.value }));
   };
 
@@ -167,7 +177,28 @@ export default function CheckoutPage() {
   };
 
   const handleSubmit = async (e, stripe, elements) => {
-    e.preventDefault();
+    if (e) e.preventDefault(); // Prevent default form submission if called from an event
+
+    // If PayPal is selected, this function should not proceed with its original Stripe logic.
+    // The actual payment initiation for PayPal happens via PayPalButtons.
+    if (formData.payment_method === 'paypal') {
+        // This function might be called by the main form's onSubmit,
+        // but for PayPal, we don't want it to proceed with Stripe logic or Place Order API call here.
+        // The `createOrderOrUpdateCustomer` will be called directly by PayPalButtons' `onClick` or `createOrder`.
+        console.log("[CheckoutPage] handleSubmit called with PayPal selected. PayPalButtons will manage the flow.");
+        // setIsProcessing(true); // Set processing true, will be set to false on completion/error by PayPal flow
+        // setSubmissionError(null);
+        return; // Exit if PayPal is chosen, as PayPalButtons handles the process.
+    }
+    
+    // Ensure Stripe is selected if we reach here (or any other non-PayPal direct processing method)
+    if (formData.payment_method !== 'stripe') {
+        console.warn("[CheckoutPage] handleSubmit called for non-Stripe/non-PayPal method without specific logic.");
+        setSubmissionError("Selected payment method is not configured for this action.");
+        setIsProcessing(false);
+        return;
+    }
+
     setIsProcessing(true);
     setSubmissionError(null);
 
@@ -181,11 +212,12 @@ export default function CheckoutPage() {
     console.log("Submitting customer and payment method data:", dataToSend);
 
     try {
-      // Step 1: Update customer information
+      // Step 1: Update customer information (common for Stripe)
+      // For PayPal, this will be called before creating the WC order inside createOrderForPaypal
       await callCartApi('/wp-json/wc/store/v1/cart/update-customer', 'POST', dataToSend);
-      console.log("Customer data updated successfully.");
+      console.log("Customer data updated successfully for Stripe.");
 
-      // Step 2: Process Payment & Place Order
+      // Step 2: Process Payment & Place Order (Stripe specific)
       if (!stripe || !elements) {
         console.error("[CheckoutPage] Stripe.js or Elements not loaded properly in handleSubmit.");
         setSubmissionError("Payment processing is not ready. Please ensure Stripe has loaded.");
@@ -244,13 +276,13 @@ export default function CheckoutPage() {
         // The WooCommerce Stripe Gateway plugin might handle the redirect after the checkout call.
       }
       
-      // Actual call to /checkout endpoint
-      console.log("Calling /wc/store/v1/checkout with:", dataToSend);
+      // Actual call to /checkout endpoint (for Stripe)
+      console.log("Calling /wc/store/v1/checkout with Stripe data:", dataToSend);
       const orderResult = await callCartApi('/wp-json/wc/store/v1/checkout', 'POST', dataToSend);
-      console.log("Order placement result:", orderResult);
+      console.log("Stripe Order placement result:", orderResult);
 
       if (orderResult && (orderResult.order_id || orderResult.order_number)) {
-        await fetchCartAndNonce();
+        await fetchCartAndNonce(); // Clear cart, get new nonce
 
         const orderNumber = orderResult.order_number || orderResult.order_id;
         const orderKey = orderResult.order_key || '';
@@ -267,33 +299,247 @@ export default function CheckoutPage() {
       setIsProcessing(false);
     }
   };
+  
+  // START PAYPAL HANDLERS
+  const createWooCommerceOrderForPayPal = async () => {
+    setIsProcessing(true);
+    setSubmissionError(null);
+    // setCreatedWooOrder(null); // Not strictly necessary to clear here if we're returning directly
+
+    // START DEFENSIVE CHECK
+    if (!cart || !cart.totals || typeof cart.totals.total_price === 'undefined' || typeof cart.totals.currency_code === 'undefined' || typeof cart.totals.currency_minor_unit === 'undefined') {
+      console.error("[PayPal] Cart data (especially total_price, currency_code, currency_minor_unit) is not available or incomplete.", JSON.stringify(cart?.totals, null, 2));
+      setSubmissionError("Your cart information is currently unavailable. Please refresh or try again shortly.");
+      setIsProcessing(false);
+      throw new Error("Cart totals are not available to proceed with PayPal order creation.");
+    }
+    // END DEFENSIVE CHECK
+
+    const customerData = {
+      billing_address: formData.billing_address,
+      shipping_address: shipToDifferentAddress ? formData.shipping_address : formData.billing_address,
+      ...(formData.order_notes && { customer_note: formData.order_notes }),
+    };
+
+    try {
+      // 1. Update customer details in WooCommerce
+      console.log("[PayPal] Updating customer data before creating WC order:", customerData);
+      await callCartApi('/wp-json/wc/store/v1/cart/update-customer', 'POST', customerData);
+      console.log("[PayPal] Customer data updated successfully.");
+
+      // 2. Create WooCommerce order to get an order ID
+      const wooOrderPayload = {
+        ...customerData, // Includes billing, shipping, and notes
+        payment_method: 'paypal', // Specify PayPal as the payment method
+        // Ensure other necessary fields for order creation are included if any
+        // The store API /checkout endpoint should handle creating the order from the current cart
+      };
+      console.log("[PayPal] Creating WooCommerce order with payload:", wooOrderPayload);
+      const wooOrderResult = await callCartApi('/wp-json/wc/store/v1/checkout', 'POST', wooOrderPayload);
+      console.log("[PayPal] WooCommerce order creation result:", wooOrderResult);
+
+      if (!wooOrderResult || !(wooOrderResult.order_id || wooOrderResult.order_number)) {
+        throw new Error("Failed to create WooCommerce order or retrieve order ID.");
+      }
+      
+      const orderId = wooOrderResult.order_id || wooOrderResult.order_number;
+      const orderKey = wooOrderResult.order_key || '';
+      
+      const minorUnit = cart.totals.currency_minor_unit;
+      const rawTotalPrice = parseInt(cart.totals.total_price, 10);
+      const formattedTotalPrice = (rawTotalPrice / Math.pow(10, minorUnit)).toFixed(minorUnit);
+
+      const orderDetails = { 
+        id: orderId, 
+        key: orderKey, 
+        total: formattedTotalPrice, 
+        currency: cart.totals.currency_code || 'USD' 
+      };
+
+      setCreatedWooOrder(orderDetails); // Still set state for onApprove if needed
+      //setIsProcessing(false); // Processing continues with PayPal client-side
+      return orderDetails; // Return the full details object
+
+    } catch (error) {
+      console.error("[PayPal] Error creating WooCommerce order:", error);
+      setSubmissionError(error.message || "Failed to prepare order for PayPal. Please try again.");
+      setIsProcessing(false);
+      throw error; // Re-throw to stop PayPal flow
+    }
+  };
+
+
+  const onPayPalApprove = async (data, actions) => {
+    console.log("[PayPal] onApprove data:", data); // data.orderID is the PayPal Order ID
+    // setIsProcessing(true); // Already true from createOrder or onClick of PayPal button
+    setSubmissionError(null);
+
+    try {
+      const response = await fetch('/api/capture-paypal-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paypalOrderID: data.orderID }), // Pass PayPal's orderID
+      });
+
+      const captureResult = await response.json();
+      console.log("[PayPal] Capture result:", captureResult);
+
+      if (!response.ok) {
+        throw new Error(captureResult.error || captureResult.message || 'PayPal payment capture failed.');
+      }
+
+      // Ensure we have the WooCommerce order details from the state or captureResult
+      const wooOrderIdToConfirm = captureResult.wooCommerceOrderId || createdWooOrder?.id;
+      const wooOrderKeyToConfirm = createdWooOrder?.key || ''; // Order key might not be in captureResult
+
+      if (!wooOrderIdToConfirm) {
+        console.error("[PayPal] WooCommerce Order ID missing after capture. This is critical.");
+        setSubmissionError("Payment successful, but we couldn't finalize your order details. Please contact support with PayPal Transaction ID: " + (captureResult.paypalTransactionId || data.orderID));
+        setIsProcessing(false); // Stop processing, but it's a partial success
+        // Potentially redirect to a specific page or show message
+        return;
+      }
+      
+      await fetchCartAndNonce(); // Clear original cart, get new nonce
+      
+      router.push(`/order-confirmation?order_number=${wooOrderIdToConfirm}&order_key=${wooOrderKeyToConfirm}`);
+
+    } catch (error) {
+      console.error("[PayPal] onApprove error:", error);
+      setSubmissionError(error.message || "An error occurred while processing your PayPal payment.");
+      //setIsProcessing(false); // PayPal button might handle this, or set it in finally
+    } finally {
+       setIsProcessing(false); // Ensure processing is set to false
+    }
+  };
+
+  const onPayPalCreateOrder = async (data, actions) => {
+    console.log("[PayPal] createOrder data from PayPal SDK:", data);
+    setSubmissionError(null);
+    setIsProcessing(true);
+
+    try {
+        const wooOrderDetails = await createWooCommerceOrderForPayPal(); 
+        
+        console.log("[PayPal] After createWooCommerceOrderForPayPal call:");
+        console.log("[PayPal] wooOrderDetails received:", JSON.stringify(wooOrderDetails, null, 2));
+        // console.log("[PayPal] createdWooOrder state (may be stale here):", JSON.stringify(createdWooOrder, null, 2));
+
+        if (!wooOrderDetails || !wooOrderDetails.id || !wooOrderDetails.total) {
+            console.error("[PayPal] Validation failed: wooOrderDetails:", wooOrderDetails);
+            throw new Error("WooCommerce order details not available or incomplete for PayPal.");
+        }
+
+        console.log(`[PayPal] Calling /api/create-paypal-payment with WC Order ID: ${wooOrderDetails.id}, Amount: ${wooOrderDetails.total}, Currency: ${wooOrderDetails.currency}`);
+        const response = await fetch('/api/create-paypal-payment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                orderId: wooOrderDetails.id.toString(),
+                amount: wooOrderDetails.total,
+                currency_code: wooOrderDetails.currency 
+            }),
+        });
+
+        const payment = await response.json();
+        if (!response.ok) {
+            throw new Error(payment.error || payment.details || 'Failed to create PayPal payment intent.');
+        }
+        console.log("[PayPal] PayPal Order ID from API:", payment.paypalOrderId);
+        return payment.paypalOrderId; // This is what PayPalButtons expects
+
+    } catch (error) {
+        console.error("[PayPal] Error in createOrder callback:", error);
+        setSubmissionError(error.message || "Could not initiate PayPal payment. Please check your details or try another method.");
+        setIsProcessing(false); // Stop processing on failure
+        throw error; // Re-throw to inform PayPal SDK
+    }
+    // No setIsProcessing(false) here, as it's handled in onApprove/onError/onCancel or if createOrder fails
+  };
+  
+  const onPayPalError = (err) => {
+    console.error("[PayPal] SDK Error:", err);
+    setSubmissionError("An error occurred with PayPal. Please try again or use a different payment method.");
+    setIsProcessing(false);
+  };
+
+  const onPayPalCancel = (data) => {
+    console.log("[PayPal] Payment cancelled:", data);
+    setSubmissionError("PayPal payment was cancelled. You can try again or choose another payment method.");
+    setIsProcessing(false);
+  };
+  // END PAYPAL HANDLERS
+
+
+  // Note: PAYPAL_CLIENT_ID should be NEXT_PUBLIC_PAYPAL_CLIENT_ID if accessed here.
+  // Ensure it's set in .env.local
+  const payPalClientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
+
+  if (!payPalClientId && formData.payment_method === 'paypal') {
+    console.error("PayPal Client ID is not configured. PayPal cannot be initialized.");
+    // Optionally, set an error message or disable PayPal if ID is missing
+  }
 
   return (
-    <Elements stripe={stripePromise}>
-      <CheckoutFormContent 
-        shipToDifferentAddress={shipToDifferentAddress} 
-        setShipToDifferentAddress={setShipToDifferentAddress}
-        formData={formData}
-        handleChange={handleChange}
-        handleSubmit={handleSubmit} // Pass the async handleSubmit
-        isProcessing={isProcessing}
-        submissionError={submissionError}
-        isCartLoading={isCartLoading} // Pass cart loading state
-        availablePaymentMethods={availablePaymentMethods}
-        handlePaymentMethodChange={handlePaymentMethodChange}
-      />
-    </Elements>
+    // Wrap with PayPalScriptProvider if PayPal Client ID is available
+    // Conditionally render based on payPalClientId to avoid errors if it's not set
+    payPalClientId ? (
+      <PayPalScriptProvider options={{ "client-id": payPalClientId, currency: formData?.billing_address?.currency || cart?.totals?.currency_code || "USD" }}>
+        <Elements stripe={stripePromise}>
+          <CheckoutFormContent 
+            shipToDifferentAddress={shipToDifferentAddress} 
+            setShipToDifferentAddress={setShipToDifferentAddress}
+            formData={formData}
+            handleChange={handleChange}
+            handleSubmit={handleSubmit} 
+            isProcessing={isProcessing}
+            submissionError={submissionError}
+            isCartLoading={isCartLoading} 
+            availablePaymentMethods={availablePaymentMethods}
+            handlePaymentMethodChange={handlePaymentMethodChange}
+            // START PAYPAL PROPS
+            onPayPalCreateOrder={onPayPalCreateOrder}
+            onPayPalApprove={onPayPalApprove}
+            onPayPalError={onPayPalError}
+            onPayPalCancel={onPayPalCancel}
+            // END PAYPAL PROPS
+          />
+        </Elements>
+      </PayPalScriptProvider>
+    ) : (
+      // Fallback if PayPal Client ID is not loaded, Stripe still works
+      <Elements stripe={stripePromise}>
+        <CheckoutFormContent 
+          shipToDifferentAddress={shipToDifferentAddress} 
+          setShipToDifferentAddress={setShipToDifferentAddress}
+          formData={formData}
+          handleChange={handleChange}
+          handleSubmit={handleSubmit} 
+          isProcessing={isProcessing}
+          submissionError={submissionError}
+          isCartLoading={isCartLoading} 
+          availablePaymentMethods={availablePaymentMethods}
+          handlePaymentMethodChange={handlePaymentMethodChange}
+          // PayPal props won't be used here, or pass null/undefined
+        />
+      </Elements>
+    )
   );
 }
 
 // New component to use Stripe hooks
 function CheckoutFormContent({ 
   shipToDifferentAddress, setShipToDifferentAddress, formData, handleChange, handleSubmit, 
-  isProcessing, submissionError, isCartLoading, availablePaymentMethods, handlePaymentMethodChange
+  isProcessing, submissionError, isCartLoading, availablePaymentMethods, handlePaymentMethodChange,
+  // START PAYPAL PROPS
+  onPayPalCreateOrder, onPayPalApprove, onPayPalError, onPayPalCancel
+  // END PAYPAL PROPS
 }) {
   const stripe = useStripe();
   const elements = useElements();
+  const { cart } = useCart(); // Get cart to access totals for PayPal amount
 
+  // This is the existing submit for Stripe (and potentially other direct methods)
   const localHandleSubmit = async (e) => {
     e.preventDefault();
     if (!stripe || !elements) {
@@ -305,6 +551,10 @@ function CheckoutFormContent({
     // Pass event, stripe, and elements to the main handleSubmit function from CheckoutPage
     await handleSubmit(e, stripe, elements);
   };
+
+  // Determine if PayPal is selected and ready
+  const isPayPalSelected = formData.payment_method === 'paypal';
+  const payPalClientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID; // Check again for safety
 
   return (
     <div className="bg-gray-50">
@@ -411,24 +661,52 @@ function CheckoutFormContent({
                     )}
 
                     {/* Placeholder for PayPal button if 'stripe_paypal' is selected */}
-                    {formData.payment_method === 'stripe_paypal' && (
+                    {/* Renamed to 'paypal' for direct integration */}
+                    {isPayPalSelected && payPalClientId && cart && (
                         <div className="mb-6">
-                            <p className="text-sm text-gray-600">You will be redirected to PayPal to complete your payment.</p>
-                            {/* PayPal button or specific instructions might go here depending on Stripe gateway behavior */}
+                            {/* Inform users what to expect */}
+                            {!isProcessing && <p className="text-sm text-gray-600 mb-2">You will be redirected to PayPal to complete your payment securely.</p>}
+                            
+                            {/* PayPalButtons component */}
+                            {/* It should only be rendered if PayPal is selected and ready */}
+                            <PayPalButtons
+                                style={{ layout: "vertical", color: "blue", shape: "rect", label: "pay" }}
+                                createOrder={onPayPalCreateOrder}
+                                onApprove={onPayPalApprove}
+                                onError={onPayPalError}
+                                onCancel={onPayPalCancel}
+                                // onClick is useful for validation before calling createOrder
+                                // For example, ensuring all form fields are valid.
+                                // onClick={async (data, actions) => {
+                                //   // Validate form fields here
+                                //   // If validation fails: return actions.reject();
+                                //   // If validation passes: return actions.resolve();
+                                //   // This is also a good place to call createWooCommerceOrderForPayPal if not done in createOrder itself.
+                                //   // However, createOrder is often preferred for async setup that returns a PayPal order ID.
+                                // }}
+                                disabled={isProcessing || isCartLoading} // Disable if already processing or cart is loading
+                            />
+                            {isProcessing && formData.payment_method === 'paypal' && <p className="text-sm text-blue-600 mt-2">Processing PayPal payment...</p>}
                         </div>
+                    )}
+                    {isPayPalSelected && !payPalClientId && (
+                         <p className="text-red-600 text-sm mt-4 mb-4">PayPal is currently unavailable. Please select another payment method.</p>
                     )}
                     
                     {/* Display any submission errors */}
                     {submissionError && (
                         <p className="text-red-600 text-sm mt-4 mb-4">{submissionError}</p>
                     )}
-                    <button 
-                        type="submit" // Changed from button to submit if this is the main form submit trigger
-                        disabled={isProcessing || isCartLoading || !stripe || !elements}
-                        className="w-full bg-[#9CB24D] hover:bg-[#8CA23D] text-white py-3 px-6 rounded-md font-medium transition-colors text-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        {isProcessing ? 'Processing...' : 'Place Order'} {/* Updated button text */}
-                    </button>
+                    {/* "Place Order" button for non-PayPal methods */}
+                    {(!isPayPalSelected || !payPalClientId) && (
+                      <button 
+                          type="submit" 
+                          disabled={isProcessing || isCartLoading || (formData.payment_method === 'stripe' && (!stripe || !elements))}
+                          className="w-full bg-[#9CB24D] hover:bg-[#8CA23D] text-white py-3 px-6 rounded-md font-medium transition-colors text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                          {isProcessing ? 'Processing...' : 'Place Order'}
+                      </button>
+                    )}
                 </div>
             </div>
           </form>
