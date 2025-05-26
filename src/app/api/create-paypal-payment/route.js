@@ -23,20 +23,13 @@ export async function POST(request) {
         },
         invoiceId: orderId, // Link to WooCommerce order
       }],
-      // application_context can be added for return_url, cancel_url etc. if needed for a server-side approval flow
-      // but for client-side JS SDK, these are often handled client-side.
     };
-
-    console.log("[API /create-paypal-payment] Attempting to create order with payload:", JSON.stringify(orderPayload, null, 2));
 
     // Use the correct SDK structure: ordersController.createOrder()
     const response = await ordersController.createOrder({
       body: orderPayload,
       prefer: 'return=representation'
     });
-    
-    console.log("[API /create-paypal-payment] PayPal create order API response status:", response.statusCode);
-    console.log("[API /create-paypal-payment] PayPal create order API response body:", JSON.stringify(response.body, null, 2));
 
     // The new SDK returns response.statusCode and response.body
     if (response.statusCode !== 201 && response.statusCode !== 200) {
@@ -64,7 +57,6 @@ export async function POST(request) {
         throw new Error("Failed to retrieve PayPal Order ID after creation.");
     }
 
-    console.log("[API /create-paypal-payment] Successfully extracted PayPal Order ID:", paypalOrderId);
     return NextResponse.json({ paypalOrderId: paypalOrderId });
 
   } catch (error) {

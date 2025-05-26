@@ -10,21 +10,11 @@ function getPayPalClient() {
     throw new Error('PayPal API configuration is incomplete on the server.');
   }
 
-  // Debug logging (remove in production)
-  console.log("[PayPal SDK Debug] Client ID length:", clientId?.length);
-  console.log("[PayPal SDK Debug] Client ID starts with:", clientId?.substring(0, 10) + "...");
-  console.log("[PayPal SDK Debug] Secret length:", clientSecret?.length);
-  console.log("[PayPal SDK Debug] Secret starts with:", clientSecret?.substring(0, 10) + "...");
-
   // Determine the environment using PAYPAL_ENVIRONMENT or fallback to NODE_ENV
   const paypalEnv = process.env.PAYPAL_ENVIRONMENT || process.env.NODE_ENV;
   const currentEnvironment = paypalEnv === 'production'
     ? Environment.Production
     : Environment.Sandbox;
-
-  console.log("[PayPal SDK Debug] PAYPAL_ENVIRONMENT:", process.env.PAYPAL_ENVIRONMENT);
-  console.log("[PayPal SDK Debug] NODE_ENV:", process.env.NODE_ENV);
-  console.log("[PayPal SDK Debug] Using PayPal Environment:", currentEnvironment);
 
   // Create and return a new client instance with OrdersController
   try {
@@ -38,8 +28,6 @@ function getPayPalClient() {
     
     // Create the OrdersController instance
     const ordersController = new OrdersController(client);
-    
-    console.log("[PayPal SDK] Client and OrdersController created successfully with environment:", currentEnvironment);
     
     // Return an object with both client and ordersController for compatibility
     return {

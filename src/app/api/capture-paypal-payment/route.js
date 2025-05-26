@@ -31,18 +31,12 @@ export async function POST(request) {
 
     const { ordersController } = getPayPalClient();
 
-    // 1. Capture PayPal Payment using the correct SDK structure
-    console.log(`[API /capture-paypal-payment] Attempting to capture PayPal order ID: ${paypalOrderID}`);
-
-    // Use the correct SDK structure: ordersController.captureOrder()
+    // Capture PayPal Payment using the correct SDK structure
     const captureResponse = await ordersController.captureOrder({
       id: paypalOrderID,
       prefer: 'return=representation',
       body: {} // Empty body for capture
     });
-
-    console.log("[API /capture-paypal-payment] PayPal capture API response status:", captureResponse.statusCode);
-    console.log("[API /capture-paypal-payment] PayPal capture API response body:", JSON.stringify(captureResponse.body, null, 2));
 
     if (captureResponse.statusCode !== 201 && captureResponse.statusCode !== 200) {
       console.error('PayPal Capture Error:', captureResponse.body);
@@ -63,10 +57,7 @@ export async function POST(request) {
       }
     }
 
-    console.log('PayPal Capture Successful:', captureResponseBody);
-
-    // 2. Extract WooCommerce Order ID (invoice_id) from PayPal order details
-    // The invoice_id should be in the purchase units from the capture response
+    // Extract WooCommerce Order ID (invoice_id) from PayPal order details
     const wooCommerceOrderId = captureResponseBody?.purchaseUnits?.[0]?.invoiceId || captureResponseBody?.purchase_units?.[0]?.invoice_id;
 
     if (!wooCommerceOrderId) {
@@ -77,18 +68,14 @@ export async function POST(request) {
       }, { status: 500 });
     }
 
-    // 3. Update WooCommerce Order Status
+    // Update WooCommerce Order Status
     const wooApi = getWooCommerceApi();
     const orderUpdateData = {
       status: 'processing',
       transaction_id: captureResponseBody?.id, // Store PayPal transaction ID
-      // customer_note: `Paid with PayPal. Transaction ID: ${captureResponseBody.id}`
     };
 
-    console.log(`Updating WooCommerce order ${wooCommerceOrderId} with data:`, orderUpdateData);
-
     const wooResponse = await wooApi.put(`orders/${wooCommerceOrderId}`, orderUpdateData);
-    console.log('WooCommerce Order Update Response:', wooResponse.data);
 
     if (wooResponse.status !== 200) {
       console.error('WooCommerce Order Update Error:', wooResponse.data);
