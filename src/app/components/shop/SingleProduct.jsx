@@ -334,7 +334,9 @@ export default function SingleProduct({ productId }) {
   const careInfoList = careInfoString.split(',').map(item => item.trim()).filter(item => item);
   const fabricTechnologyList = fabricTechnologyString.split(',').map(item => item.trim()).filter(item => item);
 
-  const ogDescriptionValue = metaData.find(meta => meta.key === 'description')?.value || '';
+  let ogDescriptionValue = metaData.find(meta => meta.key === 'description')?.value || '';
+  // Replace newline characters with <br /> for HTML rendering
+  ogDescriptionValue = ogDescriptionValue.replace(/\r\n|\r|\n/g, '<br />');
   
   // Prepare content for Product Features, Care Info, and Fabric Technology sections
   let productFeaturesContent = null;
@@ -581,7 +583,7 @@ export default function SingleProduct({ productId }) {
       {/* Sizing Chart Section */}
       {sizeChartData && (
         <div className="mt-10 py-6 border-t border-gray-200">
-          <h3 className="text-xl font-semibold mb-4 text-gray-800">Sizing Chart</h3>
+          <h3 className="text-xl font-semibold mb-4 text-gray-800 text-center">Sizing Chart</h3>
           <div className="overflow-x-auto">
             <table className="min-w-full border border-gray-300 text-sm">
               <thead>
@@ -615,7 +617,7 @@ export default function SingleProduct({ productId }) {
       )}
       {sizeChartError && (
         <div className="mt-10 py-6 border-t border-gray-200">
-          <h3 className="text-xl font-semibold mb-2 text-gray-800">Sizing Chart</h3>
+          <h3 className="text-xl font-semibold mb-2 text-gray-800 text-center">Sizing Chart</h3>
           <p className="text-red-600">{sizeChartError}</p>
         </div>
       )}
