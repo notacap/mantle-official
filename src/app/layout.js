@@ -5,6 +5,7 @@ import Footer from "./components/Footer";
 import ReactQueryProvider from "./lib/reactQuery";
 import { CartProvider } from "../context/CartContext";
 import SideCart from "./components/SideCart";
+import GoogleAnalytics from "./components/GoogleAnalytics";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -58,6 +59,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#f8f8f8] text-gray-900 min-h-screen relative flex flex-col`}
       >
+        <GoogleAnalytics />
         <ReactQueryProvider>
           <CartProvider>
             <Navbar />
