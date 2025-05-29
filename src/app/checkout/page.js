@@ -146,7 +146,7 @@ export default function CheckoutPage() {
       console.log("[CheckoutPage] No payment methods found in expected locations (cart.payment_methods or cart.payment_requirements.payment_methods) or cart structure is unexpected.");
       setAvailablePaymentMethods([]);
     }
-  }, [cart]);
+  }, [cart, formData.payment_method]);
 
   const handlePaymentMethodChange = (e) => {
     setSubmissionError(null); // Clear previous errors when changing payment method

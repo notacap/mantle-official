@@ -1,17 +1,58 @@
-import { Suspense } from 'react';
+'use client';
+
+import { Suspense, useEffect, useState } from 'react';
 import { getCollections } from '../services/woocommerce';
 import Link from 'next/link';
 
-export const metadata = {
-  title: 'Collections | Mantle Clothing',
-  description: 'Browse our collections of sustainable, eco-friendly clothing and accessories.',
-};
+// export const metadata = { // Removed due to "use client"
+//   title: 'Collections | Mantle Clothing',
+//   description: 'Browse our collections of sustainable, eco-friendly clothing and accessories.',
+// };
 
 // Component to fetch and display collections
-async function CollectionsData() {
+function CollectionsData() {
+  const [collections, setCollections] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setIsLoading(true);
+        const collectionsData = await getCollections();
+        setCollections(collectionsData.collections || []);
+      } catch (err) {
+        console.error("Error fetching collections:", err);
+        setError(err.message || 'Failed to load collections.');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
+
+  if (isLoading) {
+    // Return the same skeleton/loading UI as the Suspense fallback
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {Array(6).fill(0).map((_, index) => (
+          <div key={index} className="block p-6 bg-gray-100 rounded-lg animate-pulse h-32">
+            <div className="h-6 bg-gray-200 rounded w-3/4 mb-3"></div>
+            <div className="h-4 bg-gray-200 rounded w-1/2 mb-3"></div>
+            <div className="h-4 bg-gray-200 rounded w-full"></div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div className="text-center text-red-500 py-10">Error: {error}</div>;
+  }
+
   // Fetch collections from the API
-  const collectionsData = await getCollections();
-  const collections = collectionsData.collections || [];
+  // const collectionsData = await getCollections();
+  // const collections = collectionsData.collections || [];
   
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

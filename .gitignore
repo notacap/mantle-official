@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Product JSON logs
+logs/
+
+# Product JSON Scripts
+scripts/fetchProductJson.js

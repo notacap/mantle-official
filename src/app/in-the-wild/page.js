@@ -83,7 +83,7 @@ export default function InTheWild() {
                     During this time Chase was assigned to the Housing Authority which was a unit responsible for patrolling public housing. The unit was awarded numerous citations for its programs and initiative. The unit worked closely with the Narcotics unit by enforcing street level narcotics activity and serving search and arrest warrants.
                   </p>
                   <p>
-                    Chase is currently a sworn/active deputy at a large Sheriff's Office in Alabama where his primary duties are providing advanced training and assisting in operations at the training facility.
+                    Chase is currently a sworn/active deputy at a large Sheriff&apos;s Office in Alabama where his primary duties are providing advanced training and assisting in operations at the training facility.
                   </p>
                 </div>
               </div>
@@ -215,7 +215,7 @@ export default function InTheWild() {
                 </div>
                 <div className="bio-text max-h-64 overflow-y-auto pr-4 text-gray-700">
                   <p>
-                    Bryan began his career as a state law enforcement officer in 2012 serving as an active patrol officer for several years. Within his first two years in the field, he was assigned as a member of his agency's Special Response Team where he later was responsible for conducting firearms training and qualifications, as well as the instruction of both pistol and carbine weapons platforms. Bryan holds several Law Enforcement and Firearms Instructor certifications and continues to serve in law enforcement.
+                    Bryan began his career as a state law enforcement officer in 2012 serving as an active patrol officer for several years. Within his first two years in the field, he was assigned as a member of his agency&apos;s Special Response Team where he later was responsible for conducting firearms training and qualifications, as well as the instruction of both pistol and carbine weapons platforms. Bryan holds several Law Enforcement and Firearms Instructor certifications and continues to serve in law enforcement.
                   </p>
                 </div>
               </div>

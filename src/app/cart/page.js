@@ -53,7 +53,7 @@ export default function Cart() {
          setEditableQuantities(prev => ({ ...prev, ...initialQuantities }));
       }
     }
-  }, [cart?.items]); // Removed editableQuantities from deps to avoid loops, sync is one-way from cart.items
+  }, [cart?.items, editableQuantities]); // Removed editableQuantities from deps to avoid loops, sync is one-way from cart.items
 
   const handleQuantityInputChange = (itemKey, value) => {
     setEditableQuantities(prev => ({ ...prev, [itemKey]: value }));

@@ -251,7 +251,7 @@ export function CartProvider({ children }) {
       setError(err.message || `An error occurred while updating the cart via ${apiUrl}.`);
       throw err;
     }
-  }, [nonce, persistCartToken, setCart, setNonce, setError, setLastKnownCartUpdateTimestamp]); // Removed cartToken, relies on cartTokenRef.current internally. Added setters.
+  }, [nonce, persistCartToken, setError, setLastKnownCartUpdateTimestamp]); // Removed cartToken, relies on cartTokenRef.current internally. Added setters.
 
   // Effect for cross-tab synchronization
   useEffect(() => {

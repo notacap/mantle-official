@@ -4,7 +4,7 @@ import './about.css';
 
 export const metadata = {
   title: "About Us | Mantle Clothing",
-  description: "Learn about Mantle Clothing's story, mission, and commitment to sustainable fashion.",
+  description: "Learn about Mantle Clothing&apos;s story, mission, and commitment to sustainable fashion.",
 };
 
 export default function About() {
@@ -29,7 +29,7 @@ export default function About() {
               Work can be shitty.
             </h1>
             <h1 className="hero-heading">
-              Your clothes don't have to be.
+              Your clothes don&apos;t have to be.
             </h1>
           </div>
 
@@ -70,7 +70,7 @@ export default function About() {
                 At Mantle Clothing, we believe that fashion should never come at the expense of our planet. Our mission is to create high-quality, sustainable apparel that looks good, feels good, and does good.
               </p>
               <p>
-                We're committed to ethical manufacturing processes, using eco-friendly materials, and creating durable products that reduce waste and environmental impact. Every decision we make is guided by our commitment to sustainability and responsibility.
+                We&apos;re committed to ethical manufacturing processes, using eco-friendly materials, and creating durable products that reduce waste and environmental impact. Every decision we make is guided by our commitment to sustainability and responsibility.
               </p>
             </section>
             

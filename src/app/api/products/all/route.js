@@ -10,9 +10,11 @@ export const revalidate = 300; // Revalidate this route at most every 5 minutes 
  */
 export async function GET(request) {
   try {
-    const { searchParams } = new URL(request.url);
-    const limit = searchParams.get('limit') || 12;
-    const page = searchParams.get('page') || 1;
+    // const { searchParams } = new URL(request.url); // Removed to avoid dynamic server usage
+    // const limit = searchParams.get('limit') || 12; // Removed
+    // const page = searchParams.get('page') || 1; // Removed
+    const limit = 20; // Using a fixed limit
+    const page = 1; // Defaulting to page 1
     
     // WooCommerce API URL
     const apiUrl = new URL('https://mantle-clothing.com/wp-json/wc/v3/products');

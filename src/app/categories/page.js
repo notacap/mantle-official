@@ -1,12 +1,9 @@
-import { Suspense } from 'react';
+'use client';
+
+import { Suspense, useEffect, useState } from 'react';
 import { getCategories } from '../services/woocommerce';
 import Link from 'next/link';
 import Image from 'next/image';
-
-export const metadata = {
-  title: 'Product Categories | Mantle Clothing',
-  description: 'Browse our categories of sustainable, eco-friendly clothing and accessories.',
-};
 
 // Mapping category names to image paths
 const categoryImageMap = {
@@ -117,32 +114,64 @@ function CategoryCard({ category, imageUrl }) {
 }
 
 // Component to fetch and display categories
-async function CategoriesData() {
-  // Fetch categories from the API
-  const categoriesData = await getCategories();
-  const categories = categoriesData.categories || [];
+function CategoriesData() {
+  const [categories, setCategories] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Define the desired category order
-  const categoryOrder = ['Pants', 'Tops', 'Outerwear', 'Accessories'];
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setIsLoading(true);
+        const categoriesData = await getCategories();
+        const fetchedCategories = categoriesData.categories || [];
 
-  // Filter out the 'Uncategorized' category and sort by specified order
-  const sortedAndFilteredCategories = categories
-    .filter(category => category?.name?.toLowerCase() !== 'uncategorized')
-    .sort((a, b) => {
-      const indexA = categoryOrder.indexOf(a?.name);
-      const indexB = categoryOrder.indexOf(b?.name);
-      // If both categories are in the order list, sort by their position
-      if (indexA !== -1 && indexB !== -1) return indexA - indexB;
-      // If only one category is in the order list, it should come first
-      if (indexA !== -1) return -1;
-      if (indexB !== -1) return 1;
-      // If neither category is in the order list, sort alphabetically
-      return a?.name?.localeCompare(b?.name);
-    });
+        // Define the desired category order
+        const categoryOrder = ['Pants', 'Tops', 'Outerwear', 'Accessories'];
+
+        // Filter out the 'Uncategorized' category and sort by specified order
+        const sortedAndFiltered = fetchedCategories
+          .filter(category => category?.name?.toLowerCase() !== 'uncategorized')
+          .sort((a, b) => {
+            const indexA = categoryOrder.indexOf(a?.name);
+            const indexB = categoryOrder.indexOf(b?.name);
+            if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+            if (indexA !== -1) return -1;
+            if (indexB !== -1) return 1;
+            return a?.name?.localeCompare(b?.name);
+          });
+        setCategories(sortedAndFiltered);
+      } catch (err) {
+        console.error("Error fetching categories:", err);
+        setError(err.message || 'Failed to load categories.');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
+
+  if (isLoading) {
+    // Return the same skeleton/loading UI as the Suspense fallback
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 xl:gap-8 lg:mt-32 lg:mb-32">
+        {Array(4).fill(0).map((_, index) => (
+          <div key={index} className="block p-6 bg-gray-100 rounded-lg animate-pulse h-80 xl:h-96">
+            <div className="h-6 bg-gray-300 rounded w-3/4 mb-3"></div>
+            <div className="h-4 bg-gray-300 rounded w-1/2 mb-3"></div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div className="text-center text-red-500 py-10">Error: {error}</div>;
+  }
   
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 xl:gap-8 lg:mt-32 lg:mb-32">
-      {sortedAndFilteredCategories.map((category) => {
+      {categories.map((category) => {
         const imageUrl = categoryImageMap[category.name] || '/images/placeholder.jpg';
         
         return (
