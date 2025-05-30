@@ -123,12 +123,9 @@ function CategoriesData() {
     async function fetchData() {
       try {
         setIsLoading(true);
-        console.log('[CategoriesPage] Fetching categories...');
         const categoriesData = await getCategories('CategoriesPage-Client');
-        console.log('[CategoriesPage] Fetched categories data:', JSON.stringify(categoriesData, null, 2));
 
         const fetchedCategories = categoriesData.categories || [];
-        console.log('[CategoriesPage] Parsed categories:', JSON.stringify(fetchedCategories, null, 2));
 
         // Define the desired category order
         const categoryOrder = ['Pants', 'Tops', 'Outerwear', 'Accessories'];

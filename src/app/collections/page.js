@@ -19,13 +19,8 @@ function CollectionsData() {
     async function fetchData() {
       try {
         setIsLoading(true);
-        console.log('[CollectionsPage] Fetching collections...');
         const collectionsData = await getCollections('CollectionsPage-Client');
-        console.log('[CollectionsPage] Fetched collections data:', JSON.stringify(collectionsData, null, 2));
-
         setCollections(collectionsData.collections || []);
-        console.log('[CollectionsPage] Parsed collections:', JSON.stringify(collectionsData.collections, null, 2));
-
       } catch (err) {
         console.error("[CollectionsPage] Error in fetchData catch block:", err);
         setError(err.message || 'Failed to load collections.');

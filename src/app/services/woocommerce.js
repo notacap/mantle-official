@@ -8,7 +8,6 @@ function getBaseUrl(context) {
     // For server-side rendering, use environment variable or default to localhost
     if (typeof window === 'undefined') {
       const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
-      console.log(`[${context} Server-Side getBaseUrl] NEXT_PUBLIC_SITE_URL:`, siteUrl);
       if (!siteUrl) {
         console.error(`[${context} Server-Side getBaseUrl] ERROR: NEXT_PUBLIC_SITE_URL is not set! Falling back to localhost, which is likely incorrect for production.`);
         return 'http://localhost:3000'; 
@@ -16,7 +15,6 @@ function getBaseUrl(context) {
       return siteUrl;
     }
     // For client-side, use window.location.origin
-    console.log(`[${context} Client-Side getBaseUrl] window.location.origin:`, window.location.origin);
     return window.location.origin;
   }
   
@@ -249,7 +247,6 @@ function getBaseUrl(context) {
     const baseUrl = getBaseUrl(context);
     const constructedUrlObj = new URL('/api/collections', baseUrl);
     const constructedUrl = constructedUrlObj.toString();
-    console.log(`[Service getCollections - ${context}] Attempting to fetch from: ${constructedUrl}`);
     try {
       const url = new URL('/api/collections', baseUrl);
       
@@ -258,7 +255,6 @@ function getBaseUrl(context) {
       url.searchParams.append('page', page.toString());
       
       const response = await fetch(url.toString());
-      console.log(`[Service getCollections - ${context}] Response status from ${constructedUrl}: ${response.status}`);
       
       if (!response.ok) {
         const errorText = await response.text();
@@ -267,7 +263,6 @@ function getBaseUrl(context) {
       }
       
       const data = await response.json();
-      console.log(`[Service getCollections - ${context}] Data received (first 200 chars):`, JSON.stringify(data).substring(0,200));
       return data; // Returns { collections: [...], pagination: {...} }
     } catch (error) {
       console.error(`[Service getCollections - ${context}] Catch block error for ${constructedUrl}:`, error);
@@ -314,7 +309,6 @@ function getBaseUrl(context) {
     const baseUrl = getBaseUrl(context);
     const constructedUrlObj = new URL('/api/categories', baseUrl);
     const constructedUrl = constructedUrlObj.toString();
-    console.log(`[Service getCategories - ${context}] Attempting to fetch from: ${constructedUrl}`);
     try {
       const url = new URL('/api/categories', baseUrl);
       
@@ -325,7 +319,6 @@ function getBaseUrl(context) {
       url.searchParams.append('order', order);
       
       const response = await fetch(url.toString());
-      console.log(`[Service getCategories - ${context}] Response status from ${constructedUrl}: ${response.status}`);
       
       if (!response.ok) {
         const errorText = await response.text();
@@ -334,7 +327,6 @@ function getBaseUrl(context) {
       }
       
       const data = await response.json();
-      console.log(`[Service getCategories - ${context}] Data received (first 200 chars):`, JSON.stringify(data).substring(0,200));
       return data; // Returns { categories: [...], pagination: {...} }
     } catch (error) {
       console.error(`[Service getCategories - ${context}] Catch block error for ${constructedUrl}:`, error);
