@@ -7,6 +7,7 @@ const CartContext = createContext();
 // Helper function to get the base URL - Reads from environment variable
 const getApiBaseUrl = () => {
   const wordpressUrl = process.env.NEXT_PUBLIC_WORDPRESS_URL;
+  console.log('[CartContext] NEXT_PUBLIC_WORDPRESS_URL:', wordpressUrl);
   if (!wordpressUrl) {
     console.error(
       "Missing NEXT_PUBLIC_WORDPRESS_URL environment variable.",
