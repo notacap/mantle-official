@@ -55,7 +55,6 @@ export default function ProductActions({ productId, price, sizes, colors, amount
       opt.name.toLowerCase() === sizeName.toLowerCase());
     
     if (option) {
-      // console.log(`Found size slug for "${sizeName}": "${option.slug}"`);
       return option.slug;
     }
     
@@ -71,7 +70,6 @@ export default function ProductActions({ productId, price, sizes, colors, amount
       opt.name.toLowerCase() === colorName.toLowerCase());
     
     if (option) {
-      // console.log(`Found color slug for "${colorName}": "${option.slug}"`);
       return option.slug;
     }
     
@@ -93,22 +91,7 @@ export default function ProductActions({ productId, price, sizes, colors, amount
     return amountName; // Fall back to name if no slug found
   };
   
-  // Log available options when component mounts or options change
-  // useEffect(() => {
-  //   if (sizeOptions?.length) {
-  //     console.log('Available size options:', sizeOptions.map(opt => ({
-  //       name: opt.name,
-  //       slug: opt.slug
-  //     })));
-  //   }
-    
-  //   if (colorOptions?.length) {
-  //     console.log('Available color options:', colorOptions.map(opt => ({
-  //       name: opt.name,
-  //       slug: opt.slug
-  //     })));
-  //   }
-  // }, [sizeOptions, colorOptions]);
+
   
   // Add to cart handler - Updated to use slugs
   const handleAddToCart = async () => {
@@ -145,10 +128,7 @@ export default function ProductActions({ productId, price, sizes, colors, amount
     };
 
     try {
-      // console.log('[ProductActions] Attempting to add to cart. Current Nonce:', nonce);
-      // console.log('Adding to cart with data:', itemData);
       const updatedCart = await callCartApi('/wp-json/wc/store/v1/cart/add-item', 'POST', itemData);
-      // console.log('Cart updated successfully:', updatedCart);
       // alert('Product added to cart!'); // Remove existing alert
       openSideCart(); // Open the side cart instead
     } catch (error) {

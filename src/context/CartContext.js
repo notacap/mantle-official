@@ -7,7 +7,7 @@ const CartContext = createContext();
 // Helper function to get the base URL - Reads from environment variable
 const getApiBaseUrl = () => {
   const wordpressUrl = process.env.NEXT_PUBLIC_WORDPRESS_URL;
-  console.log('[CartContext] NEXT_PUBLIC_WORDPRESS_URL:', wordpressUrl);
+
   if (!wordpressUrl) {
     console.error(
       "Missing NEXT_PUBLIC_WORDPRESS_URL environment variable.",
@@ -35,7 +35,6 @@ export function CartProvider({ children }) {
     const storedCartToken = localStorage.getItem('wooCartToken');
     if (storedCartToken) {
       setCartToken(storedCartToken);
-      // console.log('[CartContext] Loaded Cart-Token from localStorage:', storedCartToken);
     }
     setIsTokenLoadAttempted(true);
   }, []);
@@ -49,17 +48,14 @@ export function CartProvider({ children }) {
     if (newToken && newToken !== cartTokenRef.current) { // Compare with ref's current value
       setCartToken(newToken);
       localStorage.setItem('wooCartToken', newToken);
-      // console.log('[CartContext] Saved new Cart-Token to localStorage:', newToken);
     } else if (!newToken && cartTokenRef.current) { // Clearing an existing token
       setCartToken(null);
       localStorage.removeItem('wooCartToken');
-      // console.log('[CartContext] Cleared Cart-Token from localStorage.');
     }
   }, []); // Removed cartToken from dependency array, relies on ref
 
   const fetchCartAndNonce = useCallback(async () => {
     if (!isTokenLoadAttempted) {
-      // console.log('[CartContext] fetchCartAndNonce called before token load attempted, skipping.');
       return;
     }
     setIsLoading(true);
@@ -79,7 +75,6 @@ export function CartProvider({ children }) {
     // Use cartTokenRef.current for sending the token
     if (cartTokenRef.current) {
       requestHeaders['Cart-Token'] = cartTokenRef.current;
-      // console.log('[CartContext] Sending Cart-Token in initial fetch headers:', cartTokenRef.current);
     }
 
     try {
@@ -112,7 +107,6 @@ export function CartProvider({ children }) {
         response.headers.get('Nonce');
       const cartData = await response.json();
       
-      // console.log('[CartContext] Fetched initial cart. Nonce Header:', newNonce);
 
       // Extract Cart-Token from GET response, but DO NOT persist it here.
       // persistCartToken is primarily handled by callCartApi or initial load.
@@ -126,7 +120,6 @@ export function CartProvider({ children }) {
         // We should update our state and ref, and persist it.
         // This scenario is less common for GET but possible if the token expired mid-session
         // and the GET endpoint itself provides a new one.
-        // console.log('[CartContext] GET request returned a new Cart-Token. Updating and persisting:', extractedCartToken);
         persistCartToken(extractedCartToken);
       }
       // Removed persistCartToken(extractedCartToken) from here to avoid re-triggering due to token change from GET itself
@@ -192,9 +185,7 @@ export function CartProvider({ children }) {
     }
   
     try {
-      console.log('Making API call to:', apiUrl);
-      console.log('Request body:', body);
-      console.log('Request headers:', requestHeaders);
+
       const response = await fetch(apiUrl, {
         method: method,
         headers: requestHeaders,
@@ -229,7 +220,6 @@ export function CartProvider({ children }) {
       }
   
       const data = await response.json();
-      console.log('API Response Data:', data);
       updateCartAndNonce(data, responseNonce);
 
       const currentTimestamp = Date.now();
@@ -261,11 +251,9 @@ export function CartProvider({ children }) {
         const newTimestampFromStorage = parseInt(event.newValue, 10);
 
         if (thisTabLastUpdateTimestampRef.current !== null && newTimestampFromStorage === thisTabLastUpdateTimestampRef.current) {
-          // console.log('[CartContext] Storage event was from this tab, ignoring for re-fetch.');
           return; 
         }
 
-        // console.log('[CartContext] Detected cart update from another source. Refreshing cart...');
         setLastKnownCartUpdateTimestamp(newTimestampFromStorage);
         thisTabLastUpdateTimestampRef.current = newTimestampFromStorage;
         if (isTokenLoadAttempted) {
