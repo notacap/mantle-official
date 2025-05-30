@@ -4,20 +4,19 @@
  */
 
 // Helper function to get base URL
-function getBaseUrl() {
+function getBaseUrl(context) {
     // For server-side rendering, use environment variable or default to localhost
     if (typeof window === 'undefined') {
       const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
-      console.log('[ServService-Side getBaseUrl] NEXT_PUBLIC_SITE_URL:', siteUrl); // LOG
-      // It's crucial that siteUrl is correctly set in Vercel for production
+      console.log(`[${context} Server-Side getBaseUrl] NEXT_PUBLIC_SITE_URL:`, siteUrl);
       if (!siteUrl) {
-        console.error('[Server-Side getBaseUrl] ERROR: NEXT_PUBLIC_SITE_URL is not set! Falling back to localhost, which is likely incorrect for production.');
+        console.error(`[${context} Server-Side getBaseUrl] ERROR: NEXT_PUBLIC_SITE_URL is not set! Falling back to localhost, which is likely incorrect for production.`);
         return 'http://localhost:3000'; 
       }
       return siteUrl;
     }
     // For client-side, use window.location.origin
-    console.log('[Client-Side getBaseUrl] window.location.origin:', window.location.origin);
+    console.log(`[${context} Client-Side getBaseUrl] window.location.origin:`, window.location.origin);
     return window.location.origin;
   }
   
@@ -29,7 +28,7 @@ function getBaseUrl() {
   export async function getFeaturedProducts(limit = 8) {
     try {
       // Use our internal API route
-      const url = new URL('/api/products/featured', getBaseUrl());
+      const url = new URL('/api/products/featured', getBaseUrl('getFeaturedProducts'));
       
       // Add limit parameter
       url.searchParams.append('limit', limit.toString());
@@ -57,7 +56,7 @@ function getBaseUrl() {
   export async function getProducts(limit = 20, page = 1) {
     try {
       // Use our internal API route
-      const url = new URL('/api/products/all', getBaseUrl());
+      const url = new URL('/api/products/all', getBaseUrl('getProducts'));
       
       // Add parameters
       url.searchParams.append('limit', limit.toString());
@@ -86,7 +85,7 @@ function getBaseUrl() {
   export async function getProductsByCategory(categoryId, limit = 8) {
     try {
       // Use our internal API route
-      const url = new URL('/api/products/category', getBaseUrl());
+      const url = new URL('/api/products/category', getBaseUrl('getProductsByCategory'));
       
       // Add query parameters
       url.searchParams.append('category', categoryId.toString());
@@ -114,7 +113,7 @@ function getBaseUrl() {
   export async function getProduct(productId) {
     try {
       // Use our internal API route
-      const url = new URL('/api/products', getBaseUrl());
+      const url = new URL('/api/products', getBaseUrl('getProduct'));
       
       // Add query parameters
       url.searchParams.append('id', productId.toString());
@@ -220,7 +219,7 @@ function getBaseUrl() {
       }
       
       // Use our internal API route
-      const url = new URL('/api/products/tag', getBaseUrl());
+      const url = new URL('/api/products/tag', getBaseUrl('getProductsByTag'));
       
       // Add query parameters
       url.searchParams.append('tag', tag);
@@ -246,32 +245,32 @@ function getBaseUrl() {
    * @param {number} page - Page number for pagination
    * @returns {Promise<Object>} - Object with collections array and pagination info
    */
-  export async function getCollections(limit = 100, page = 1) {
-    const constructedUrlObj = new URL('/api/collections', getBaseUrl());
+  export async function getCollections(context = 'Unknown Context', limit = 100, page = 1) {
+    const baseUrl = getBaseUrl(context);
+    const constructedUrlObj = new URL('/api/collections', baseUrl);
     const constructedUrl = constructedUrlObj.toString();
-    console.log(`[Service getCollections] Attempting to fetch from: ${constructedUrl}`); // LOG
+    console.log(`[Service getCollections - ${context}] Attempting to fetch from: ${constructedUrl}`);
     try {
-      // Use our internal API route
-      const url = new URL('/api/collections', getBaseUrl());
+      const url = new URL('/api/collections', baseUrl);
       
       // Add parameters
       url.searchParams.append('limit', limit.toString());
       url.searchParams.append('page', page.toString());
       
       const response = await fetch(url.toString());
-      console.log(`[Service getCollections] Response status from ${constructedUrl}: ${response.status}`); // LOG
+      console.log(`[Service getCollections - ${context}] Response status from ${constructedUrl}: ${response.status}`);
       
       if (!response.ok) {
         const errorText = await response.text();
-        console.error(`[Service getCollections] Failed response from ${constructedUrl}: ${response.status}, ${errorText}`); // LOG
+        console.error(`[Service getCollections - ${context}] Failed response from ${constructedUrl}: ${response.status}, ${errorText}`);
         throw new Error(`Failed to fetch collections: ${response.status}`);
       }
       
       const data = await response.json();
-      console.log(`[Service getCollections] Data received from ${constructedUrl} (first 200 chars):`, JSON.stringify(data).substring(0,200)); // LOG
+      console.log(`[Service getCollections - ${context}] Data received (first 200 chars):`, JSON.stringify(data).substring(0,200));
       return data; // Returns { collections: [...], pagination: {...} }
     } catch (error) {
-      console.error(`[Service getCollections] Catch block error for ${constructedUrl}:`, error); // LOG
+      console.error(`[Service getCollections - ${context}] Catch block error for ${constructedUrl}:`, error);
       return { collections: [], pagination: { total: 0, totalPages: 0, currentPage: 1, perPage: limit } };
     }
   }
@@ -284,7 +283,7 @@ function getBaseUrl() {
   export async function getCollection(collectionId) {
     try {
       // Use our internal API route
-      const url = new URL('/api/collections/single', getBaseUrl());
+      const url = new URL('/api/collections/single', getBaseUrl('getCollection'));
       
       // Add query parameters
       url.searchParams.append('id', collectionId.toString());
@@ -311,13 +310,13 @@ function getBaseUrl() {
    * @param {string} order - Order direction (default: asc)
    * @returns {Promise<Object>} - Object with categories array and pagination info
    */
-  export async function getCategories(limit = 100, page = 1, orderby = 'name', order = 'asc') {
-    const constructedUrlObj = new URL('/api/categories', getBaseUrl());
+  export async function getCategories(context = 'Unknown Context', limit = 100, page = 1, orderby = 'name', order = 'asc') {
+    const baseUrl = getBaseUrl(context);
+    const constructedUrlObj = new URL('/api/categories', baseUrl);
     const constructedUrl = constructedUrlObj.toString();
-    console.log(`[Service getCategories] Attempting to fetch from: ${constructedUrl}`); // LOG
+    console.log(`[Service getCategories - ${context}] Attempting to fetch from: ${constructedUrl}`);
     try {
-      // Use our internal API route
-      const url = new URL('/api/categories', getBaseUrl());
+      const url = new URL('/api/categories', baseUrl);
       
       // Add parameters
       url.searchParams.append('limit', limit.toString());
@@ -326,19 +325,19 @@ function getBaseUrl() {
       url.searchParams.append('order', order);
       
       const response = await fetch(url.toString());
-      console.log(`[Service getCategories] Response status from ${constructedUrl}: ${response.status}`); // LOG
+      console.log(`[Service getCategories - ${context}] Response status from ${constructedUrl}: ${response.status}`);
       
       if (!response.ok) {
         const errorText = await response.text();
-        console.error(`[Service getCategories] Failed response from ${constructedUrl}: ${response.status}, ${errorText}`); // LOG
+        console.error(`[Service getCategories - ${context}] Failed response from ${constructedUrl}: ${response.status}, ${errorText}`);
         throw new Error(`Failed to fetch categories: ${response.status}`);
       }
       
       const data = await response.json();
-      console.log(`[Service getCategories] Data received from ${constructedUrl} (first 200 chars):`, JSON.stringify(data).substring(0,200)); // LOG
+      console.log(`[Service getCategories - ${context}] Data received (first 200 chars):`, JSON.stringify(data).substring(0,200));
       return data; // Returns { categories: [...], pagination: {...} }
     } catch (error) {
-      console.error(`[Service getCategories] Catch block error for ${constructedUrl}:`, error); // LOG
+      console.error(`[Service getCategories - ${context}] Catch block error for ${constructedUrl}:`, error);
       return { categories: [], pagination: { total: 0, totalPages: 0, currentPage: 1, perPage: limit } };
     }
   }
@@ -351,7 +350,7 @@ function getBaseUrl() {
   export async function getCategory(categoryId) {
     try {
       // Use our internal API route
-      const url = new URL('/api/categories/single', getBaseUrl());
+      const url = new URL('/api/categories/single', getBaseUrl('getCategory'));
       
       // Add query parameters
       url.searchParams.append('id', categoryId.toString());
@@ -377,7 +376,7 @@ function getBaseUrl() {
   export async function getCategoryTree() {
     try {
       // Use our internal API route
-      const url = new URL('/api/categories/tree', getBaseUrl());
+      const url = new URL('/api/categories/tree', getBaseUrl('getCategoryTree'));
       
       const response = await fetch(url.toString());
       

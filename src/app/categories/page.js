@@ -124,7 +124,7 @@ function CategoriesData() {
       try {
         setIsLoading(true);
         console.log('[CategoriesPage] Fetching categories...');
-        const categoriesData = await getCategories();
+        const categoriesData = await getCategories('CategoriesPage-Client');
         console.log('[CategoriesPage] Fetched categories data:', JSON.stringify(categoriesData, null, 2));
 
         const fetchedCategories = categoriesData.categories || [];

@@ -20,7 +20,7 @@ function CollectionsData() {
       try {
         setIsLoading(true);
         console.log('[CollectionsPage] Fetching collections...');
-        const collectionsData = await getCollections();
+        const collectionsData = await getCollections('CollectionsPage-Client');
         console.log('[CollectionsPage] Fetched collections data:', JSON.stringify(collectionsData, null, 2));
 
         setCollections(collectionsData.collections || []);

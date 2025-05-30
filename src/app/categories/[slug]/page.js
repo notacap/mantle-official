@@ -15,7 +15,7 @@ export async function generateMetadata({ params }) {
   const slug = resolvedParams.slug;
   
   // Find category by slug
-  const categoriesData = await getCategories();
+  const categoriesData = await getCategories('CategorySlugPage-GenerateMetadata');
   const categories = categoriesData.categories || [];
   const category = categories.find(cat => cat.slug === slug);
   
@@ -40,7 +40,7 @@ export default async function CategoryPage({ params }) {
   const slug = resolvedParams.slug;
   
   // Find category by slug
-  const categoriesData = await getCategories();
+  const categoriesData = await getCategories('CategorySlugPage-PageLoad');
   const categories = categoriesData.categories || [];
   const category = categories.find(cat => cat.slug === slug);
   

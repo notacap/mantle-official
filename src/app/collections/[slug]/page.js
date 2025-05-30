@@ -15,7 +15,7 @@ export async function generateMetadata({ params }) {
   const slug = resolvedParams.slug;
   
   // Find collection by slug
-  const collectionsData = await getCollections();
+  const collectionsData = await getCollections('CollectionSlugPage-GenerateMetadata');
   const collections = collectionsData.collections || [];
   const collection = collections.find(col => col.slug === slug);
   
@@ -38,7 +38,7 @@ export default async function CollectionPage({ params }) {
   const slug = resolvedParams.slug;
   
   // Find collection by slug
-  const collectionsData = await getCollections();
+  const collectionsData = await getCollections('CollectionSlugPage-PageLoad');
   const collections = collectionsData.collections || [];
   const collection = collections.find(col => col.slug === slug);
   
