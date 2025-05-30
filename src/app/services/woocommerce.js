@@ -7,9 +7,17 @@
 function getBaseUrl() {
     // For server-side rendering, use environment variable or default to localhost
     if (typeof window === 'undefined') {
-      return process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+      console.log('[ServService-Side getBaseUrl] NEXT_PUBLIC_SITE_URL:', siteUrl); // LOG
+      // It's crucial that siteUrl is correctly set in Vercel for production
+      if (!siteUrl) {
+        console.error('[Server-Side getBaseUrl] ERROR: NEXT_PUBLIC_SITE_URL is not set! Falling back to localhost, which is likely incorrect for production.');
+        return 'http://localhost:3000'; 
+      }
+      return siteUrl;
     }
     // For client-side, use window.location.origin
+    console.log('[Client-Side getBaseUrl] window.location.origin:', window.location.origin);
     return window.location.origin;
   }
   
@@ -46,7 +54,7 @@ function getBaseUrl() {
    * @param {number} page - Page number for pagination
    * @returns {Promise<Array>} - Array of product objects
    */
-  export async function getProducts(limit = 12, page = 1) {
+  export async function getProducts(limit = 20, page = 1) {
     try {
       // Use our internal API route
       const url = new URL('/api/products/all', getBaseUrl());
@@ -239,6 +247,9 @@ function getBaseUrl() {
    * @returns {Promise<Object>} - Object with collections array and pagination info
    */
   export async function getCollections(limit = 100, page = 1) {
+    const constructedUrlObj = new URL('/api/collections', getBaseUrl());
+    const constructedUrl = constructedUrlObj.toString();
+    console.log(`[Service getCollections] Attempting to fetch from: ${constructedUrl}`); // LOG
     try {
       // Use our internal API route
       const url = new URL('/api/collections', getBaseUrl());
@@ -248,15 +259,19 @@ function getBaseUrl() {
       url.searchParams.append('page', page.toString());
       
       const response = await fetch(url.toString());
+      console.log(`[Service getCollections] Response status from ${constructedUrl}: ${response.status}`); // LOG
       
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`[Service getCollections] Failed response from ${constructedUrl}: ${response.status}, ${errorText}`); // LOG
         throw new Error(`Failed to fetch collections: ${response.status}`);
       }
       
       const data = await response.json();
+      console.log(`[Service getCollections] Data received from ${constructedUrl} (first 200 chars):`, JSON.stringify(data).substring(0,200)); // LOG
       return data; // Returns { collections: [...], pagination: {...} }
     } catch (error) {
-      console.error('Error fetching collections:', error);
+      console.error(`[Service getCollections] Catch block error for ${constructedUrl}:`, error); // LOG
       return { collections: [], pagination: { total: 0, totalPages: 0, currentPage: 1, perPage: limit } };
     }
   }
@@ -297,6 +312,9 @@ function getBaseUrl() {
    * @returns {Promise<Object>} - Object with categories array and pagination info
    */
   export async function getCategories(limit = 100, page = 1, orderby = 'name', order = 'asc') {
+    const constructedUrlObj = new URL('/api/categories', getBaseUrl());
+    const constructedUrl = constructedUrlObj.toString();
+    console.log(`[Service getCategories] Attempting to fetch from: ${constructedUrl}`); // LOG
     try {
       // Use our internal API route
       const url = new URL('/api/categories', getBaseUrl());
@@ -308,15 +326,19 @@ function getBaseUrl() {
       url.searchParams.append('order', order);
       
       const response = await fetch(url.toString());
+      console.log(`[Service getCategories] Response status from ${constructedUrl}: ${response.status}`); // LOG
       
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`[Service getCategories] Failed response from ${constructedUrl}: ${response.status}, ${errorText}`); // LOG
         throw new Error(`Failed to fetch categories: ${response.status}`);
       }
       
       const data = await response.json();
+      console.log(`[Service getCategories] Data received from ${constructedUrl} (first 200 chars):`, JSON.stringify(data).substring(0,200)); // LOG
       return data; // Returns { categories: [...], pagination: {...} }
     } catch (error) {
-      console.error('Error fetching categories:', error);
+      console.error(`[Service getCategories] Catch block error for ${constructedUrl}:`, error); // LOG
       return { categories: [], pagination: { total: 0, totalPages: 0, currentPage: 1, perPage: limit } };
     }
   }

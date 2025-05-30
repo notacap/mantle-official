@@ -123,8 +123,12 @@ function CategoriesData() {
     async function fetchData() {
       try {
         setIsLoading(true);
+        console.log('[CategoriesPage] Fetching categories...');
         const categoriesData = await getCategories();
+        console.log('[CategoriesPage] Fetched categories data:', JSON.stringify(categoriesData, null, 2));
+
         const fetchedCategories = categoriesData.categories || [];
+        console.log('[CategoriesPage] Parsed categories:', JSON.stringify(fetchedCategories, null, 2));
 
         // Define the desired category order
         const categoryOrder = ['Pants', 'Tops', 'Outerwear', 'Accessories'];
@@ -142,7 +146,7 @@ function CategoriesData() {
           });
         setCategories(sortedAndFiltered);
       } catch (err) {
-        console.error("Error fetching categories:", err);
+        console.error("[CategoriesPage] Error in fetchData catch block:", err);
         setError(err.message || 'Failed to load categories.');
       } finally {
         setIsLoading(false);
