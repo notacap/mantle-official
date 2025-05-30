@@ -388,19 +388,7 @@ export default function SingleProduct({ productId }) {
     detailSections.push({ title: 'Fabric Technology', content: fabricTechnologyContent });
   }
 
-  // Log the attribute options to help with debugging
-  // console.log('Attribute options and product images:', {
-  //   colorAttributeId, 
-  //   sizeAttributeId,
-  //   amountAttributeId,
-  //   colors, 
-  //   sizes, 
-  //   amounts,
-  //   colorOptions, 
-  //   sizeOptions,
-  //   amountOptions,
-  //   productImages: product?.images
-  // });
+
   
   return (
     <>
