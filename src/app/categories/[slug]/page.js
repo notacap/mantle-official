@@ -54,6 +54,7 @@ export default async function CategoryPage({ params }) {
       {/* Breadcrumb navigation */}
       <div className="text-sm text-gray-500 mb-6">
         <Link href="/" className="hover:underline">Home</Link> {' / '}
+        <Link href="/shop" className="hover:underline">Shop</Link> {' / '}
         <Link href="/categories" className="hover:underline">Categories</Link> {' / '}
         <span className="font-medium text-gray-700">{category.name}</span>
       </div>

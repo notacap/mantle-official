@@ -79,6 +79,13 @@ function CollectionsData() {
 export default function CollectionsPage() {
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 1rem' }}>
+      {/* Breadcrumb navigation */}
+      <div className="text-sm text-gray-500 mb-6">
+        <Link href="/" className="hover:underline">Home</Link> {' / '}
+        <Link href="/shop" className="hover:underline">Shop</Link> {' / '}
+        <span className="font-medium text-gray-700">Collections</span>
+      </div>
+
       <h1 style={{ 
         fontSize: '2.5rem', 
         fontWeight: 'bold', 

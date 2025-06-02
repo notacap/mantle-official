@@ -193,6 +193,12 @@ function CategoriesData() {
 export default function CategoriesPage() {
   return (
     <div className="w-full"> {/* Simplified wrapper */}
+      {/* Breadcrumb navigation */}
+      <div className="text-sm text-gray-500 mb-6 max-w-7xl mx-auto px-4 pt-10">
+        <Link href="/" className="hover:underline">Home</Link> {' / '}
+        <Link href="/shop" className="hover:underline">Shop</Link> {' / '}
+        <span className="font-medium text-gray-700">Categories</span>
+      </div>
       <div className="max-w-7xl mx-auto px-4 py-10 xl:py-16"> {/* Changed max-width and padding for larger screens */}
         <h1 style={{ 
           fontSize: '2.5rem', 

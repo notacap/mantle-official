@@ -35,6 +35,12 @@ export default function Shop() {
 
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 1rem' }}>
+      {/* Breadcrumb navigation */}
+      <div className="text-sm text-gray-500 mb-6">
+        <Link href="/" className="hover:underline">Home</Link> {' / '}
+        <span className="font-medium text-gray-700">Shop</span>
+      </div>
+      
       <h1 style={{ 
         fontSize: '2.5rem', 
         fontWeight: 'bold', 

@@ -52,6 +52,7 @@ export default async function CollectionPage({ params }) {
       {/* Breadcrumb navigation */}
       <div className="text-sm text-gray-500 mb-6">
         <Link href="/" className="hover:underline">Home</Link> {' / '}
+        <Link href="/shop" className="hover:underline">Shop</Link> {' / '}
         <Link href="/collections" className="hover:underline">Collections</Link> {' / '}
         <span className="font-medium text-gray-700">{collection.name}</span>
       </div>
