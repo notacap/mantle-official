@@ -403,13 +403,6 @@ export default function SingleProduct({ productId }) {
             <DialogTrigger asChild>
               <div 
                 className="product-image-container cursor-pointer" 
-                style={{ 
-                  position: 'relative', 
-                  height: '500px',
-                  backgroundColor: '#f9fafb',
-                  borderRadius: '0.5rem',
-                  overflow: 'hidden',
-                }}
                 onClick={handleMainImageClick}
               >
                 {currentImage && currentImage.src && (
