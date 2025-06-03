@@ -1,8 +1,9 @@
 import { getCollections } from '@/app/services/woocommerce';
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata({ params: rawParams }) {
   // Ensure params is properly destructured or awaited if necessary,
   // but typically Next.js passes resolved params here.
+  const params = await Promise.resolve(rawParams);
   const slug = params.slug;
   
   // It's good practice to use a unique context string for calls to shared services
