@@ -3,6 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 
 // Helper function to decode HTML entities (can be moved to a utility file later if not already present)
@@ -25,6 +26,7 @@ function decodeHtmlEntities(text) {
 
 export default function CheckoutCartSummary() {
   const { cart, isLoading: isCartLoading } = useCart();
+  const router = useRouter();
 
   if (isCartLoading && !cart) {
     return (
@@ -53,6 +55,27 @@ export default function CheckoutCartSummary() {
   const taxes = cart.totals?.total_tax ? parseFloat(cart.totals.total_tax) / (10**currencyMinorUnit) : 0; // Assuming total_tax exists
   const total = cart.totals?.total_price ? parseFloat(cart.totals.total_price) / (10**currencyMinorUnit) : 0;
 
+  const handleProductLinkClick = async (itemId) => {
+    try {
+      const response = await fetch(`/api/products?id=${itemId}`);
+      if (!response.ok) {
+        throw new Error(`API request failed with status ${response.status}`);
+      }
+      const productData = await response.json();
+      // Ensure productData is an array and get the first element as per API structure
+      const product = Array.isArray(productData) ? productData[0] : productData;
+
+      if (product && product.parent_id && product.parent_id !== 0) {
+        router.push(`/shop/product/${product.parent_id}`);
+      } else {
+        router.push(`/shop/product/${itemId}`);
+      }
+    } catch (err) {
+      console.error("Failed to fetch parent product ID:", err);
+      // Fallback to original item ID on error
+      router.push(`/shop/product/${itemId}`);
+    }
+  };
 
   return (
     <div className="p-6 bg-gray-100 rounded-lg shadow-md">
@@ -66,21 +89,19 @@ export default function CheckoutCartSummary() {
 
           return (
             <div key={item.key} className="flex items-start space-x-4 py-3 border-b border-gray-200 last:border-b-0">
-              <Link href={`/shop/product/${item.id}`} legacyBehavior>
-                <a className="w-20 h-20 relative flex-shrink-0 rounded-md overflow-hidden border border-gray-200 bg-white cursor-pointer">
-                  <Image
-                    src={imageUrl}
-                    alt={decodeHtmlEntities(item.name)}
-                    fill
-                    style={{ objectFit: 'cover' }}
-                    sizes="(max-width: 768px) 20vw, 80px"
-                  />
-                </a>
-              </Link>
+              <div onClick={() => handleProductLinkClick(item.id)} className="w-20 h-20 relative flex-shrink-0 rounded-md overflow-hidden border border-gray-200 bg-white cursor-pointer">
+                <Image
+                  src={imageUrl}
+                  alt={decodeHtmlEntities(item.name)}
+                  fill
+                  style={{ objectFit: 'cover' }}
+                  sizes="(max-width: 768px) 20vw, 80px"
+                />
+              </div>
               <div className="flex-grow">
-                <Link href={`/shop/product/${item.id}`} legacyBehavior>
-                  <a className="text-md font-medium text-gray-800 hover:text-[#9CB24D] cursor-pointer">{decodeHtmlEntities(item.name)}</a>
-                </Link>
+                <div onClick={() => handleProductLinkClick(item.id)} className="text-md font-medium text-gray-800 hover:text-[#9CB24D] cursor-pointer">
+                  {decodeHtmlEntities(item.name)}
+                </div>
                 {variationText && <p className="text-xs text-gray-500 mt-0.5">{variationText}</p>}
                 <p className="text-sm text-gray-600 mt-1">Quantity: {item.quantity}</p>
               </div>

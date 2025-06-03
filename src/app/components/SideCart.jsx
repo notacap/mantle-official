@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { FiX, FiTrash2, FiPlus, FiMinus } from 'react-icons/fi';
 import { useCart } from '@/context/CartContext';
 import { formatPrice } from '@/app/services/woocommerce';
@@ -29,6 +30,7 @@ function decodeHtmlEntities(text) {
 export default function SideCart() {
   const { cart, callCartApi, isSideCartOpen, closeSideCart, isLoading: isCartLoading } = useCart();
   const [isUpdatingItem, setIsUpdatingItem] = useState(false);
+  const router = useRouter();
 
   const handleUpdateQuantity = async (itemKey, newQuantity) => {
     if (newQuantity < 1 || isUpdatingItem || isCartLoading) return;
@@ -64,6 +66,27 @@ export default function SideCart() {
   const cartItems = cart?.items || [];
   const subtotal = cart?.totals?.total_items ? parseFloat(cart.totals.total_items) / (10**(cart.totals.currency_minor_unit || 2)) : 0;
   const currencySymbol = cart?.totals?.currency_symbol || '$';
+
+  const handleProductLinkClick = async (itemId) => {
+    closeSideCart();
+    try {
+      const response = await fetch(`/api/products?id=${itemId}`);
+      if (!response.ok) {
+        throw new Error(`API request failed with status ${response.status}`);
+      }
+      const productData = await response.json();
+      const product = Array.isArray(productData) ? productData[0] : productData;
+
+      if (product && product.parent_id && product.parent_id !== 0) {
+        router.push(`/shop/product/${product.parent_id}`);
+      } else {
+        router.push(`/shop/product/${itemId}`);
+      }
+    } catch (err) {
+      console.error("Failed to fetch parent product ID:", err);
+      router.push(`/shop/product/${itemId}`);
+    }
+  };
 
   return (
     <>
@@ -111,20 +134,18 @@ export default function SideCart() {
 
               return (
                 <div key={item.key} className="flex items-start space-x-3 pb-4 border-b border-gray-100 last:border-b-0">
-                  <Link href={`/shop/product/${item.id}`} legacyBehavior>
-                    <a className="w-20 h-20 relative flex-shrink-0 rounded-md overflow-hidden border border-gray-200 cursor-pointer">
-                      <Image
-                        src={imageUrl}
-                        alt={decodeHtmlEntities(item.name)}
-                        fill
-                        style={{ objectFit: 'cover' }}
-                      />
-                    </a>
-                  </Link>
+                  <div onClick={() => handleProductLinkClick(item.id)} className="w-20 h-20 relative flex-shrink-0 rounded-md overflow-hidden border border-gray-200 cursor-pointer">
+                    <Image
+                      src={imageUrl}
+                      alt={decodeHtmlEntities(item.name)}
+                      fill
+                      style={{ objectFit: 'cover' }}
+                    />
+                  </div>
                   <div className="flex-grow">
-                    <Link href={`/shop/product/${item.id}`} legacyBehavior>
-                     <a className="text-sm font-medium text-gray-800 hover:text-[#9CB24D] cursor-pointer">{decodeHtmlEntities(item.name)}</a>
-                    </Link>
+                    <div onClick={() => handleProductLinkClick(item.id)} className="text-sm font-medium text-gray-800 hover:text-[#9CB24D] cursor-pointer">
+                      {decodeHtmlEntities(item.name)}
+                    </div>
                     {variationText && <p className="text-xs text-gray-500 mt-0.5">{variationText}</p>}
                     <p className="text-sm font-semibold text-gray-900 mt-1">{currencySymbol}{itemPrice.toFixed(2)}</p>
                     

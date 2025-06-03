@@ -129,21 +129,21 @@ export default function CheckoutPage() {
   // END PAYPAL STATE
 
   useEffect(() => {
-    console.log("[CheckoutPage] Cart data received:", cart);
+    // console.log("[CheckoutPage] Cart data received:", cart);
     if (cart && Array.isArray(cart.payment_methods) && cart.payment_methods.length > 0) {
-      console.log("[CheckoutPage] Detected payment methods directly from cart.payment_methods:", cart.payment_methods);
+      // console.log("[CheckoutPage] Detected payment methods directly from cart.payment_methods:", cart.payment_methods);
       setAvailablePaymentMethods(cart.payment_methods);
       if (!formData.payment_method) {
         setFormData(prev => ({ ...prev, payment_method: cart.payment_methods[0].name }));
       }
     } else if (cart && cart.payment_requirements && Array.isArray(cart.payment_requirements.payment_methods)) {
-      console.log("[CheckoutPage] Detected payment methods from cart.payment_requirements.payment_methods:", cart.payment_requirements.payment_methods);
+      // console.log("[CheckoutPage] Detected payment methods from cart.payment_requirements.payment_methods:", cart.payment_requirements.payment_methods);
       setAvailablePaymentMethods(cart.payment_requirements.payment_methods);
       if (!formData.payment_method && cart.payment_requirements.payment_methods.length > 0) {
         setFormData(prev => ({ ...prev, payment_method: cart.payment_requirements.payment_methods[0].name }));
       }
     } else {
-      console.log("[CheckoutPage] No payment methods found in expected locations (cart.payment_methods or cart.payment_requirements.payment_methods) or cart structure is unexpected.");
+      // console.log("[CheckoutPage] No payment methods found in expected locations (cart.payment_methods or cart.payment_requirements.payment_methods) or cart structure is unexpected.");
       setAvailablePaymentMethods([]);
     }
   }, [cart, formData.payment_method]);
@@ -185,7 +185,7 @@ export default function CheckoutPage() {
         // This function might be called by the main form's onSubmit,
         // but for PayPal, we don't want it to proceed with Stripe logic or Place Order API call here.
         // The `createOrderOrUpdateCustomer` will be called directly by PayPalButtons' `onClick` or `createOrder`.
-        console.log("[CheckoutPage] handleSubmit called with PayPal selected. PayPalButtons will manage the flow.");
+        // console.log("[CheckoutPage] handleSubmit called with PayPal selected. PayPalButtons will manage the flow.");
         // setIsProcessing(true); // Set processing true, will be set to false on completion/error by PayPal flow
         // setSubmissionError(null);
         return; // Exit if PayPal is chosen, as PayPalButtons handles the process.
@@ -209,13 +209,13 @@ export default function CheckoutPage() {
       ...(formData.order_notes && { customer_note: formData.order_notes }),
     };
 
-    console.log("Submitting customer and payment method data:", dataToSend);
+    // console.log("Submitting customer and payment method data:", dataToSend);
 
     try {
       // Step 1: Update customer information (common for Stripe)
       // For PayPal, this will be called before creating the WC order inside createOrderForPaypal
       await callCartApi('/wp-json/wc/store/v1/cart/update-customer', 'POST', dataToSend);
-      console.log("Customer data updated successfully for Stripe.");
+      // console.log("Customer data updated successfully for Stripe.");
 
       // Step 2: Process Payment & Place Order (Stripe specific)
       if (!stripe || !elements) {
@@ -264,22 +264,22 @@ export default function CheckoutPage() {
           { key: 'stripe_token', value: paymentMethod.id }
         ];
         
-        console.log("Payment method created (pm_...):", paymentMethod.id);
-        console.log("Data for final checkout:", dataToSend);
+        // console.log("Payment method created (pm_...):", paymentMethod.id);
+        // console.log("Data for final checkout:", dataToSend);
 
       } else if (formData.payment_method === 'stripe_paypal') {
         // For PayPal, the dataToSend might be simpler, or redirect might be handled by WC Stripe plugin
         // The payment_data structure might differ. Check cart.payment_requirements for details.
-        console.log("Attempting PayPal checkout...");
+        // console.log("Attempting PayPal checkout...");
         // Placeholder: PayPal often involves redirection or a specific flow initiated by Stripe.js or the gateway.
         // dataToSend might simply need payment_method: 'stripe_paypal'
         // The WooCommerce Stripe Gateway plugin might handle the redirect after the checkout call.
       }
       
       // Actual call to /checkout endpoint (for Stripe)
-      console.log("Calling /wc/store/v1/checkout with Stripe data:", dataToSend);
+      // console.log("Calling /wc/store/v1/checkout with Stripe data:", dataToSend);
       const orderResult = await callCartApi('/wp-json/wc/store/v1/checkout', 'POST', dataToSend);
-      console.log("Stripe Order placement result:", orderResult);
+      // console.log("Stripe Order placement result:", orderResult);
 
       if (orderResult && (orderResult.order_id || orderResult.order_number)) {
         await fetchCartAndNonce(); // Clear cart, get new nonce
@@ -323,9 +323,9 @@ export default function CheckoutPage() {
 
     try {
       // 1. Update customer details in WooCommerce
-      console.log("[PayPal] Updating customer data before creating WC order:", customerData);
+      // console.log("[PayPal] Updating customer data before creating WC order:", customerData);
       await callCartApi('/wp-json/wc/store/v1/cart/update-customer', 'POST', customerData);
-      console.log("[PayPal] Customer data updated successfully.");
+      // console.log("[PayPal] Customer data updated successfully.");
 
       // 2. Create WooCommerce order to get an order ID
       const wooOrderPayload = {
@@ -334,9 +334,9 @@ export default function CheckoutPage() {
         // Ensure other necessary fields for order creation are included if any
         // The store API /checkout endpoint should handle creating the order from the current cart
       };
-      console.log("[PayPal] Creating WooCommerce order with payload:", wooOrderPayload);
+      // console.log("[PayPal] Creating WooCommerce order with payload:", wooOrderPayload);
       const wooOrderResult = await callCartApi('/wp-json/wc/store/v1/checkout', 'POST', wooOrderPayload);
-      console.log("[PayPal] WooCommerce order creation result:", wooOrderResult);
+      // console.log("[PayPal] WooCommerce order creation result:", wooOrderResult);
 
       if (!wooOrderResult || !(wooOrderResult.order_id || wooOrderResult.order_number)) {
         throw new Error("Failed to create WooCommerce order or retrieve order ID.");
@@ -370,7 +370,7 @@ export default function CheckoutPage() {
 
 
   const onPayPalApprove = async (data, actions) => {
-    console.log("[PayPal] onApprove data:", data); // data.orderID is the PayPal Order ID
+    // console.log("[PayPal] onApprove data:", data); // data.orderID is the PayPal Order ID
     // setIsProcessing(true); // Already true from createOrder or onClick of PayPal button
     setSubmissionError(null);
 
@@ -382,7 +382,7 @@ export default function CheckoutPage() {
       });
 
       const captureResult = await response.json();
-      console.log("[PayPal] Capture result:", captureResult);
+      // console.log("[PayPal] Capture result:", captureResult);
 
       if (!response.ok) {
         throw new Error(captureResult.error || captureResult.message || 'PayPal payment capture failed.');
@@ -414,15 +414,15 @@ export default function CheckoutPage() {
   };
 
   const onPayPalCreateOrder = async (data, actions) => {
-    console.log("[PayPal] createOrder data from PayPal SDK:", data);
+      // console.log("[PayPal] createOrder data from PayPal SDK:", data);
     setSubmissionError(null);
     setIsProcessing(true);
 
     try {
         const wooOrderDetails = await createWooCommerceOrderForPayPal(); 
         
-        console.log("[PayPal] After createWooCommerceOrderForPayPal call:");
-        console.log("[PayPal] wooOrderDetails received:", JSON.stringify(wooOrderDetails, null, 2));
+        // console.log("[PayPal] After createWooCommerceOrderForPayPal call:");
+        // console.log("[PayPal] wooOrderDetails received:", JSON.stringify(wooOrderDetails, null, 2));
         // console.log("[PayPal] createdWooOrder state (may be stale here):", JSON.stringify(createdWooOrder, null, 2));
 
         if (!wooOrderDetails || !wooOrderDetails.id || !wooOrderDetails.total) {
@@ -430,7 +430,7 @@ export default function CheckoutPage() {
             throw new Error("WooCommerce order details not available or incomplete for PayPal.");
         }
 
-        console.log(`[PayPal] Calling /api/create-paypal-payment with WC Order ID: ${wooOrderDetails.id}, Amount: ${wooOrderDetails.total}, Currency: ${wooOrderDetails.currency}`);
+        // console.log(`[PayPal] Calling /api/create-paypal-payment with WC Order ID: ${wooOrderDetails.id}, Amount: ${wooOrderDetails.total}, Currency: ${wooOrderDetails.currency}`);
         const response = await fetch('/api/create-paypal-payment', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -445,7 +445,7 @@ export default function CheckoutPage() {
         if (!response.ok) {
             throw new Error(payment.error || payment.details || 'Failed to create PayPal payment intent.');
         }
-        console.log("[PayPal] PayPal Order ID from API:", payment.paypalOrderId);
+        // console.log("[PayPal] PayPal Order ID from API:", payment.paypalOrderId);
         return payment.paypalOrderId; // This is what PayPalButtons expects
 
     } catch (error) {
@@ -464,7 +464,7 @@ export default function CheckoutPage() {
   };
 
   const onPayPalCancel = (data) => {
-    console.log("[PayPal] Payment cancelled:", data);
+    // console.log("[PayPal] Payment cancelled:", data);
     setSubmissionError("PayPal payment was cancelled. You can try again or choose another payment method.");
     setIsProcessing(false);
   };

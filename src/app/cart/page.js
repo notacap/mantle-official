@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { FiTrash2, FiPlus, FiMinus } from 'react-icons/fi';
 import ButtonWithHover from '../components/ButtonWithHover';
 import NewsletterSignup from '../components/NewsletterSignup';
@@ -36,6 +37,7 @@ export default function Cart() {
   const { cart, isLoading, error, callCartApi } = useCart();
   const [isUpdatingCartItems, setIsUpdatingCartItems] = useState(false);
   const [editableQuantities, setEditableQuantities] = useState({});
+  const router = useRouter();
 
   // Effect to initialize/synchronize editableQuantities when cart items change
   useEffect(() => {
@@ -84,14 +86,12 @@ export default function Cart() {
 
   const updateQuantity = async (itemKey, newQuantity) => {
     if (newQuantity < 1 || isUpdatingCartItems || isLoading) return;
-    console.log('Attempting to update quantity - Item Key:', itemKey, 'New Quantity:', newQuantity);
     setIsUpdatingCartItems(true);
     try {
       const updatedCart = await callCartApi('/wp-json/wc/store/v1/cart/update-item', 'POST', {
         key: itemKey,
         quantity: newQuantity,
       });
-      console.log('API Response - Updated Cart:', updatedCart);
     } catch (err) {
       console.error("Failed to update quantity:", err);
       alert(`Error updating quantity: ${err.message}`);
@@ -112,6 +112,28 @@ export default function Cart() {
       alert(`Error removing item: ${err.message}`);
     } finally {
       setIsUpdatingCartItems(false);
+    }
+  };
+
+  const handleProductLinkClick = async (itemId) => {
+    try {
+      const response = await fetch(`/api/products?id=${itemId}`);
+      if (!response.ok) {
+        throw new Error(`API request failed with status ${response.status}`);
+      }
+      const productData = await response.json();
+      // Ensure productData is an array and get the first element as per API structure
+      const product = Array.isArray(productData) ? productData[0] : productData;
+
+      if (product && product.parent_id && product.parent_id !== 0) {
+        router.push(`/shop/product/${product.parent_id}`);
+      } else {
+        router.push(`/shop/product/${itemId}`);
+      }
+    } catch (err) {
+      console.error("Failed to fetch parent product ID:", err);
+      // Fallback to original item ID on error
+      router.push(`/shop/product/${itemId}`);
     }
   };
 
@@ -197,7 +219,6 @@ export default function Cart() {
             </div>
             
             {cartItems.map((item) => {
-              console.log('Rendering Item - Key:', item.key, 'Quantity:', item.quantity);
               const imageUrl = item.images && item.images.length > 0 ? item.images[0].src : '/placeholder.png';
               const itemTotal = item.totals?.line_total ? parseFloat(item.totals.line_total) / (10**cart.totals.currency_minor_unit) : 0;
               const itemPrice = item.prices?.price ? parseFloat(item.prices.price) / (10**cart.totals.currency_minor_unit) : 0;
@@ -206,20 +227,18 @@ export default function Cart() {
               return (
                 <div key={item.key} className="p-4 md:p-6 border-b border-gray-200 grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
                   <div className="md:col-span-6 flex items-center">
-                    <Link href={`/shop/product/${item.id}`} legacyBehavior>
-                      <a className="w-24 h-24 relative flex-shrink-0 rounded-md overflow-hidden border border-gray-200 cursor-pointer">
-                        <Image
-                          src={imageUrl}
-                          alt={item.name}
-                          fill
-                          style={{ objectFit: 'cover' }}
-                        />
-                      </a>
-                    </Link>
+                    <div onClick={() => handleProductLinkClick(item.id)} className="w-24 h-24 relative flex-shrink-0 rounded-md overflow-hidden border border-gray-200 cursor-pointer">
+                      <Image
+                        src={imageUrl}
+                        alt={item.name}
+                        fill
+                        style={{ objectFit: 'cover' }}
+                      />
+                    </div>
                     <div className="ml-4 flex-1">
-                      <Link href={`/shop/product/${item.id}`} legacyBehavior>
-                        <a className="text-lg font-medium text-gray-900 hover:text-[#9CB24D] cursor-pointer">{decodeHtmlEntities(item.name)}</a>
-                      </Link>
+                      <div onClick={() => handleProductLinkClick(item.id)} className="text-lg font-medium text-gray-900 hover:text-[#9CB24D] cursor-pointer">
+                        {decodeHtmlEntities(item.name)}
+                      </div>
                       {variationText && 
                         <p className="mt-1 text-sm text-gray-500">
                           {variationText}
