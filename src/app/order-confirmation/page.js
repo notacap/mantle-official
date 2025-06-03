@@ -4,6 +4,7 @@ import { useEffect, useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import './order-confirmation.css'; // We'll create this CSS file next
+import NewsletterSignup from '../components/NewsletterSignup';
 
 function OrderConfirmationContent() {
   const searchParams = useSearchParams();
@@ -59,6 +60,7 @@ function OrderConfirmationContent() {
           <p className="mt-4 text-xs text-gray-400">Order Key: {orderKey}</p>
         )} */}
       </div>
+      <NewsletterSignup />
     </main>
   );
 }

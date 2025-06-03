@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Instagram } from 'lucide-react';
 import './in-the-wild.css';
 import InstagramSection from '../components/InstagramSection';
+import NewsletterSignup from '../components/NewsletterSignup';
 
 export const metadata = {
   title: "In The Wild | Mantle Clothing",
@@ -227,6 +228,7 @@ export default function InTheWild() {
 
       {/* Instagram Feed Section */}
       <InstagramSection />
+      <NewsletterSignup />
     </main>
   );
 } 

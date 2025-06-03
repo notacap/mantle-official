@@ -3,6 +3,7 @@ import Link from 'next/link';
 import FeaturedBlogPost from '@/app/components/blog/FeaturedBlogPost';
 import BlogPostItem from '@/app/components/blog/BlogPostItem';
 import BlogLoadingSkeleton from './loading'; // Will use the loading.js file
+import NewsletterSignup from '@/app/components/NewsletterSignup'; // Added import
 
 async function fetchPosts() {
   const baseUrl = 'https://mantle-clothing.com/wp-json'; // Hardcoded for testing
@@ -63,6 +64,7 @@ export default async function BlogPage() {
           </div>
         )}
       </Suspense>
+      <NewsletterSignup />
     </div>
   );
 } 

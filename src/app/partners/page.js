@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import NewsletterSignup from '../components/NewsletterSignup';
 import './partners.css';
 
 export const metadata = {
@@ -108,6 +109,7 @@ export default function Partners() {
           </div>
         </div>
       </section>
+      <NewsletterSignup />
     </main>
   );
 } 

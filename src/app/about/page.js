@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import AboutSidebar from '../components/about/AboutSidebar';
+import NewsletterSignup from '../components/NewsletterSignup';
 import './about.css';
 
 export const metadata = {
@@ -162,6 +163,7 @@ export default function About() {
           </div>
         </div>
       </div>
+      <NewsletterSignup />
     </main>
   );
 } 
