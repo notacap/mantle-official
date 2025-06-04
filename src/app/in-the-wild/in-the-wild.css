@@ -1,11 +1,41 @@
 /* In The Wild Page Styles */
-.in-the-wild-page {
-  position: relative;
+
+/* Reset any inherited hero-section styles */
+.in-the-wild-page .hero-section,
+.in-the-wild-page .hero-section * {
+  box-sizing: border-box;
 }
 
-.in-the-wild-page .hero-section {
+.in-the-wild-page {
   position: relative;
-  margin-top: 0;
+  isolation: isolate; /* Create new stacking context */
+}
+
+/* Hero section with explicit height to prevent layout shifts */
+.in-the-wild-page .hero-section {
+  position: relative !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  height: 500px !important;
+  width: 100% !important;
+  overflow: hidden !important;
+  display: block !important;
+  background: transparent !important;
+}
+
+/* Ensure the image container fills the hero section */
+.in-the-wild-page .hero-section > div:first-child {
+  position: relative !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+@media (min-width: 768px) {
+  .in-the-wild-page .hero-section {
+    height: 500px !important;
+  }
 }
 
 .in-the-wild-page .hero-overlay {
@@ -13,6 +43,9 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 10;
 }
 
 /* Professional Card Styles */

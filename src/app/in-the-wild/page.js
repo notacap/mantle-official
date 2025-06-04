@@ -14,18 +14,20 @@ export default function InTheWild() {
   return (
     <main className="in-the-wild-page">
       {/* Hero Banner Section */}
-      <section className="hero-section relative h-[60vh] md:h-[70vh] w-full overflow-hidden">
-        <Image 
-          src="/images/banner_3.jpg" 
-          alt="Mantle Clothing In The Wild" 
-          fill
-          priority
-          sizes="100vw"
-          style={{ 
-            objectFit: 'cover',
-            objectPosition: 'center',
-          }} 
-        />
+      <section className="hero-section">
+        <div className="relative w-full h-full">
+          <Image 
+            src="/images/banner_3.jpg" 
+            alt="Mantle Clothing In The Wild" 
+            fill
+            priority
+            sizes="100vw"
+            style={{ 
+              objectFit: 'cover',
+              objectPosition: 'center',
+            }} 
+          />
+        </div>
         <div className="hero-overlay absolute inset-0 bg-black/40 flex flex-col justify-center items-center text-white text-center px-4">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
             In The Wild
