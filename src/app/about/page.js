@@ -101,6 +101,29 @@ export default function About() {
                   <h3>Cait</h3>
                   <p className="team-role">Co-Owner</p>
                 </div>
+
+                <div className="team-member">
+                  <div
+                    className="team-member-image"
+                    style={{
+                      width: 250,
+                      height: 250,
+                      borderRadius: '50%',
+                      overflow: 'hidden',
+                      position: 'relative'
+                    }}
+                  >
+                    <Image 
+                      src="/images/will.jpg" 
+                      alt="Will - Co-Owner" 
+                      width={250}
+                      height={250}
+                      style={{ objectFit: 'cover' }}
+                    />
+                  </div>
+                  <h3>Will</h3>
+                  <p className="team-role">Co-Owner</p>
+                </div>
                 
                 <div className="team-member">
                   <div
@@ -123,29 +146,6 @@ export default function About() {
                   </div>
                   <h3>Chris</h3>
                   <p className="team-role">Web Dev / Digital Marketing</p>
-                </div>
-                
-                <div className="team-member">
-                  <div
-                    className="team-member-image"
-                    style={{
-                      width: 250,
-                      height: 250,
-                      borderRadius: '50%',
-                      overflow: 'hidden',
-                      position: 'relative'
-                    }}
-                  >
-                    <Image 
-                      src="/images/will.jpg" 
-                      alt="Will - Co-Owner" 
-                      width={250}
-                      height={250}
-                      style={{ objectFit: 'cover' }}
-                    />
-                  </div>
-                  <h3>Will</h3>
-                  <p className="team-role">Co-Owner</p>
                 </div>
               </div>
             </section>
