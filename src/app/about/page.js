@@ -92,14 +92,14 @@ export default function About() {
                   >
                     <Image 
                       src="/images/piggy.jpg" 
-                      alt="Cait - CEO" 
+                      alt="Cait - Co-Owner" 
                       width={250}
                       height={250}
                       style={{ objectFit: 'cover' }}
                     />
                   </div>
                   <h3>Cait</h3>
-                  <p className="team-role">CEO</p>
+                  <p className="team-role">Co-Owner</p>
                 </div>
                 
                 <div className="team-member">
@@ -138,14 +138,14 @@ export default function About() {
                   >
                     <Image 
                       src="/images/will.jpg" 
-                      alt="Will - Social Media" 
+                      alt="Will - Co-Owner" 
                       width={250}
                       height={250}
                       style={{ objectFit: 'cover' }}
                     />
                   </div>
                   <h3>Will</h3>
-                  <p className="team-role">Social Media</p>
+                  <p className="team-role">Co-Owner</p>
                 </div>
               </div>
             </section>
