@@ -11,21 +11,21 @@ export default function HeroSlideshow() {
   const slides = [
     { 
       src: "/images/banner-1.jpg", 
-      alt: "Sustainable clothing collection",
-      heading: "Sustainable Fashion for a Better Tomorrow",
-      subheading: "Eco-friendly apparel that doesn't compromise on style"
+      alt: "Operational & Range Deck Clothing Banner Image",
+      heading: "Operational & Range Deck Clothing",
+      subheading: "Trusted by professionals in demanding environments"
     },
     { 
       src: "/images/banner-2.jpg", 
-      alt: "Eco-friendly apparel",
-      heading: "Ethically Made, Responsibly Sourced",
+      alt: "Clothes that Work for You Banner Image",
+      heading: "Clothes that Work for You",
       subheading: "Clothing that respects both people and planet"
     },
     { 
       src: "/images/banner_3.jpg", 
-      alt: "Ethical fashion",
+      alt: "Designed for Durability Banner Image",
       heading: "Designed for Durability",
-      subheading: "Quality pieces that stand the test of time"
+      subheading: "Comfort and functionality in every stitch"
     }
   ];
 
