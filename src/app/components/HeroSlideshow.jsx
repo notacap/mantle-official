@@ -19,7 +19,7 @@ export default function HeroSlideshow() {
       src: "/images/banner-2.jpg", 
       alt: "Clothes that Work for You Banner Image",
       heading: "Clothes that Work for You",
-      subheading: "Clothing that respects both people and planet"
+      subheading: "Move freely, work confidently, live comfortably"
     },
     { 
       src: "/images/banner_3.jpg", 
