@@ -8,6 +8,15 @@ import { useCart } from '../../context/CartContext';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import CheckoutCartSummary from '../components/CheckoutCartSummary';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 // START PAYPAL IMPORTS
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
@@ -123,10 +132,16 @@ export default function CheckoutPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [submissionError, setSubmissionError] = useState(null);
   const [availablePaymentMethods, setAvailablePaymentMethods] = useState([]);
+  const [isPaymentDeclineError, setIsPaymentDeclineError] = useState(false);
   
   // START PAYPAL STATE
   const [createdWooOrder, setCreatedWooOrder] = useState(null);
   // END PAYPAL STATE
+
+  const handleModalClose = () => {
+    setIsPaymentDeclineError(false);
+    setSubmissionError(null);
+  };
 
   useEffect(() => {
     // console.log("[CheckoutPage] Cart data received:", cart);
@@ -201,6 +216,7 @@ export default function CheckoutPage() {
 
     setIsProcessing(true);
     setSubmissionError(null);
+    setIsPaymentDeclineError(false);
 
     let dataToSend = {
       billing_address: formData.billing_address,
@@ -255,6 +271,7 @@ export default function CheckoutPage() {
         if (stripeError) {
           console.error("Stripe error:", stripeError);
           setSubmissionError(stripeError.message || "Error creating payment method.");
+          setIsPaymentDeclineError(true);
           setIsProcessing(false);
           return;
         }
@@ -295,6 +312,7 @@ export default function CheckoutPage() {
     } catch (error) {
       console.error("Checkout error:", error);
       setSubmissionError(error.message || "An unknown error occurred during checkout.");
+      setIsPaymentDeclineError(true);
     } finally {
       setIsProcessing(false);
     }
@@ -304,6 +322,7 @@ export default function CheckoutPage() {
   const createWooCommerceOrderForPayPal = async () => {
     setIsProcessing(true);
     setSubmissionError(null);
+    setIsPaymentDeclineError(false);
     // setCreatedWooOrder(null); // Not strictly necessary to clear here if we're returning directly
 
     // START DEFENSIVE CHECK
@@ -363,6 +382,7 @@ export default function CheckoutPage() {
     } catch (error) {
       console.error("[PayPal] Error creating WooCommerce order:", error);
       setSubmissionError(error.message || "Failed to prepare order for PayPal. Please try again.");
+      setIsPaymentDeclineError(true);
       setIsProcessing(false);
       throw error; // Re-throw to stop PayPal flow
     }
@@ -373,6 +393,7 @@ export default function CheckoutPage() {
     // console.log("[PayPal] onApprove data:", data); // data.orderID is the PayPal Order ID
     // setIsProcessing(true); // Already true from createOrder or onClick of PayPal button
     setSubmissionError(null);
+    setIsPaymentDeclineError(false);
 
     try {
       const response = await fetch('/api/capture-paypal-payment', {
@@ -407,7 +428,7 @@ export default function CheckoutPage() {
     } catch (error) {
       console.error("[PayPal] onApprove error:", error);
       setSubmissionError(error.message || "An error occurred while processing your PayPal payment.");
-      //setIsProcessing(false); // PayPal button might handle this, or set it in finally
+      setIsPaymentDeclineError(true);
     } finally {
        setIsProcessing(false); // Ensure processing is set to false
     }
@@ -417,6 +438,7 @@ export default function CheckoutPage() {
       // console.log("[PayPal] createOrder data from PayPal SDK:", data);
     setSubmissionError(null);
     setIsProcessing(true);
+    setIsPaymentDeclineError(false);
 
     try {
         const wooOrderDetails = await createWooCommerceOrderForPayPal(); 
@@ -451,6 +473,7 @@ export default function CheckoutPage() {
     } catch (error) {
         console.error("[PayPal] Error in createOrder callback:", error);
         setSubmissionError(error.message || "Could not initiate PayPal payment. Please check your details or try another method.");
+        setIsPaymentDeclineError(true);
         setIsProcessing(false); // Stop processing on failure
         throw error; // Re-throw to inform PayPal SDK
     }
@@ -460,6 +483,7 @@ export default function CheckoutPage() {
   const onPayPalError = (err) => {
     console.error("[PayPal] SDK Error:", err);
     setSubmissionError("An error occurred with PayPal. Please try again or use a different payment method.");
+    setIsPaymentDeclineError(true);
     setIsProcessing(false);
   };
 
@@ -494,6 +518,8 @@ export default function CheckoutPage() {
             handleSubmit={handleSubmit} 
             isProcessing={isProcessing}
             submissionError={submissionError}
+            isPaymentDeclineError={isPaymentDeclineError}
+            handleModalClose={handleModalClose}
             isCartLoading={isCartLoading} 
             availablePaymentMethods={availablePaymentMethods}
             handlePaymentMethodChange={handlePaymentMethodChange}
@@ -517,6 +543,8 @@ export default function CheckoutPage() {
           handleSubmit={handleSubmit} 
           isProcessing={isProcessing}
           submissionError={submissionError}
+          isPaymentDeclineError={isPaymentDeclineError}
+          handleModalClose={handleModalClose}
           isCartLoading={isCartLoading} 
           availablePaymentMethods={availablePaymentMethods}
           handlePaymentMethodChange={handlePaymentMethodChange}
@@ -530,7 +558,7 @@ export default function CheckoutPage() {
 // New component to use Stripe hooks
 function CheckoutFormContent({ 
   shipToDifferentAddress, setShipToDifferentAddress, formData, handleChange, handleSubmit, 
-  isProcessing, submissionError, isCartLoading, availablePaymentMethods, handlePaymentMethodChange,
+  isProcessing, submissionError, isPaymentDeclineError, handleModalClose, isCartLoading, availablePaymentMethods, handlePaymentMethodChange,
   // START PAYPAL PROPS
   onPayPalCreateOrder, onPayPalApprove, onPayPalError, onPayPalCancel
   // END PAYPAL PROPS
@@ -694,9 +722,24 @@ function CheckoutFormContent({
                     )}
                     
                     {/* Display any submission errors */}
-                    {submissionError && (
+                    {submissionError && !isPaymentDeclineError && (
                         <p className="text-red-600 text-sm mt-4 mb-4">{submissionError}</p>
                     )}
+
+                    <Dialog open={isPaymentDeclineError} onOpenChange={(open) => !open && handleModalClose()}>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Payment Declined</DialogTitle>
+                          <DialogDescription>
+                            Please try a different payment method or check your payment details.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <DialogFooter>
+                            <Button onClick={handleModalClose}>Close</Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+
                     {/* "Place Order" button for non-PayPal methods */}
                     {(!isPayPalSelected || !payPalClientId) && (
                       <button 
