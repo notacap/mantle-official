@@ -130,6 +130,29 @@ export default function SingleProduct({ productId }) {
     enabled: !!productId,
   });
   
+  // Fetch product variations
+  const { 
+    data: variations, 
+    isLoading: isLoadingVariations,
+    error: variationsError,
+  } = useQuery({
+    queryKey: ['productVariations', productId],
+    queryFn: async () => {
+      const url = new URL(`/api/products/${productId}/variations`, window.location.origin);
+      const response = await fetch(url.toString());
+      if (!response.ok) {
+        // It's common for simple products to not have variations, so we don't treat it as a critical error.
+        // The API route now returns an empty array for products with no variations,
+        // but this handles other potential errors gracefully.
+        console.warn(`Could not fetch variations for product ${productId}. Status: ${response.status}`);
+        return [];
+      }
+      return response.json();
+    },
+    enabled: !!productId,
+    retry: false, // Don't retry if variations fail, it's likely not a variable product.
+  });
+
   // Fetch categories
   const {
     data: categoriesData = { categories: [] },
@@ -312,7 +335,7 @@ export default function SingleProduct({ productId }) {
     );
   }
 
-  if (isLoadingProduct || isLoadingCategories) {
+  if (isLoadingProduct || isLoadingCategories || isLoadingVariations) {
     return <ProductLoadingSkeleton />;
   }
 
@@ -540,6 +563,7 @@ export default function SingleProduct({ productId }) {
             sizeOptions={sizeOptions}
             colorOptions={colorOptions}
             amountOptions={amountOptions}
+            variations={variations || []}
           />
         </div>
       </div>

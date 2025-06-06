@@ -4,14 +4,57 @@ import { useState, useEffect } from 'react';
 import { formatPrice } from '@/app/services/woocommerce';
 import { useCart } from '@/context/CartContext'; // Import useCart hook
 
-export default function ProductActions({ productId, price, sizes, colors, amounts, sizeOptions, colorOptions, amountOptions }) {
+export default function ProductActions({ productId, price, sizes, colors, amounts, sizeOptions, colorOptions, amountOptions, variations }) {
   const [quantity, setQuantity] = useState(1);
-  const [selectedSize, setSelectedSize] = useState(sizes?.[0] || '');
-  const [selectedColor, setSelectedColor] = useState(colors?.[0] || '');
+  const [selectedSize, setSelectedSize] = useState('');
+  const [selectedColor, setSelectedColor] = useState('');
   const [selectedAmount, setSelectedAmount] = useState(amounts?.[0] || '');
   const [unitPrice, setUnitPrice] = useState(parseFloat(price) || 0);
   const [isAddingToCart, setIsAddingToCart] = useState(false); // Local loading state for the button
   const { callCartApi, setIsLoading: setCartLoading, isLoading: isCartLoading, nonce, openSideCart } = useCart(); // Get context functions
+  
+  // Effect to set initial selections
+  useEffect(() => {
+    // Set initial size if available
+    if (sizes && sizes.length > 0) {
+      setSelectedSize(sizes[0]);
+    }
+    // Set initial color if available
+    if (colors && colors.length > 0) {
+      setSelectedColor(colors[0]);
+    }
+  }, [sizes, colors]);
+
+  // Effect to validate selection when variations load or selections change
+  useEffect(() => {
+    if (variations && variations.length > 0 && selectedSize && selectedColor) {
+      const variation = variations.find(v => {
+        const sizeAttr = v.attributes.find(a => (a.name.toLowerCase() === 'size' || a.name.toLowerCase() === 'sizes') && a.option === selectedSize);
+        const colorAttr = v.attributes.find(a => (a.name.toLowerCase() === 'color' || a.name.toLowerCase() === 'colours') && a.option === selectedColor);
+        return sizeAttr && colorAttr;
+      });
+
+      if (!variation || variation.stock_status === 'outofstock') {
+        // Current combination is invalid. Try to find the first available size for the selected color.
+        const firstAvailableSize = sizes.find(size => {
+          const v = variations.find(v => {
+            const sizeAttr = v.attributes.find(a => (a.name.toLowerCase() === 'size' || a.name.toLowerCase() === 'sizes') && a.option === size);
+            const colorAttr = v.attributes.find(a => (a.name.toLowerCase() === 'color' || a.name.toLowerCase() === 'colours') && a.option === selectedColor);
+            return sizeAttr && colorAttr && v.stock_status !== 'outofstock';
+          });
+          return !!v;
+        });
+
+        if (firstAvailableSize) {
+          setSelectedSize(firstAvailableSize);
+        } else {
+          // No size is available for this color, so we must reset something.
+          // For now, let's just clear size. This indicates to the user they need to make a new choice.
+          setSelectedSize('');
+        }
+      }
+    }
+  }, [selectedColor, variations, sizes, selectedSize, colors]);
   
   useEffect(() => {
     if (selectedAmount && amounts && amounts.length > 0) {
@@ -44,6 +87,42 @@ export default function ProductActions({ productId, price, sizes, colors, amount
   
   const increaseQuantity = () => {
     setQuantity(quantity + 1);
+  };
+  
+  const handleSelectSize = (size) => {
+    setSelectedSize(size);
+    // When a size is selected, check if the current color is valid with it.
+    // If not, clear the color selection to force the user to pick a valid one.
+    if (selectedColor && isOptionDisabled('color', selectedColor, size)) {
+      setSelectedColor('');
+    }
+  };
+
+  const handleSelectColor = (color) => {
+    setSelectedColor(color);
+    // When a color is selected, check if the current size is valid with it.
+    // If not, clear the size selection to force the user to pick a valid one.
+    if (selectedSize && isOptionDisabled('size', selectedSize, color)) {
+      setSelectedSize('');
+    }
+  };
+
+  const isOptionDisabled = (type, value, localSelected) => {
+    if (!variations || variations.length === 0) return false; // No variations data, enable all
+
+    const localSelectedSize = type === 'color' ? localSelected || selectedSize : value;
+    const localSelectedColor = type === 'size' ? localSelected || selectedColor : value;
+
+    if (!localSelectedSize || !localSelectedColor) return false;
+
+    const variation = variations.find(v => {
+        const sizeAttr = v.attributes.find(a => (a.name.toLowerCase() === 'size' || a.name.toLowerCase() === 'sizes') && a.option === localSelectedSize);
+        const colorAttr = v.attributes.find(a => (a.name.toLowerCase() === 'color' || a.name.toLowerCase() === 'colours') && a.option === localSelectedColor);
+        return sizeAttr && colorAttr;
+    });
+
+    if (!variation) return true; // Combination doesn't exist
+    return variation.stock_status === 'outofstock';
   };
   
   // Helper function to get slug from display name
@@ -141,8 +220,38 @@ export default function ProductActions({ productId, price, sizes, colors, amount
     }
   };
   
+  const isCurrentSelectionInvalid = () => {
+    if (!variations || variations.length === 0) return false;
+    
+    const hasSizes = sizes && sizes.length > 0;
+    const hasColors = colors && colors.length > 0;
+
+    if ((hasSizes && !selectedSize) || (hasColors && !selectedColor)) {
+      return true; // A selection is required but not made
+    }
+
+    if (selectedSize && selectedColor) {
+      return isOptionDisabled('size', selectedSize, selectedColor);
+    }
+    
+    // Handle products with only one attribute type
+    if (hasSizes && !hasColors && selectedSize) {
+        const variation = variations.find(v => v.attributes.some(a => (a.name.toLowerCase() === 'size' || a.name.toLowerCase() === 'sizes') && a.option === selectedSize));
+        if (!variation) return true;
+        return variation.stock_status === 'outofstock';
+    }
+
+    if (hasColors && !hasSizes && selectedColor) {
+        const variation = variations.find(v => v.attributes.some(a => (a.name.toLowerCase() === 'color' || a.name.toLowerCase() === 'colours') && a.option === selectedColor));
+        if (!variation) return true;
+        return variation.stock_status === 'outofstock';
+    }
+
+    return false;
+  };
+
   // Determine if the button should be disabled
-  const isButtonDisabled = isAddingToCart || isCartLoading || !nonce;
+  const isButtonDisabled = isAddingToCart || isCartLoading || !nonce || isCurrentSelectionInvalid();
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -153,24 +262,30 @@ export default function ProductActions({ productId, price, sizes, colors, amount
             Size
           </h3>
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-            {sizes.map((size) => (
-              <button
-                key={size}
-                onClick={() => setSelectedSize(size)}
-                style={{
-                  padding: '0.5rem 1rem',
-                  border: `1px solid ${selectedSize === size ? '#9CB24D' : '#e5e7eb'}`,
-                  borderRadius: '0.375rem',
-                  backgroundColor: selectedSize === size ? '#f3f6e8' : 'white',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  color: selectedSize === size ? '#9CB24D' : 'inherit',
-                  fontWeight: selectedSize === size ? '500' : 'normal'
-                }}
-              >
-                {size}
-              </button>
-            ))}
+            {sizes.map((size) => {
+              const isDisabled = isOptionDisabled('size', size, selectedColor);
+              return (
+                <button
+                  key={size}
+                  onClick={() => handleSelectSize(size)}
+                  disabled={isDisabled}
+                  style={{
+                    padding: '0.5rem 1rem',
+                    border: `1px solid ${selectedSize === size ? '#9CB24D' : '#e5e7eb'}`,
+                    borderRadius: '0.375rem',
+                    backgroundColor: selectedSize === size ? '#f3f6e8' : 'white',
+                    cursor: isDisabled ? 'not-allowed' : 'pointer',
+                    transition: 'all 0.2s',
+                    color: selectedSize === size ? '#9CB24D' : 'inherit',
+                    fontWeight: selectedSize === size ? '500' : 'normal',
+                    opacity: isDisabled ? 0.6 : 1,
+                    textDecoration: isDisabled ? 'line-through' : 'none',
+                  }}
+                >
+                  {size}
+                </button>
+              );
+            })}
           </div>
         </div>
       )}
@@ -182,24 +297,30 @@ export default function ProductActions({ productId, price, sizes, colors, amount
             Color
           </h3>
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-            {colors.map((color) => (
-              <button
-                key={color}
-                onClick={() => setSelectedColor(color)}
-                style={{
-                  padding: '0.5rem 1rem',
-                  border: `1px solid ${selectedColor === color ? '#9CB24D' : '#e5e7eb'}`,
-                  borderRadius: '0.375rem',
-                  backgroundColor: selectedColor === color ? '#f3f6e8' : 'white',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  color: selectedColor === color ? '#9CB24D' : 'inherit',
-                  fontWeight: selectedColor === color ? '500' : 'normal'
-                }}
-              >
-                {color}
-              </button>
-            ))}
+            {colors.map((color) => {
+              const isDisabled = isOptionDisabled('color', color, selectedSize);
+              return (
+                <button
+                  key={color}
+                  onClick={() => handleSelectColor(color)}
+                  disabled={isDisabled}
+                  style={{
+                    padding: '0.5rem 1rem',
+                    border: `1px solid ${selectedColor === color ? '#9CB24D' : '#e5e7eb'}`,
+                    borderRadius: '0.375rem',
+                    backgroundColor: selectedColor === color ? '#f3f6e8' : 'white',
+                    cursor: isDisabled ? 'not-allowed' : 'pointer',
+                    transition: 'all 0.2s',
+                    color: selectedColor === color ? '#9CB24D' : 'inherit',
+                    fontWeight: selectedColor === color ? '500' : 'normal',
+                    opacity: isDisabled ? 0.6 : 1,
+                    textDecoration: isDisabled ? 'line-through' : 'none',
+                  }}
+                >
+                  {color}
+                </button>
+              );
+            })}
           </div>
         </div>
       )}
