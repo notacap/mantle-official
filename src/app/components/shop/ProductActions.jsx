@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { formatPrice } from '@/app/services/woocommerce';
 import { useCart } from '@/context/CartContext'; // Import useCart hook
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 export default function ProductActions({ productId, price, sizes, colors, amounts, sizeOptions, colorOptions, amountOptions, variations }) {
   const [quantity, setQuantity] = useState(1);
@@ -264,7 +265,7 @@ export default function ProductActions({ productId, price, sizes, colors, amount
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
             {sizes.map((size) => {
               const isDisabled = isOptionDisabled('size', size, selectedColor);
-              return (
+              const button = (
                 <button
                   key={size}
                   onClick={() => handleSelectSize(size)}
@@ -285,6 +286,19 @@ export default function ProductActions({ productId, price, sizes, colors, amount
                   {size}
                 </button>
               );
+
+              return isDisabled ? (
+                <TooltipProvider key={size}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>{button}</TooltipTrigger>
+                    <TooltipContent>
+                      <p>Item is currently out of stock</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              ) : (
+                button
+              );
             })}
           </div>
         </div>
@@ -299,7 +313,7 @@ export default function ProductActions({ productId, price, sizes, colors, amount
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
             {colors.map((color) => {
               const isDisabled = isOptionDisabled('color', color, selectedSize);
-              return (
+              const button = (
                 <button
                   key={color}
                   onClick={() => handleSelectColor(color)}
@@ -319,6 +333,19 @@ export default function ProductActions({ productId, price, sizes, colors, amount
                 >
                   {color}
                 </button>
+              );
+
+              return isDisabled ? (
+                <TooltipProvider key={color}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>{button}</TooltipTrigger>
+                    <TooltipContent>
+                      <p>Item is currently out of stock</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              ) : (
+                button
               );
             })}
           </div>

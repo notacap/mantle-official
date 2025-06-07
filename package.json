@@ -13,6 +13,7 @@
     "@paypal/react-paypal-js": "^8.8.3",
     "@radix-ui/react-dialog": "^1.1.13",
     "@radix-ui/react-slot": "^1.2.2",
+    "@radix-ui/react-tooltip": "^1.2.7",
     "@radix-ui/react-visually-hidden": "^1.2.2",
     "@stripe/react-stripe-js": "^3.7.0",
     "@stripe/stripe-js": "^7.3.0",
