@@ -14,49 +14,36 @@ export default function ProductActions({ productId, price, sizes, colors, amount
   const [isAddingToCart, setIsAddingToCart] = useState(false); // Local loading state for the button
   const { callCartApi, setIsLoading: setCartLoading, isLoading: isCartLoading, nonce, openSideCart } = useCart(); // Get context functions
   
-  // Effect to set initial selections
+  // This effect replaces the original "set initial selections" effect.
+  // It intelligently sets the default options based on stock availability.
   useEffect(() => {
-    // Set initial size if available
-    if (sizes && sizes.length > 0) {
-      setSelectedSize(sizes[0]);
-    }
-    // Set initial color if available
-    if (colors && colors.length > 0) {
-      setSelectedColor(colors[0]);
-    }
-  }, [sizes, colors]);
+    // Default to the first option in the list.
+    let defaultSize = sizes?.[0] || '';
+    let defaultColor = colors?.[0] || '';
 
-  // Effect to validate selection when variations load or selections change
-  useEffect(() => {
-    if (variations && variations.length > 0 && selectedSize && selectedColor) {
-      const variation = variations.find(v => {
-        const sizeAttr = v.attributes.find(a => (a.name.toLowerCase() === 'size' || a.name.toLowerCase() === 'sizes') && a.option === selectedSize);
-        const colorAttr = v.attributes.find(a => (a.name.toLowerCase() === 'color' || a.name.toLowerCase() === 'colours') && a.option === selectedColor);
-        return sizeAttr && colorAttr;
-      });
+    // If we have variations, try to find a better default.
+    if (variations && variations.length > 0) {
+        const firstInStockVariation = variations.find(v => v.stock_status === 'instock');
 
-      if (!variation || variation.stock_status === 'outofstock') {
-        // Current combination is invalid. Try to find the first available size for the selected color.
-        const firstAvailableSize = sizes.find(size => {
-          const v = variations.find(v => {
-            const sizeAttr = v.attributes.find(a => (a.name.toLowerCase() === 'size' || a.name.toLowerCase() === 'sizes') && a.option === size);
-            const colorAttr = v.attributes.find(a => (a.name.toLowerCase() === 'color' || a.name.toLowerCase() === 'colours') && a.option === selectedColor);
-            return sizeAttr && colorAttr && v.stock_status !== 'outofstock';
-          });
-          return !!v;
-        });
+        // If we find a variation that is in stock, we use its attributes as the default.
+        if (firstInStockVariation) {
+            const colorAttr = firstInStockVariation.attributes.find(a => a.name.toLowerCase() === 'color' || a.name.toLowerCase() === 'colours');
+            const sizeAttr = firstInStockVariation.attributes.find(a => a.name.toLowerCase() === 'size' || a.name.toLowerCase() === 'sizes');
 
-        if (firstAvailableSize) {
-          setSelectedSize(firstAvailableSize);
-        } else {
-          // No size is available for this color, so we must reset something.
-          // For now, let's just clear size. This indicates to the user they need to make a new choice.
-          setSelectedSize('');
+            if (colorAttr && colors.includes(colorAttr.option)) {
+                defaultColor = colorAttr.option;
+            }
+            if (sizeAttr && sizes.includes(sizeAttr.option)) {
+                defaultSize = sizeAttr.option;
+            }
         }
-      }
     }
-  }, [selectedColor, variations, sizes, selectedSize, colors]);
-  
+
+    setSelectedColor(defaultColor);
+    setSelectedSize(defaultSize);
+
+  }, [variations, sizes, colors]);
+
   useEffect(() => {
     if (selectedAmount && amounts && amounts.length > 0) {
       // Assuming selectedAmount might be like "$25.00" or "25.00" or "25"
@@ -93,19 +80,18 @@ export default function ProductActions({ productId, price, sizes, colors, amount
   const handleSelectSize = (size) => {
     setSelectedSize(size);
     // When a size is selected, check if the current color is valid with it.
-    // If not, clear the color selection to force the user to pick a valid one.
+    // If not, find the first available color for this size.
     if (selectedColor && isOptionDisabled('color', selectedColor, size)) {
-      setSelectedColor('');
+       const firstAvailableColor = colors.find(color => !isOptionDisabled('color', color, size));
+       setSelectedColor(firstAvailableColor || '');
     }
   };
 
   const handleSelectColor = (color) => {
     setSelectedColor(color);
-    // When a color is selected, check if the current size is valid with it.
-    // If not, clear the size selection to force the user to pick a valid one.
-    if (selectedSize && isOptionDisabled('size', selectedSize, color)) {
-      setSelectedSize('');
-    }
+    // When a color is selected, find the first available size for this new color.
+    const firstAvailableSize = sizes.find(size => !isOptionDisabled('size', size, color));
+    setSelectedSize(firstAvailableSize || '');
   };
 
   const isOptionDisabled = (type, value, localSelected) => {
@@ -114,11 +100,19 @@ export default function ProductActions({ productId, price, sizes, colors, amount
     const localSelectedSize = type === 'color' ? localSelected || selectedSize : value;
     const localSelectedColor = type === 'size' ? localSelected || selectedColor : value;
 
-    if (!localSelectedSize || !localSelectedColor) return false;
+    const hasSizes = sizes && sizes.length > 0;
+    const hasColors = colors && colors.length > 0;
+
+    // If the product has both attributes, but one is not yet selected, we can't determine the stock.
+    // So we don't disable it, to allow the user to make a full selection.
+    if (hasSizes && hasColors && (!localSelectedSize || !localSelectedColor)) {
+      return false;
+    }
 
     const variation = variations.find(v => {
-        const sizeAttr = v.attributes.find(a => (a.name.toLowerCase() === 'size' || a.name.toLowerCase() === 'sizes') && a.option === localSelectedSize);
-        const colorAttr = v.attributes.find(a => (a.name.toLowerCase() === 'color' || a.name.toLowerCase() === 'colours') && a.option === localSelectedColor);
+        // A variation matches if all its defined attributes match our selection.
+        const sizeAttr = !hasSizes || v.attributes.find(a => (a.name.toLowerCase() === 'size' || a.name.toLowerCase() === 'sizes') && a.option === localSelectedSize);
+        const colorAttr = !hasColors || v.attributes.find(a => (a.name.toLowerCase() === 'color' || a.name.toLowerCase() === 'colours') && a.option === localSelectedColor);
         return sizeAttr && colorAttr;
     });
 
