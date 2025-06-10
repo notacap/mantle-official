@@ -6,7 +6,7 @@ import BlogLoadingSkeleton from './loading'; // Will use the loading.js file
 import NewsletterSignup from '@/app/components/NewsletterSignup'; // Added import
 
 async function fetchPosts() {
-  const baseUrl = 'https://mantle-clothing.com/wp-json'; // Hardcoded for testing
+  const baseUrl = 'https://api.mantle-clothing.com/wp-json'; // Hardcoded for testing
   // console.log('Attempting to fetch posts from hardcoded baseUrl:', baseUrl);
 
   const fetchUrl = `${baseUrl}/wp/v2/posts?_embed&orderby=date&order=desc`;
