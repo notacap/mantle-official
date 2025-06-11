@@ -19,7 +19,7 @@ export async function GET(request) {
     }
     
     // WooCommerce API URL
-    const apiUrl = new URL('https://mantle-clothing.com/wp-json/wc/v3/products');
+    const apiUrl = new URL(`${process.env.NEXT_PUBLIC_WORDPRESS_URL}/wp-json/wc/v3/products`);
     
     // Add query parameters
     apiUrl.searchParams.append('category', categoryId);

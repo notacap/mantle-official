@@ -52,7 +52,7 @@ export async function GET(request) {
     const tagId = getTagIdFromSlug(tagSlug);
     
     // WooCommerce API URL
-    const apiUrl = new URL('https://mantle-clothing.com/wp-json/wc/v3/products');
+    const apiUrl = new URL(`${process.env.NEXT_PUBLIC_WORDPRESS_URL}/wp-json/wc/v3/products`);
     
     // First add authentication
     apiUrl.searchParams.append('consumer_key', process.env.WOOCOMMERCE_CONSUMER_KEY);

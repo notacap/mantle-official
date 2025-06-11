@@ -18,7 +18,7 @@ export async function GET(request) {
     }
     
     // WooCommerce API URL for product attribute terms
-    const apiUrl = new URL(`https://mantle-clothing.com/wp-json/wc/v3/products/attributes/${attributeId}/terms`);
+    const apiUrl = new URL(`${process.env.NEXT_PUBLIC_WORDPRESS_URL}/wp-json/wc/v3/products/attributes/${attributeId}/terms`);
     
     // Add parameters
     apiUrl.searchParams.append('per_page', '100');

@@ -18,7 +18,7 @@ export async function GET(request) {
     }
     
     // WooCommerce API URL for a single category
-    const apiUrl = new URL(`https://mantle-clothing.com/wp-json/wc/v3/products/categories/${categoryId}`);
+    const apiUrl = new URL(`${process.env.NEXT_PUBLIC_WORDPRESS_URL}/wp-json/wc/v3/products/categories/${categoryId}`);
     
     // Add authentication
     apiUrl.searchParams.append('consumer_key', process.env.WOOCOMMERCE_CONSUMER_KEY);

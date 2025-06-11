@@ -20,7 +20,7 @@ export async function GET(request, { params }) {
     }
 
     // WooCommerce API URL for product variations
-    const apiUrl = new URL(`https://mantle-clothing.com/wp-json/wc/v3/products/${productId}/variations`);
+    const apiUrl = new URL(`${process.env.NEXT_PUBLIC_WORDPRESS_URL}/wp-json/wc/v3/products/${productId}/variations`);
 
     // Add authentication
     apiUrl.searchParams.append('consumer_key', process.env.WOOCOMMERCE_CONSUMER_KEY);

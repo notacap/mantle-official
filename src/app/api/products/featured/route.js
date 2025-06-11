@@ -15,7 +15,7 @@ export async function GET(request) {
     const limit = 8; // Using a fixed limit
     
     // WooCommerce API URL
-    const apiUrl = new URL('https://mantle-clothing.com/wp-json/wc/v3/products');
+    const apiUrl = new URL(`${process.env.NEXT_PUBLIC_WORDPRESS_URL}/wp-json/wc/v3/products`);
     
     // Add query parameters
     apiUrl.searchParams.append('featured', 'true');
@@ -44,7 +44,7 @@ export async function GET(request) {
     // If no featured products, try to get regular products
     if (products.length === 0) {
       // Create a new URL for regular products
-      const regularProductsUrl = new URL('https://mantle-clothing.com/wp-json/wc/v3/products');
+      const regularProductsUrl = new URL(`${process.env.NEXT_PUBLIC_WORDPRESS_URL}/wp-json/wc/v3/products`);
       regularProductsUrl.searchParams.append('status', 'publish');
       regularProductsUrl.searchParams.append('per_page', limit.toString());
       regularProductsUrl.searchParams.append('stock_status', 'instock');

@@ -11,7 +11,7 @@ export const revalidate = 300; // Revalidate this route every 5 minutes
 export async function GET(request) {
   try {
     // WooCommerce API URL for product categories
-    const apiUrl = new URL('https://mantle-clothing.com/wp-json/wc/v3/products/categories');
+    const apiUrl = new URL(`${process.env.NEXT_PUBLIC_WORDPRESS_URL}/wp-json/wc/v3/products/categories`);
     
     // Add parameters
     apiUrl.searchParams.append('per_page', '100');
