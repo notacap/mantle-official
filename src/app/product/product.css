@@ -1,0 +1,30 @@
+.product-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .product-layout {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Add padding to the product image container */
+.product-image-container {
+  position: relative;
+  height: 500px; /* Default height for larger screens */
+  background-color: #f9fafb;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  margin-top: 2rem; /* Adjusted default top margin */
+  padding-top: 0; /* Remove default top padding, rely on margin or direct child spacing */
+}
+
+@media (max-width: 767.98px) {
+  .product-image-container {
+    height: 320px; /* Shorter height for mobile */
+    margin-top: 1rem; /* Reduced top margin for mobile */
+    padding-top: 0; /* Ensure no top padding on mobile */
+  }
+} 
