@@ -21,6 +21,9 @@ export const metadata = {
   title: "Mantle Clothing | Premium Sustainable Apparel",
   description: "Discover Mantle Clothing's premium sustainable apparel. Shop our collection of eco-friendly, ethically-made clothing for conscious consumers.",
   keywords: "sustainable clothing, eco-friendly apparel, ethical fashion, Mantle Clothing, outdoor apparel, rain collection, range collection",
+  icons: {
+    icon: '/images/MANTLE_LOGO.svg?v=2',
+  },
   metadataBase: new URL('https://mantleclothing.com'),
   alternates: {
     canonical: '/',
