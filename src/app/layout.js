@@ -23,6 +23,12 @@ export const metadata = {
   keywords: "sustainable clothing, eco-friendly apparel, ethical fashion, Mantle Clothing, outdoor apparel, rain collection, range collection",
   icons: {
     icon: '/images/MANTLE_LOGO.svg?v=2',
+    shortcut: '/images/MANTLE_LOGO.svg?v=2',
+    apple: '/images/MANTLE_LOGO.svg?v=2',
+    other: {
+      rel: 'apple-touch-icon-precomposed',
+      url: '/images/MANTLE_LOGO.svg?v=2',
+    },
   },
   metadataBase: new URL('https://mantleclothing.com'),
   alternates: {
