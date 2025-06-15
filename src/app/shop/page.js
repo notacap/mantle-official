@@ -48,7 +48,7 @@ export default function Shop() {
         marginBottom: '1rem', // Adjusted margin for button
         color: '#333'
       }}>
-        Shop All
+        Shop All Products
       </h1>
 
       {isMobileScreen && (
