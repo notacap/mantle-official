@@ -5,6 +5,48 @@ import BlogPostItem from '@/app/components/blog/BlogPostItem';
 import BlogLoadingSkeleton from './loading'; // Will use the loading.js file
 import NewsletterSignup from '@/app/components/NewsletterSignup'; // Added import
 
+export const metadata = {
+  title: 'Blog - Tactical Gear Insights & Product Updates | Mantle Clothing',
+  description: 'Expert insights on tactical clothing, gear reviews, product updates, and field-tested advice for law enforcement and first responders. Stay informed with Mantle.',
+  keywords: 'tactical gear blog, law enforcement clothing tips, police gear reviews, tactical apparel insights, first responder equipment, mantle clothing updates, range-tested gear advice, tactical clothing care',
+  openGraph: {
+    title: 'Mantle Clothing Blog - Gear Insights from the Field',
+    description: 'Real-world tactical gear insights, product deep dives, and professional tips from 200+ days on the range. Written by cops, for cops.',
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://mantle-clothing.com/blog',
+    siteName: 'Mantle Clothing',
+    images: [
+      {
+        url: '/images/banner-1.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Mantle Clothing - Sustainable Apparel',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Blog - Tactical Gear Insights | Mantle Clothing',
+    description: 'Expert insights on tactical clothing and gear. Field-tested advice for law enforcement professionals.',
+    images: ['/images/banner-1.jpg'],
+  },
+  alternates: {
+    canonical: 'https://mantle-clothing.com/blog',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+};
+
 async function fetchPosts() {
   const baseUrl = 'https://api.mantle-clothing.com/wp-json'; // Hardcoded for testing
   // console.log('Attempting to fetch posts from hardcoded baseUrl:', baseUrl);

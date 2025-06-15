@@ -6,9 +6,46 @@ import InstagramSection from '../components/InstagramSection';
 import NewsletterSignup from '../components/NewsletterSignup';
 
 export const metadata = {
-  title: "In The Wild | Mantle Clothing",
-  description: "See how professionals wear Mantle Clothing on the job, featuring real testimonials from our community.",
-};
+  title: 'In The Wild - Professional Partners & Field Testing | Mantle Clothing',
+  description: 'Meet the decorated law enforcement professionals who trust Mantle gear: Chase Jenkins, Dan Smith, Fred Hawkins, and Bryan Veliz. See our clothing in action.',
+  keywords: 'mantle clothing testimonials, chase jenkins, dan smith, fred hawkins, bryan veliz, law enforcement partners, tactical gear field testing, police gear reviews, mantle professionals, real world tactical testing',
+  openGraph: {
+    title: 'In The Wild - Mantle Clothing Professional Partners',
+    description: 'Trusted by experienced law enforcement professionals. See how Chase Jenkins, Dan Smith, Fred Hawkins, and Bryan Veliz use Mantle gear in real-world operations.',
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://mantle-clothing.com/in-the-wild',
+    siteName: 'Mantle Clothing',
+    images: [
+      {
+        url: '/images/banner-1.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Mantle Clothing - Sustainable Apparel',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'In The Wild - Professional Partners | Mantle Clothing',
+    description: 'Decorated law enforcement professionals trust Mantle. Real gear, real operations, real results.',
+    images: ['/images/banner-1.jpg'],
+  },
+  alternates: {
+    canonical: 'https://mantle-clothing.com/in-the-wild',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+}
 
 export default function InTheWild() {
   return (
