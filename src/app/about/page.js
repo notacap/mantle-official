@@ -94,13 +94,13 @@ export default function About() {
                 Mantle Clothing emerged from a simple truth: those who protect and serve deserve gear that works as hard as they do. What started as frustrated conversations around the range evolved into a mission to revolutionize tactical apparel.
               </p>
               <p>
-                The word "mantle" itself tells our story. Historically, it was the outermost garment worn by those who braved the elements to farm, protect, and build. It represented both physical protection and the weight of responsibility. Today, we carry that tradition forward for modern professionals who still work in the elements.
+                The word &quot;mantle&quot; itself tells our story. Historically, it was the outermost garment worn by those who braved the elements to farm, protect, and build. It represented both physical protection and the weight of responsibility. Today, we carry that tradition forward for modern professionals who still work in the elements.
               </p>
               <p>
                 Our journey began with a year of meticulous development: selecting premium European fabrics, testing countless prototypes, and gathering feedback from law enforcement officers across the country. We partnered with seamstresses with over 20 years of technical garment experience and consulted with SWAT officers, range instructors, and outdoor professionals. The result? A 9-piece collection that merges high-end outdoor performance with tactical functionality.
               </p>
               <p>
-                We're not here to make easy clothes or chase profit margins. We're here because we've worn the gear that fits like a trash bag, falls apart after a few uses, and leaves you wet, cold, and fumbling for equipment. We're the new kids on the block, and we're proud of it—because it means we're not bound by "how it's always been done."
+                We&apos;re not here to make easy clothes or chase profit margins. We&apos;re here because we&apos;ve worn the gear that fits like a trash bag, falls apart after a few uses, and leaves you wet, cold, and fumbling for equipment. We&apos;re the new kids on the block, and we&apos;re proud of it—because it means we&apos;re not bound by &quot;how it&apos;s always been done.&quot;
               </p>
             </section>
             
@@ -200,18 +200,18 @@ export default function About() {
                 Mantle was born out of frustration with the existing law enforcement clothing options and a desire to make something better. Co-Founder William Petty is on the range for over 200 days each year, training police officers. He was unhappy with the clothing that fell apart, was uncomfortable, and restrictive. He decided to design a clothing line specifically for police officers and what they do every day.
               </p>
               <p>
-                But great gear isn't designed in a vacuum. Our philosophy centers on three core principles:
+                But great gear isn&apos;t designed in a vacuum. Our philosophy centers on three core principles:
               </p>
               <p>
-                <strong>1. Purpose Over Fashion</strong> - While you'll look fly as 1980 David Bowie on perimeter, every feature serves a function. We don't add zippers, pockets, or panels unless they solve a real problem.
+                <strong>1. Purpose Over Fashion</strong> - While you&apos;ll look fly as 1980 David Bowie on perimeter, every feature serves a function. We don&apos;t add zippers, pockets, or panels unless they solve a real problem.
               </p>
               <p>
-                <strong>2. Field-Tested Innovation </strong> - Each garment undergoes rigorous testing in actual operational environments. If it doesn't work on the range deck, in the rain, or during a foot pursuit, it doesn't make the cut.
+                <strong>2. Field-Tested Innovation </strong> - Each garment undergoes rigorous testing in actual operational environments. If it doesn&apos;t work on the range deck, in the rain, or during a foot pursuit, it doesn&apos;t make the cut.
               </p>
               <p>
-                <strong>3. Uncompromising Quality</strong> - We use top-tier materials and construction methods, even when cheaper alternatives exist. The right high-end fabrics, reinforced stitching in stress points, and components that won't fail when it matters most.
+                <strong>3. Uncompromising Quality</strong> - We use top-tier materials and construction methods, even when cheaper alternatives exist. The right high-end fabrics, reinforced stitching in stress points, and components that won&apos;t fail when it matters most.
               </p>
-              <p>The devil is in the details, and we've built a full-blown cult around getting them right. Because when you're focused on the job, your gear should be the last thing on your mind.</p>
+              <p>The devil is in the details, and we&apos;ve built a full-blown cult around getting them right. Because when you&apos;re focused on the job, your gear should be the last thing on your mind.</p>
             </section>
           </div>
         </div>
