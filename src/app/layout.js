@@ -19,9 +19,9 @@ const geistMono = Geist_Mono({
 });
                                                                                                                                                                                                        
 export const metadata = {
-  title: "Mantle Clothing | Premium Sustainable Apparel",
-  description: "Discover Mantle Clothing's premium sustainable apparel. Shop our collection of eco-friendly, ethically-made clothing for conscious consumers.",
-  keywords: "sustainable clothing, eco-friendly apparel, ethical fashion, Mantle Clothing, outdoor apparel, rain collection, range collection",
+  title: 'Mantle Clothing - Premium Tactical & Outdoor Apparel for Law Enforcement',
+  description: 'Purpose-built technical clothing designed for operational use. Premium law enforcement and outdoor apparel featuring waterproof, articulated designs with integrated protection. Tough, warm, water-resistant gear for those who work in the elements.',
+  keywords: 'tactical clothing, law enforcement apparel, outdoor gear, waterproof work pants, technical clothing, police gear, security apparel, operational clothing, tactical jacket, work bibs',
   icons: {
     icon: '/images/MANTLE_LOGO.svg?v=2',
     shortcut: '/images/MANTLE_LOGO.svg?v=2',
@@ -38,11 +38,20 @@ export const metadata = {
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
   },
   openGraph: {
-    title: "Mantle Clothing | Premium Sustainable Apparel",
-    description: "Discover Mantle Clothing's premium sustainable apparel. Shop our collection of eco-friendly, ethically-made clothing for conscious consumers.",
-    url: 'https://mantleclothing.com',
+    title: 'Mantle Clothing - Premium Tactical & Outdoor Apparel',
+    description: 'Purpose-built technical clothing merging high-end outdoor performance with tactical functionality. Designed for law enforcement, security, and outdoor professionals.',
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://mantle-clothing.com',
     siteName: 'Mantle Clothing',
     images: [
       {
@@ -57,8 +66,8 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: "Mantle Clothing | Premium Sustainable Apparel",
-    description: "Discover Mantle Clothing's premium sustainable apparel. Shop our collection of eco-friendly, ethically-made clothing for conscious consumers.",
+    title: 'Mantle Clothing - Premium Tactical & Outdoor Apparel',
+    description: 'Purpose-built technical clothing for operational use. Premium gear for law enforcement and outdoor professionals.',
     images: ['/images/banner-1.jpg'],
   },
 };
