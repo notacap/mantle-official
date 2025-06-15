@@ -19,6 +19,7 @@
     "@stripe/stripe-js": "^7.3.0",
     "@tanstack/react-query": "^5.74.3",
     "@tanstack/react-query-devtools": "^5.74.3",
+    "@vercel/analytics": "^1.5.0",
     "@woocommerce/woocommerce-rest-api": "^1.0.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

@@ -6,6 +6,7 @@ import ReactQueryProvider from "./lib/reactQuery";
 import { CartProvider } from "../context/CartContext";
 import SideCart from "./components/SideCart";
 import GoogleAnalytics from "./components/GoogleAnalytics";
+import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -82,6 +83,7 @@ export default function RootLayout({ children }) {
             <SideCart />
           </CartProvider>
         </ReactQueryProvider>
+        <Analytics />
       </body>
     </html>
   );
