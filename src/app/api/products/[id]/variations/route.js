@@ -10,7 +10,7 @@ import { NextResponse } from 'next/server';
  */
 export async function GET(request, { params }) {
   try {
-    const { id: productId } = params;
+    const { id: productId } = await params;
 
     if (!productId) {
       return NextResponse.json(
