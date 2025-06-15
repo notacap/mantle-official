@@ -11,10 +11,10 @@ export const metadata = {
     siteName: 'Mantle Clothing',
     images: [
       {
-        url: 'https://mantle-clothing.com/og-shop-all.jpg', // Update with actual image
+        url: '/images/banner-1.jpg',
         width: 1200,
         height: 630,
-        alt: 'Mantle Clothing Tactical Apparel Collection',
+        alt: 'Mantle Clothing - Sustainable Apparel',
       },
     ],
   },
@@ -22,7 +22,7 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Shop All Tactical Clothing & Gear - Mantle Clothing',
     description: 'Browse our complete collection of purpose-built tactical clothing for law enforcement and outdoor professionals.',
-    images: ['https://mantle-clothing.com/twitter-shop-all.jpg'], // Update with actual image
+    images: ['/images/banner-1.jpg'],
   },
   alternates: {
     canonical: 'https://mantle-clothing.com/shop',
