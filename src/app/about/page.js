@@ -4,9 +4,46 @@ import NewsletterSignup from '../components/NewsletterSignup';
 import './about.css';
 
 export const metadata = {
-  title: "About Us | Mantle Clothing",
-  description: "Learn about Mantle Clothing&apos;s story, mission, and commitment to sustainable fashion.",
-};
+  title: 'About Us - Our Mission & Story | Mantle Clothing',
+  description: 'Born from 200+ days on the range. Mantle creates quality, purpose-built clothing for law enforcement and first responders. Designed by cops, for cops who demand better gear.',
+  keywords: 'mantle clothing story, william petty, law enforcement clothing brand, first responder apparel, police gear company, tactical clothing designers, range-tested gear, purpose-built clothing',
+  openGraph: {
+    title: 'About Mantle Clothing - Purpose-Built for Those Who Serve',
+    description: 'Founded by range instructor William Petty after 200+ days training officers. We create technical clothing that performs correctly, allowing first responders to focus on their job.',
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://mantle-clothing.com/about',
+    siteName: 'Mantle Clothing',
+    images: [
+      {
+        url: '/images/banner-1.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Mantle Clothing - Sustainable Apparel',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'About Mantle Clothing - Our Mission & Story',
+    description: 'Born from frustration with existing options. Purpose-built clothing designed by law enforcement, for law enforcement.',
+    images: ['/images/banner-1.jpg'],
+  },
+  alternates: {
+    canonical: 'https://mantle-clothing.com/about',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+}
 
 export default function About() {
   return (
@@ -54,13 +91,16 @@ export default function About() {
             <section id="our-story" className="content-section">
               <h2>Our Story</h2>
               <p>
-                Mantle was founded in 2018 with a simple yet powerful mission: to create high-quality, sustainable clothing that could withstand the demands of modern work without compromising on style or comfort.
+                Mantle Clothing emerged from a simple truth: those who protect and serve deserve gear that works as hard as they do. What started as frustrated conversations around the range evolved into a mission to revolutionize tactical apparel.
               </p>
               <p>
-                Our founder, drawn from years of experience in both outdoor apparel and sustainable manufacturing, recognized a gap in the market for workwear that was both functional and environmentally responsible.
+                The word "mantle" itself tells our story. Historically, it was the outermost garment worn by those who braved the elements to farm, protect, and build. It represented both physical protection and the weight of responsibility. Today, we carry that tradition forward for modern professionals who still work in the elements.
               </p>
               <p>
-                What began as a small collection of essential pieces has grown into a comprehensive line of apparel designed for those who demand more from their clothing – whether in the field, at the worksite, or in everyday life.
+                Our journey began with a year of meticulous development: selecting premium European fabrics, testing countless prototypes, and gathering feedback from law enforcement officers across the country. We partnered with seamstresses with over 20 years of technical garment experience and consulted with SWAT officers, range instructors, and outdoor professionals. The result? A 9-piece collection that merges high-end outdoor performance with tactical functionality.
+              </p>
+              <p>
+                We're not here to make easy clothes or chase profit margins. We're here because we've worn the gear that fits like a trash bag, falls apart after a few uses, and leaves you wet, cold, and fumbling for equipment. We're the new kids on the block, and we're proud of it—because it means we're not bound by "how it's always been done."
               </p>
             </section>
             
@@ -68,10 +108,13 @@ export default function About() {
             <section id="our-mission" className="content-section">
               <h2>Our Mission</h2>
               <p>
-                At Mantle Clothing, we believe that fashion should never come at the expense of our planet. Our mission is to create high-quality, sustainable apparel that looks good, feels good, and does good.
+                Our goal at Mantle is to make quality, purpose-built clothing for law enforcement and other first responders. We believe clothing should perform and function correctly, allowing individuals to focus on their job.
               </p>
               <p>
-                We&apos;re committed to ethical manufacturing processes, using eco-friendly materials, and creating durable products that reduce waste and environmental impact. Every decision we make is guided by our commitment to sustainability and responsibility.
+                Every piece we create addresses real-world operational needs. From waterproof work bibs that actually keep you dry during 12-hour shifts, to pants with integrated D3O knee protection that moves with you, we obsess over the details others ignore. Purpose-built pockets that work in positions other than standing. Air flow vents where you need them. Articulated cuts that facilitate true movement while running, climbing, and yes, doing hero shit.
+              </p>
+              <p>
+                We take pride in clothing those who still work in professions of skill. Your job is to tend to your work, your legacy (our job) is to make it suck less while you do. Because weather (and at times your job) can be shitty. Your clothes shouldn&apos;t be.
               </p>
             </section>
             
@@ -154,11 +197,21 @@ export default function About() {
             <section id="design" className="content-section">
               <h2>Design Philosophy</h2>
               <p>
-                Our design approach combines function, durability, and timeless style. We create versatile pieces that work across environments and seasons, with thoughtful details that enhance performance and comfort.
+                Mantle was born out of frustration with the existing law enforcement clothing options and a desire to make something better. Co-Founder William Petty is on the range for over 200 days each year, training police officers. He was unhappy with the clothing that fell apart, was uncomfortable, and restrictive. He decided to design a clothing line specifically for police officers and what they do every day.
               </p>
               <p>
-                Each garment is engineered to move with you, stand up to repeated wear, and maintain its appearance over time. We believe that truly sustainable clothing must be designed to last, both physically and stylistically.
+                But great gear isn't designed in a vacuum. Our philosophy centers on three core principles:
               </p>
+              <p>
+                <strong>1. Purpose Over Fashion</strong> - While you'll look fly as 1980 David Bowie on perimeter, every feature serves a function. We don't add zippers, pockets, or panels unless they solve a real problem.
+              </p>
+              <p>
+                <strong>2. Field-Tested Innovation </strong> - Each garment undergoes rigorous testing in actual operational environments. If it doesn't work on the range deck, in the rain, or during a foot pursuit, it doesn't make the cut.
+              </p>
+              <p>
+                <strong>3. Uncompromising Quality</strong> - We use top-tier materials and construction methods, even when cheaper alternatives exist. The right high-end fabrics, reinforced stitching in stress points, and components that won't fail when it matters most.
+              </p>
+              <p>The devil is in the details, and we've built a full-blown cult around getting them right. Because when you're focused on the job, your gear should be the last thing on your mind.</p>
             </section>
           </div>
         </div>
