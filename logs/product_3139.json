@@ -1,0 +1,184 @@
+{
+  "id": 3139,
+  "name": "Shirt - Mod 3 - Navy, L",
+  "slug": "shirt-mod-3-lw-navy-l",
+  "permalink": "https://mantle-clothing.com/product/shirt-mod-3-lw/?attribute_pa_color=navy&attribute_pa_size=large",
+  "date_created": "2023-06-20T17:06:51",
+  "date_created_gmt": "2023-06-20T23:06:51",
+  "date_modified": "2025-04-29T11:43:07",
+  "date_modified_gmt": "2025-04-29T17:43:07",
+  "type": "variation",
+  "status": "publish",
+  "featured": false,
+  "catalog_visibility": "visible",
+  "description": "<p>Shirt - Mod 3 Navy - Large.</p>\n",
+  "short_description": "",
+  "sku": "M-S3 - 032",
+  "price": "100",
+  "regular_price": "100",
+  "sale_price": "",
+  "date_on_sale_from": null,
+  "date_on_sale_from_gmt": null,
+  "date_on_sale_to": null,
+  "date_on_sale_to_gmt": null,
+  "on_sale": false,
+  "purchasable": true,
+  "total_sales": "0",
+  "virtual": false,
+  "downloadable": false,
+  "downloads": [],
+  "download_limit": -1,
+  "download_expiry": -1,
+  "external_url": "",
+  "button_text": "",
+  "tax_status": "taxable",
+  "tax_class": "",
+  "manage_stock": true,
+  "stock_quantity": 54,
+  "backorders": "no",
+  "backorders_allowed": false,
+  "backordered": false,
+  "low_stock_amount": null,
+  "sold_individually": false,
+  "weight": "0",
+  "dimensions": {
+    "length": "",
+    "width": "",
+    "height": ""
+  },
+  "shipping_required": true,
+  "shipping_taxable": true,
+  "shipping_class": "ups-ground",
+  "shipping_class_id": 63,
+  "reviews_allowed": false,
+  "average_rating": "0.00",
+  "rating_count": 0,
+  "upsell_ids": [],
+  "cross_sell_ids": [],
+  "parent_id": 3138,
+  "purchase_note": "",
+  "categories": [],
+  "tags": [],
+  "images": [
+    {
+      "id": 3158,
+      "date_created": "2023-06-21T09:17:05",
+      "date_created_gmt": "2023-06-21T21:17:05",
+      "date_modified": "2023-06-21T09:17:05",
+      "date_modified_gmt": "2023-06-21T21:17:05",
+      "src": "https://mantle-clothing.com/wp-content/uploads/2023/06/JIM_6791.jpg",
+      "name": "JIM_6791",
+      "alt": ""
+    }
+  ],
+  "attributes": [
+    {
+      "id": 1,
+      "name": "Color",
+      "slug": "pa_color",
+      "option": "Navy"
+    },
+    {
+      "id": 3,
+      "name": "Size",
+      "slug": "pa_size",
+      "option": "L"
+    }
+  ],
+  "default_attributes": [],
+  "variations": [],
+  "grouped_products": [],
+  "menu_order": 1,
+  "price_html": "<span class=\"woocommerce-Price-amount amount\"><bdi><span class=\"woocommerce-Price-currencySymbol\">&#36;</span>100.00</bdi></span>",
+  "related_ids": [],
+  "meta_data": [
+    {
+      "id": 116167,
+      "key": "_subscription_payment_sync_date",
+      "value": "0"
+    },
+    {
+      "id": 253866,
+      "key": "wavi_value",
+      "value": ""
+    },
+    {
+      "id": 253867,
+      "key": "_coupon_title",
+      "value": []
+    },
+    {
+      "id": 253868,
+      "key": "send_coupons_on_renewals",
+      "value": "no"
+    },
+    {
+      "id": 277759,
+      "key": "_wc_gla_synced_at",
+      "value": "1748306172"
+    },
+    {
+      "id": 277760,
+      "key": "_wc_gla_sync_status",
+      "value": "synced"
+    },
+    {
+      "id": 277762,
+      "key": "_wc_gla_google_ids",
+      "value": {
+        "US": "online:en:US:gla_3139"
+      }
+    },
+    {
+      "id": 297489,
+      "key": "_wc_gla_mc_status",
+      "value": "approved"
+    }
+  ],
+  "stock_status": "instock",
+  "has_options": false,
+  "post_password": "",
+  "global_unique_id": "",
+  "yoast_head": null,
+  "yoast_head_json": null,
+  "uagb_featured_image_src": [],
+  "uagb_author_info": {
+    "display_name": "",
+    "author_link": "https://mantle-clothing.com/author/"
+  },
+  "uagb_comment_info": 0,
+  "uagb_excerpt": "Color: Navy, Size: L",
+  "brands": [],
+  "google_listings_and_ads__channel_visibility": {
+    "is_visible": true,
+    "channel_visibility": "sync-and-show",
+    "sync_status": "synced",
+    "issues": []
+  },
+  "_links": {
+    "self": [
+      {
+        "href": "https://mantle-clothing.com/wp-json/wc/v3/products/3139",
+        "targetHints": {
+          "allow": [
+            "GET",
+            "POST",
+            "PUT",
+            "PATCH",
+            "DELETE"
+          ]
+        }
+      }
+    ],
+    "collection": [
+      {
+        "href": "https://mantle-clothing.com/wp-json/wc/v3/products"
+      }
+    ],
+    "up": [
+      {
+        "href": "https://mantle-clothing.com/wp-json/wc/v3/products/3138"
+      }
+    ]
+  }
+}

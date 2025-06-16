@@ -1,0 +1,666 @@
+{
+  "id": 5403,
+  "name": "Rain Jacket - Mod 2",
+  "slug": "rain-jacket-mod-2",
+  "permalink": "https://mantle-clothing.com/product/rain-jacket-mod-2/",
+  "date_created": "2025-02-12T15:27:10",
+  "date_created_gmt": "2025-02-12T22:27:10",
+  "date_modified": "2025-05-27T18:16:35",
+  "date_modified_gmt": "2025-05-28T00:16:35",
+  "type": "variable",
+  "status": "publish",
+  "featured": false,
+  "catalog_visibility": "visible",
+  "description": "<p><!-- wp:list --></p>\n<ul class=\"wp-block-list\"><!-- wp:list-item --></p>\n<li></li>\n<p><!-- /wp:list-item --></ul>\n<p><!-- /wp:list --></p>\n<p><!-- wp:paragraph --></p>\n<p><!-- /wp:paragraph --></p>\n",
+  "short_description": "",
+  "sku": "M-RJ-1",
+  "price": "475.0000",
+  "regular_price": "",
+  "sale_price": "",
+  "date_on_sale_from": null,
+  "date_on_sale_from_gmt": null,
+  "date_on_sale_to": null,
+  "date_on_sale_to_gmt": null,
+  "on_sale": false,
+  "purchasable": true,
+  "total_sales": 14,
+  "virtual": false,
+  "downloadable": false,
+  "downloads": [],
+  "download_limit": -1,
+  "download_expiry": -1,
+  "external_url": "",
+  "button_text": "",
+  "tax_status": "taxable",
+  "tax_class": "",
+  "manage_stock": false,
+  "stock_quantity": null,
+  "backorders": "no",
+  "backorders_allowed": false,
+  "backordered": false,
+  "low_stock_amount": null,
+  "sold_individually": false,
+  "weight": "0",
+  "dimensions": {
+    "length": "",
+    "width": "",
+    "height": ""
+  },
+  "shipping_required": true,
+  "shipping_taxable": true,
+  "shipping_class": "ups-ground",
+  "shipping_class_id": 63,
+  "reviews_allowed": true,
+  "average_rating": "0.00",
+  "rating_count": 0,
+  "upsell_ids": [
+    199
+  ],
+  "cross_sell_ids": [],
+  "parent_id": 0,
+  "purchase_note": "",
+  "categories": [
+    {
+      "id": 20,
+      "name": "Outerwear",
+      "slug": "outerwear"
+    },
+    {
+      "id": 22,
+      "name": "Tops",
+      "slug": "tops"
+    }
+  ],
+  "tags": [
+    {
+      "id": 21,
+      "name": "The Rain Collection",
+      "slug": "rain-collection"
+    }
+  ],
+  "images": [
+    {
+      "id": 5396,
+      "date_created": "2025-02-11T05:23:37",
+      "date_created_gmt": "2025-02-11T19:23:37",
+      "date_modified": "2025-02-11T05:23:37",
+      "date_modified_gmt": "2025-02-11T19:23:37",
+      "src": "https://mantle-clothing.com/wp-content/uploads/2020/11/JBR_0480-Edit.jpg",
+      "name": "JBR_0480-Edit",
+      "alt": ""
+    },
+    {
+      "id": 5390,
+      "date_created": "2025-02-11T05:22:38",
+      "date_created_gmt": "2025-02-11T19:22:38",
+      "date_modified": "2025-02-11T05:22:38",
+      "date_modified_gmt": "2025-02-11T19:22:38",
+      "src": "https://mantle-clothing.com/wp-content/uploads/2020/11/JBR_0501-Edit.jpg",
+      "name": "JBR_0501-Edit",
+      "alt": ""
+    },
+    {
+      "id": 5393,
+      "date_created": "2025-02-11T05:23:09",
+      "date_created_gmt": "2025-02-11T19:23:09",
+      "date_modified": "2025-02-11T05:23:09",
+      "date_modified_gmt": "2025-02-11T19:23:09",
+      "src": "https://mantle-clothing.com/wp-content/uploads/2020/11/JBR_0488-Edit.jpg",
+      "name": "JBR_0488-Edit",
+      "alt": ""
+    },
+    {
+      "id": 5395,
+      "date_created": "2025-02-11T05:23:29",
+      "date_created_gmt": "2025-02-11T19:23:29",
+      "date_modified": "2025-02-11T05:23:29",
+      "date_modified_gmt": "2025-02-11T19:23:29",
+      "src": "https://mantle-clothing.com/wp-content/uploads/2020/11/JBR_0486-Edit.jpg",
+      "name": "JBR_0486-Edit",
+      "alt": ""
+    },
+    {
+      "id": 5396,
+      "date_created": "2025-02-11T05:23:37",
+      "date_created_gmt": "2025-02-11T19:23:37",
+      "date_modified": "2025-02-11T05:23:37",
+      "date_modified_gmt": "2025-02-11T19:23:37",
+      "src": "https://mantle-clothing.com/wp-content/uploads/2020/11/JBR_0480-Edit.jpg",
+      "name": "JBR_0480-Edit",
+      "alt": ""
+    },
+    {
+      "id": 5394,
+      "date_created": "2025-02-11T05:23:20",
+      "date_created_gmt": "2025-02-11T19:23:20",
+      "date_modified": "2025-02-11T05:23:20",
+      "date_modified_gmt": "2025-02-11T19:23:20",
+      "src": "https://mantle-clothing.com/wp-content/uploads/2020/11/JBR_0487-Edit.jpg",
+      "name": "JBR_0487-Edit",
+      "alt": ""
+    },
+    {
+      "id": 5392,
+      "date_created": "2025-02-11T05:22:58",
+      "date_created_gmt": "2025-02-11T19:22:58",
+      "date_modified": "2025-02-11T05:22:58",
+      "date_modified_gmt": "2025-02-11T19:22:58",
+      "src": "https://mantle-clothing.com/wp-content/uploads/2020/11/JBR_0491-Edit.jpg",
+      "name": "JBR_0491-Edit",
+      "alt": ""
+    },
+    {
+      "id": 5391,
+      "date_created": "2025-02-11T05:22:48",
+      "date_created_gmt": "2025-02-11T19:22:48",
+      "date_modified": "2025-02-11T05:22:48",
+      "date_modified_gmt": "2025-02-11T19:22:48",
+      "src": "https://mantle-clothing.com/wp-content/uploads/2020/11/JBR_0493-Edit.jpg",
+      "name": "JBR_0493-Edit",
+      "alt": ""
+    }
+  ],
+  "attributes": [
+    {
+      "id": 1,
+      "name": "Color",
+      "slug": "pa_color",
+      "position": 0,
+      "visible": true,
+      "variation": true,
+      "options": [
+        "Mantle Green"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Size",
+      "slug": "pa_size",
+      "position": 1,
+      "visible": true,
+      "variation": true,
+      "options": [
+        "XS",
+        "S",
+        "M",
+        "M - Long",
+        "L",
+        "L - Long",
+        "XL",
+        "XL - Long",
+        "XXL"
+      ]
+    }
+  ],
+  "default_attributes": [],
+  "variations": [
+    5404,
+    5405,
+    5406,
+    5407,
+    5408
+  ],
+  "grouped_products": [],
+  "menu_order": 0,
+  "price_html": "<span class=\"woocommerce-Price-amount amount\"><bdi><span class=\"woocommerce-Price-currencySymbol\">&#36;</span>475.00</bdi></span>",
+  "related_ids": [
+    204,
+    199,
+    563,
+    140,
+    3138
+  ],
+  "meta_data": [
+    {
+      "id": 274553,
+      "key": "details",
+      "value": "Weight: 1 lb 4 oz\r\nSupported brim with an adjustable hood for a helmet, ear pro, and coms. \r\n"
+    },
+    {
+      "id": 274554,
+      "key": "_details",
+      "value": "field_5fbc19ebb6aa2"
+    },
+    {
+      "id": 274555,
+      "key": "description",
+      "value": "The Mantle Rain Jacket Mod 2 is a purpose-built, mission garment focusing on durability, articulation, and ventilation. Overbuilt waterproof protection and strategically placed zippers, pockets, and reinforcements ensure you stay dry and comfortable in even the worst conditions.\r\n\r\nThis jacket is designed to be a heavier weight outer shell. The material is extremely wind and abrasion resistant. Perfect for use under a plate carrier or backpack.\r\n\r\n&nbsp;"
+    },
+    {
+      "id": 274556,
+      "key": "fabric_technology",
+      "value": "Shell 100% Polyamide PTFE Membrane, Interior 100% Polyester, Ratings: WR 20000 MVP 8000, PFAS Free"
+    },
+    {
+      "id": 274557,
+      "key": "_fabric_technology",
+      "value": "field_5fbc3e4256a2f"
+    },
+    {
+      "id": 274558,
+      "key": "fabric_technology_heading",
+      "value": "Fabric Technology"
+    },
+    {
+      "id": 274559,
+      "key": "_fabric_technology_heading",
+      "value": "field_5fbc3e1c72550"
+    },
+    {
+      "id": 274560,
+      "key": "sizing_heading",
+      "value": "Sizing"
+    },
+    {
+      "id": 274561,
+      "key": "_sizing_heading",
+      "value": "field_5fbd41743f812"
+    },
+    {
+      "id": 274562,
+      "key": "table_shortcode",
+      "value": "[supsystic-tables id=1]"
+    },
+    {
+      "id": 274563,
+      "key": "_table_shortcode",
+      "value": "field_5fbd41903f813"
+    },
+    {
+      "id": 274564,
+      "key": "care_heading",
+      "value": "Care"
+    },
+    {
+      "id": 274565,
+      "key": "_care_heading",
+      "value": "field_5fbd472f1b2e2"
+    },
+    {
+      "id": 274566,
+      "key": "care_info",
+      "value": "Machine wash - Cold, Gentle Cycle. Hang to dry. Do not use fabric softener, Do not iron, Treat with Nikwax after first wash"
+    },
+    {
+      "id": 274567,
+      "key": "_care_info",
+      "value": "field_5fbd4752e90a9"
+    },
+    {
+      "id": 274568,
+      "key": "detail_image1",
+      "value": ""
+    },
+    {
+      "id": 274569,
+      "key": "_detail_image1",
+      "value": "field_5fbd498f3746e"
+    },
+    {
+      "id": 274570,
+      "key": "detail_image_1",
+      "value": ""
+    },
+    {
+      "id": 274571,
+      "key": "_detail_image_1",
+      "value": "field_5fbd498f3746e"
+    },
+    {
+      "id": 274572,
+      "key": "detail_image_2",
+      "value": ""
+    },
+    {
+      "id": 274573,
+      "key": "_detail_image_2",
+      "value": "field_5fbd7db748e5f"
+    },
+    {
+      "id": 274574,
+      "key": "detail_image_3",
+      "value": ""
+    },
+    {
+      "id": 274575,
+      "key": "_detail_image_3",
+      "value": "field_5fbd7df1209f8"
+    },
+    {
+      "id": 274576,
+      "key": "image_gallery",
+      "value": "[modula id=\"251\"]"
+    },
+    {
+      "id": 274577,
+      "key": "_image_gallery",
+      "value": "field_5fbd83e61c8c3"
+    },
+    {
+      "id": 274578,
+      "key": "_yoast_wpseo_estimated-reading-time-minutes",
+      "value": "1"
+    },
+    {
+      "id": 274579,
+      "key": "spec_sheet",
+      "value": ""
+    },
+    {
+      "id": 274580,
+      "key": "_spec_sheet",
+      "value": "field_604a76f482352"
+    },
+    {
+      "id": 274581,
+      "key": "_yith_wcbm_badge_from_date",
+      "value": ""
+    },
+    {
+      "id": 274582,
+      "key": "_yith_wcbm_badge_to_date",
+      "value": ""
+    },
+    {
+      "id": 274583,
+      "key": "_yith_wcbm_badge_schedule",
+      "value": "0"
+    },
+    {
+      "id": 274584,
+      "key": "_yoast_wpseo_wordproof_timestamp",
+      "value": ""
+    },
+    {
+      "id": 274585,
+      "key": "_yoast_wpseo_primary_product_cat",
+      "value": ""
+    },
+    {
+      "id": 274586,
+      "key": "_yoast_wpseo_primary_fb_product_set",
+      "value": ""
+    },
+    {
+      "id": 274587,
+      "key": "_uag_migration_processed",
+      "value": "1"
+    },
+    {
+      "id": 274588,
+      "key": "_uag_custom_page_level_css",
+      "value": ""
+    },
+    {
+      "id": 274589,
+      "key": "_monsterinsights_skip_tracking",
+      "value": ""
+    },
+    {
+      "id": 274590,
+      "key": "_monsterinsights_sitenote_active",
+      "value": ""
+    },
+    {
+      "id": 274591,
+      "key": "_coupon_title",
+      "value": []
+    },
+    {
+      "id": 274592,
+      "key": "send_coupons_on_renewals",
+      "value": "no"
+    },
+    {
+      "id": 274593,
+      "key": "_yoast_wpseo_primary_product_brand",
+      "value": ""
+    },
+    {
+      "id": 274743,
+      "key": "_yoast_wpseo_focuskw",
+      "value": "Rain Jacket"
+    },
+    {
+      "id": 274744,
+      "key": "_yoast_wpseo_linkdex",
+      "value": "37"
+    },
+    {
+      "id": 275185,
+      "key": "_acf_changed",
+      "value": "1"
+    },
+    {
+      "id": 277721,
+      "key": "_wc_gla_visibility",
+      "value": "sync-and-show"
+    },
+    {
+      "id": 277723,
+      "key": "_wc_gla_sync_status",
+      "value": "synced"
+    },
+    {
+      "id": 277950,
+      "key": "_wc_gla_synced_at",
+      "value": "1748391418"
+    },
+    {
+      "id": 277951,
+      "key": "_wc_gla_google_ids",
+      "value": {
+        "US": "online:en:US:gla_5408"
+      }
+    },
+    {
+      "id": 297566,
+      "key": "_wc_gla_mc_status",
+      "value": "approved"
+    },
+    {
+      "id": 298129,
+      "key": "_yoast_wpseo_content_score",
+      "value": "90"
+    },
+    {
+      "id": 298262,
+      "key": "_uag_page_assets",
+      "value": {
+        "css": "",
+        "js": "",
+        "current_block_list": [
+          "core/list",
+          "core/list-item",
+          "core/paragraph"
+        ],
+        "uag_flag": false,
+        "uag_version": 1748448621,
+        "gfonts": [],
+        "gfonts_url": "",
+        "gfonts_files": [],
+        "uag_faq_layout": false
+      }
+    }
+  ],
+  "stock_status": "instock",
+  "has_options": true,
+  "post_password": "",
+  "global_unique_id": "",
+  "yoast_head": "<!-- This site is optimized with the Yoast SEO plugin v25.0 - https://yoast.com/wordpress/plugins/seo/ -->\n<title>Rain Jacket - Mod 2 - Mantle Clothing</title>\n<!-- Admin only notice: this page does not show a meta description because it does not have one, either write it for this page specifically or go into the [Yoast SEO - Settings] menu and set up a template. -->\n<meta name=\"robots\" content=\"index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1\" />\n<link rel=\"canonical\" href=\"https://mantle-clothing.com/product/rain-jacket-mod-2/\" />\n<meta property=\"og:locale\" content=\"en_US\" />\n<meta property=\"og:type\" content=\"article\" />\n<meta property=\"og:title\" content=\"Rain Jacket - Mod 2 - Mantle Clothing\" />\n<meta property=\"og:url\" content=\"https://mantle-clothing.com/product/rain-jacket-mod-2/\" />\n<meta property=\"og:site_name\" content=\"Mantle Clothing\" />\n<meta property=\"article:modified_time\" content=\"2025-05-28T00:16:35+00:00\" />\n<meta property=\"og:image\" content=\"https://mantle-clothing.com/wp-content/uploads/2020/11/JBR_0480-Edit-1024x683.jpg\" />\n\t<meta property=\"og:image:width\" content=\"1024\" />\n\t<meta property=\"og:image:height\" content=\"683\" />\n\t<meta property=\"og:image:type\" content=\"image/jpeg\" />\n<meta name=\"twitter:card\" content=\"summary_large_image\" />\n<meta name=\"twitter:label1\" content=\"Est. reading time\" />\n\t<meta name=\"twitter:data1\" content=\"1 minute\" />\n<script type=\"application/ld+json\" class=\"yoast-schema-graph\">{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"WebPage\",\"@id\":\"https://mantle-clothing.com/product/rain-jacket-mod-2/\",\"url\":\"https://mantle-clothing.com/product/rain-jacket-mod-2/\",\"name\":\"Rain Jacket - Mod 2 - Mantle Clothing\",\"isPartOf\":{\"@id\":\"https://mantle-clothing.com/#website\"},\"primaryImageOfPage\":{\"@id\":\"https://mantle-clothing.com/product/rain-jacket-mod-2/#primaryimage\"},\"image\":{\"@id\":\"https://mantle-clothing.com/product/rain-jacket-mod-2/#primaryimage\"},\"thumbnailUrl\":\"https://mantle-clothing.com/wp-content/uploads/2020/11/JBR_0480-Edit.jpg\",\"datePublished\":\"2025-02-12T22:27:10+00:00\",\"dateModified\":\"2025-05-28T00:16:35+00:00\",\"breadcrumb\":{\"@id\":\"https://mantle-clothing.com/product/rain-jacket-mod-2/#breadcrumb\"},\"inLanguage\":\"en-US\",\"potentialAction\":[{\"@type\":\"ReadAction\",\"target\":[\"https://mantle-clothing.com/product/rain-jacket-mod-2/\"]}]},{\"@type\":\"ImageObject\",\"inLanguage\":\"en-US\",\"@id\":\"https://mantle-clothing.com/product/rain-jacket-mod-2/#primaryimage\",\"url\":\"https://mantle-clothing.com/wp-content/uploads/2020/11/JBR_0480-Edit.jpg\",\"contentUrl\":\"https://mantle-clothing.com/wp-content/uploads/2020/11/JBR_0480-Edit.jpg\",\"width\":8192,\"height\":5464},{\"@type\":\"BreadcrumbList\",\"@id\":\"https://mantle-clothing.com/product/rain-jacket-mod-2/#breadcrumb\",\"itemListElement\":[{\"@type\":\"ListItem\",\"position\":1,\"name\":\"Home\",\"item\":\"https://mantle-clothing.com/\"},{\"@type\":\"ListItem\",\"position\":2,\"name\":\"Shop\",\"item\":\"https://mantle-clothing.com/shop/\"},{\"@type\":\"ListItem\",\"position\":3,\"name\":\"Rain Jacket &#8211; Mod 2\"}]},{\"@type\":\"WebSite\",\"@id\":\"https://mantle-clothing.com/#website\",\"url\":\"https://mantle-clothing.com/\",\"name\":\"Mantle Clothing\",\"description\":\"\",\"publisher\":{\"@id\":\"https://mantle-clothing.com/#organization\"},\"potentialAction\":[{\"@type\":\"SearchAction\",\"target\":{\"@type\":\"EntryPoint\",\"urlTemplate\":\"https://mantle-clothing.com/?s={search_term_string}\"},\"query-input\":{\"@type\":\"PropertyValueSpecification\",\"valueRequired\":true,\"valueName\":\"search_term_string\"}}],\"inLanguage\":\"en-US\"},{\"@type\":\"Organization\",\"@id\":\"https://mantle-clothing.com/#organization\",\"name\":\"Mantle Clothing\",\"url\":\"https://mantle-clothing.com/\",\"logo\":{\"@type\":\"ImageObject\",\"inLanguage\":\"en-US\",\"@id\":\"https://mantle-clothing.com/#/schema/logo/image/\",\"url\":\"https://mantle-clothing.com/wp-content/uploads/2020/12/MANTLE_LOGO.svg\",\"contentUrl\":\"https://mantle-clothing.com/wp-content/uploads/2020/12/MANTLE_LOGO.svg\",\"width\":900,\"height\":600,\"caption\":\"Mantle Clothing\"},\"image\":{\"@id\":\"https://mantle-clothing.com/#/schema/logo/image/\"}}]}</script>\n<!-- / Yoast SEO plugin. -->",
+  "yoast_head_json": {
+    "title": "Rain Jacket - Mod 2 - Mantle Clothing",
+    "robots": {
+      "index": "index",
+      "follow": "follow",
+      "max-snippet": "max-snippet:-1",
+      "max-image-preview": "max-image-preview:large",
+      "max-video-preview": "max-video-preview:-1"
+    },
+    "canonical": "https://mantle-clothing.com/product/rain-jacket-mod-2/",
+    "og_locale": "en_US",
+    "og_type": "article",
+    "og_title": "Rain Jacket - Mod 2 - Mantle Clothing",
+    "og_url": "https://mantle-clothing.com/product/rain-jacket-mod-2/",
+    "og_site_name": "Mantle Clothing",
+    "article_modified_time": "2025-05-28T00:16:35+00:00",
+    "og_image": [
+      {
+        "width": 1024,
+        "height": 683,
+        "url": "https://mantle-clothing.com/wp-content/uploads/2020/11/JBR_0480-Edit-1024x683.jpg",
+        "type": "image/jpeg"
+      }
+    ],
+    "twitter_card": "summary_large_image",
+    "twitter_misc": {
+      "Est. reading time": "1 minute"
+    },
+    "schema": {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebPage",
+          "@id": "https://mantle-clothing.com/product/rain-jacket-mod-2/",
+          "url": "https://mantle-clothing.com/product/rain-jacket-mod-2/",
+          "name": "Rain Jacket - Mod 2 - Mantle Clothing",
+          "isPartOf": {
+            "@id": "https://mantle-clothing.com/#website"
+          },
+          "primaryImageOfPage": {
+            "@id": "https://mantle-clothing.com/product/rain-jacket-mod-2/#primaryimage"
+          },
+          "image": {
+            "@id": "https://mantle-clothing.com/product/rain-jacket-mod-2/#primaryimage"
+          },
+          "thumbnailUrl": "https://mantle-clothing.com/wp-content/uploads/2020/11/JBR_0480-Edit.jpg",
+          "datePublished": "2025-02-12T22:27:10+00:00",
+          "dateModified": "2025-05-28T00:16:35+00:00",
+          "breadcrumb": {
+            "@id": "https://mantle-clothing.com/product/rain-jacket-mod-2/#breadcrumb"
+          },
+          "inLanguage": "en-US",
+          "potentialAction": [
+            {
+              "@type": "ReadAction",
+              "target": [
+                "https://mantle-clothing.com/product/rain-jacket-mod-2/"
+              ]
+            }
+          ]
+        },
+        {
+          "@type": "ImageObject",
+          "inLanguage": "en-US",
+          "@id": "https://mantle-clothing.com/product/rain-jacket-mod-2/#primaryimage",
+          "url": "https://mantle-clothing.com/wp-content/uploads/2020/11/JBR_0480-Edit.jpg",
+          "contentUrl": "https://mantle-clothing.com/wp-content/uploads/2020/11/JBR_0480-Edit.jpg",
+          "width": 8192,
+          "height": 5464
+        },
+        {
+          "@type": "BreadcrumbList",
+          "@id": "https://mantle-clothing.com/product/rain-jacket-mod-2/#breadcrumb",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://mantle-clothing.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Shop",
+              "item": "https://mantle-clothing.com/shop/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": "Rain Jacket &#8211; Mod 2"
+            }
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://mantle-clothing.com/#website",
+          "url": "https://mantle-clothing.com/",
+          "name": "Mantle Clothing",
+          "description": "",
+          "publisher": {
+            "@id": "https://mantle-clothing.com/#organization"
+          },
+          "potentialAction": [
+            {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://mantle-clothing.com/?s={search_term_string}"
+              },
+              "query-input": {
+                "@type": "PropertyValueSpecification",
+                "valueRequired": true,
+                "valueName": "search_term_string"
+              }
+            }
+          ],
+          "inLanguage": "en-US"
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://mantle-clothing.com/#organization",
+          "name": "Mantle Clothing",
+          "url": "https://mantle-clothing.com/",
+          "logo": {
+            "@type": "ImageObject",
+            "inLanguage": "en-US",
+            "@id": "https://mantle-clothing.com/#/schema/logo/image/",
+            "url": "https://mantle-clothing.com/wp-content/uploads/2020/12/MANTLE_LOGO.svg",
+            "contentUrl": "https://mantle-clothing.com/wp-content/uploads/2020/12/MANTLE_LOGO.svg",
+            "width": 900,
+            "height": 600,
+            "caption": "Mantle Clothing"
+          },
+          "image": {
+            "@id": "https://mantle-clothing.com/#/schema/logo/image/"
+          }
+        }
+      ]
+    }
+  },
+  "uagb_featured_image_src": [],
+  "uagb_author_info": {
+    "display_name": "",
+    "author_link": "https://mantle-clothing.com/author/"
+  },
+  "uagb_comment_info": 0,
+  "uagb_excerpt": null,
+  "brands": [],
+  "google_listings_and_ads__channel_visibility": {
+    "is_visible": true,
+    "channel_visibility": "sync-and-show",
+    "sync_status": "synced",
+    "issues": []
+  },
+  "_links": {
+    "self": [
+      {
+        "href": "https://mantle-clothing.com/wp-json/wc/v3/products/5403",
+        "targetHints": {
+          "allow": [
+            "GET",
+            "POST",
+            "PUT",
+            "PATCH",
+            "DELETE"
+          ]
+        }
+      }
+    ],
+    "collection": [
+      {
+        "href": "https://mantle-clothing.com/wp-json/wc/v3/products"
+      }
+    ]
+  }
+}

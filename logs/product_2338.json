@@ -1,0 +1,537 @@
+{
+  "id": 2338,
+  "name": "Mantle T-Shirt - Retro",
+  "slug": "mantle-t-shirt-retro",
+  "permalink": "https://mantle-clothing.com/product/mantle-t-shirt-retro/",
+  "date_created": "2022-12-13T12:22:41",
+  "date_created_gmt": "2022-12-13T19:22:41",
+  "date_modified": "2025-03-24T17:30:43",
+  "date_modified_gmt": "2025-03-24T23:30:43",
+  "type": "variable",
+  "status": "publish",
+  "featured": false,
+  "catalog_visibility": "visible",
+  "description": "",
+  "short_description": "",
+  "sku": "TSHIRT-001",
+  "price": "18.0000",
+  "regular_price": "",
+  "sale_price": "",
+  "date_on_sale_from": null,
+  "date_on_sale_from_gmt": null,
+  "date_on_sale_to": null,
+  "date_on_sale_to_gmt": null,
+  "on_sale": false,
+  "purchasable": true,
+  "total_sales": 44,
+  "virtual": false,
+  "downloadable": false,
+  "downloads": [],
+  "download_limit": -1,
+  "download_expiry": -1,
+  "external_url": "",
+  "button_text": "",
+  "tax_status": "taxable",
+  "tax_class": "",
+  "manage_stock": false,
+  "stock_quantity": null,
+  "backorders": "no",
+  "backorders_allowed": false,
+  "backordered": false,
+  "low_stock_amount": null,
+  "sold_individually": false,
+  "weight": "0",
+  "dimensions": {
+    "length": "",
+    "width": "",
+    "height": ""
+  },
+  "shipping_required": true,
+  "shipping_taxable": true,
+  "shipping_class": "first-class",
+  "shipping_class_id": 62,
+  "reviews_allowed": true,
+  "average_rating": "0.00",
+  "rating_count": 0,
+  "upsell_ids": [],
+  "cross_sell_ids": [],
+  "parent_id": 0,
+  "purchase_note": "",
+  "categories": [
+    {
+      "id": 24,
+      "name": "Accessories",
+      "slug": "accessories"
+    }
+  ],
+  "tags": [],
+  "images": [
+    {
+      "id": 2367,
+      "date_created": "2022-12-13T05:25:19",
+      "date_created_gmt": "2022-12-13T19:25:19",
+      "date_modified": "2022-12-13T05:25:19",
+      "date_modified_gmt": "2022-12-13T19:25:19",
+      "src": "https://mantle-clothing.com/wp-content/uploads/2022/12/P1000001-removebg-e1670960437649.png",
+      "name": "P1000001-removebg",
+      "alt": ""
+    },
+    {
+      "id": 2366,
+      "date_created": "2022-12-13T05:25:14",
+      "date_created_gmt": "2022-12-13T19:25:14",
+      "date_modified": "2022-12-13T05:25:14",
+      "date_modified_gmt": "2022-12-13T19:25:14",
+      "src": "https://mantle-clothing.com/wp-content/uploads/2022/12/P1000002-removebg-preview.png",
+      "name": "P1000002-removebg-preview",
+      "alt": ""
+    },
+    {
+      "id": 2363,
+      "date_created": "2022-12-13T05:24:51",
+      "date_created_gmt": "2022-12-13T19:24:51",
+      "date_modified": "2022-12-13T05:24:51",
+      "date_modified_gmt": "2022-12-13T19:24:51",
+      "src": "https://mantle-clothing.com/wp-content/uploads/2022/12/P1000007-removebg.png",
+      "name": "P1000007-removebg",
+      "alt": ""
+    },
+    {
+      "id": 2355,
+      "date_created": "2022-12-13T05:24:23",
+      "date_created_gmt": "2022-12-13T19:24:23",
+      "date_modified": "2022-12-13T05:24:23",
+      "date_modified_gmt": "2022-12-13T19:24:23",
+      "src": "https://mantle-clothing.com/wp-content/uploads/2022/12/P1000006-scaled.jpg",
+      "name": "P1000006",
+      "alt": ""
+    },
+    {
+      "id": 2364,
+      "date_created": "2022-12-13T05:25:03",
+      "date_created_gmt": "2022-12-13T19:25:03",
+      "date_modified": "2022-12-13T05:25:03",
+      "date_modified_gmt": "2022-12-13T19:25:03",
+      "src": "https://mantle-clothing.com/wp-content/uploads/2022/12/P1000005-removebg.png",
+      "name": "P1000005-removebg",
+      "alt": ""
+    },
+    {
+      "id": 2365,
+      "date_created": "2022-12-13T05:25:12",
+      "date_created_gmt": "2022-12-13T19:25:12",
+      "date_modified": "2022-12-13T05:25:12",
+      "date_modified_gmt": "2022-12-13T19:25:12",
+      "src": "https://mantle-clothing.com/wp-content/uploads/2022/12/P1000004-removebg-preview.png",
+      "name": "P1000004-removebg-preview",
+      "alt": ""
+    },
+    {
+      "id": 2361,
+      "date_created": "2022-12-13T05:24:38",
+      "date_created_gmt": "2022-12-13T19:24:38",
+      "date_modified": "2022-12-13T05:42:10",
+      "date_modified_gmt": "2022-12-13T19:42:10",
+      "src": "https://mantle-clothing.com/wp-content/uploads/2022/12/P1000009-removebg-e1670960509588.png",
+      "name": "P1000009-removebg",
+      "alt": ""
+    },
+    {
+      "id": 2362,
+      "date_created": "2022-12-13T05:24:48",
+      "date_created_gmt": "2022-12-13T19:24:48",
+      "date_modified": "2022-12-13T05:24:48",
+      "date_modified_gmt": "2022-12-13T19:24:48",
+      "src": "https://mantle-clothing.com/wp-content/uploads/2022/12/P1000008-removebg-preview.png",
+      "name": "P1000008-removebg-preview",
+      "alt": ""
+    },
+    {
+      "id": 2360,
+      "date_created": "2022-12-13T05:24:34",
+      "date_created_gmt": "2022-12-13T19:24:34",
+      "date_modified": "2022-12-13T05:24:34",
+      "date_modified_gmt": "2022-12-13T19:24:34",
+      "src": "https://mantle-clothing.com/wp-content/uploads/2022/12/P1000010-removebg-preview.png",
+      "name": "P1000010-removebg-preview",
+      "alt": ""
+    }
+  ],
+  "attributes": [
+    {
+      "id": 1,
+      "name": "Color",
+      "slug": "pa_color",
+      "position": 0,
+      "visible": true,
+      "variation": true,
+      "options": [
+        "Black",
+        "Heather Gray",
+        "Orange",
+        "Tahiti Blue"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Size",
+      "slug": "pa_size",
+      "position": 1,
+      "visible": true,
+      "variation": true,
+      "options": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ]
+    }
+  ],
+  "default_attributes": [],
+  "variations": [
+    2339,
+    2340,
+    2341,
+    2342,
+    2343,
+    2344,
+    2345,
+    2346,
+    2347,
+    2348,
+    2349,
+    2350,
+    2351,
+    2352,
+    2353,
+    2354
+  ],
+  "grouped_products": [],
+  "menu_order": 0,
+  "price_html": "<span class=\"woocommerce-Price-amount amount\"><bdi><span class=\"woocommerce-Price-currencySymbol\">&#36;</span>18.00</bdi></span>",
+  "related_ids": [
+    816,
+    1780,
+    1943,
+    1781
+  ],
+  "meta_data": [
+    {
+      "id": 79970,
+      "key": "image_gallery",
+      "value": ""
+    },
+    {
+      "id": 79971,
+      "key": "_image_gallery",
+      "value": "field_5fbd83e61c8c3"
+    },
+    {
+      "id": 79972,
+      "key": "fabric_technology_heading",
+      "value": ""
+    },
+    {
+      "id": 79973,
+      "key": "_fabric_technology_heading",
+      "value": "field_5fbc3e1c72550"
+    },
+    {
+      "id": 79974,
+      "key": "fabric_technology",
+      "value": ""
+    },
+    {
+      "id": 79975,
+      "key": "_fabric_technology",
+      "value": "field_5fbc3e4256a2f"
+    },
+    {
+      "id": 79976,
+      "key": "care_heading",
+      "value": ""
+    },
+    {
+      "id": 79977,
+      "key": "_care_heading",
+      "value": "field_5fbd472f1b2e2"
+    },
+    {
+      "id": 79978,
+      "key": "care_info",
+      "value": ""
+    },
+    {
+      "id": 79979,
+      "key": "_care_info",
+      "value": "field_5fbd4752e90a9"
+    },
+    {
+      "id": 79980,
+      "key": "description",
+      "value": ""
+    },
+    {
+      "id": 79982,
+      "key": "sizing_heading",
+      "value": ""
+    },
+    {
+      "id": 79983,
+      "key": "_sizing_heading",
+      "value": "field_5fbd41743f812"
+    },
+    {
+      "id": 79984,
+      "key": "table_shortcode",
+      "value": ""
+    },
+    {
+      "id": 79985,
+      "key": "_table_shortcode",
+      "value": "field_5fbd41903f813"
+    },
+    {
+      "id": 79986,
+      "key": "spec_sheet",
+      "value": ""
+    },
+    {
+      "id": 79987,
+      "key": "_spec_sheet",
+      "value": "field_604a76f482352"
+    },
+    {
+      "id": 79988,
+      "key": "_yith_wcbm_badge_from_date",
+      "value": ""
+    },
+    {
+      "id": 79989,
+      "key": "_yith_wcbm_badge_to_date",
+      "value": ""
+    },
+    {
+      "id": 79990,
+      "key": "_yith_wcbm_badge_schedule",
+      "value": "0"
+    },
+    {
+      "id": 79991,
+      "key": "_yoast_wpseo_estimated-reading-time-minutes",
+      "value": "0"
+    },
+    {
+      "id": 79992,
+      "key": "_yoast_wpseo_wordproof_timestamp",
+      "value": ""
+    },
+    {
+      "id": 79993,
+      "key": "_yoast_wpseo_primary_product_cat",
+      "value": "24"
+    },
+    {
+      "id": 253355,
+      "key": "_uag_migration_processed",
+      "value": "1"
+    },
+    {
+      "id": 277519,
+      "key": "_wc_gla_visibility",
+      "value": "dont-sync-and-show"
+    },
+    {
+      "id": 298442,
+      "key": "_uag_page_assets",
+      "value": {
+        "css": "",
+        "js": "",
+        "current_block_list": [],
+        "uag_flag": false,
+        "uag_version": 1748463319,
+        "gfonts": [],
+        "gfonts_url": "",
+        "gfonts_files": [],
+        "uag_faq_layout": false
+      }
+    }
+  ],
+  "stock_status": "instock",
+  "has_options": true,
+  "post_password": "",
+  "global_unique_id": "",
+  "yoast_head": "<!-- This site is optimized with the Yoast SEO plugin v25.0 - https://yoast.com/wordpress/plugins/seo/ -->\n<title>Mantle T-Shirt - Retro - Mantle Clothing</title>\n<!-- Admin only notice: this page does not show a meta description because it does not have one, either write it for this page specifically or go into the [Yoast SEO - Settings] menu and set up a template. -->\n<meta name=\"robots\" content=\"index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1\" />\n<link rel=\"canonical\" href=\"https://mantle-clothing.com/product/mantle-t-shirt-retro/\" />\n<meta property=\"og:locale\" content=\"en_US\" />\n<meta property=\"og:type\" content=\"article\" />\n<meta property=\"og:title\" content=\"Mantle T-Shirt - Retro - Mantle Clothing\" />\n<meta property=\"og:url\" content=\"https://mantle-clothing.com/product/mantle-t-shirt-retro/\" />\n<meta property=\"og:site_name\" content=\"Mantle Clothing\" />\n<meta property=\"article:modified_time\" content=\"2025-03-24T23:30:43+00:00\" />\n<meta property=\"og:image\" content=\"https://mantle-clothing.com/wp-content/uploads/2022/12/P1000001-removebg-e1670960437649-856x1024.png\" />\n\t<meta property=\"og:image:width\" content=\"856\" />\n\t<meta property=\"og:image:height\" content=\"1024\" />\n\t<meta property=\"og:image:type\" content=\"image/png\" />\n<meta name=\"twitter:card\" content=\"summary_large_image\" />\n<script type=\"application/ld+json\" class=\"yoast-schema-graph\">{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"WebPage\",\"@id\":\"https://mantle-clothing.com/product/mantle-t-shirt-retro/\",\"url\":\"https://mantle-clothing.com/product/mantle-t-shirt-retro/\",\"name\":\"Mantle T-Shirt - Retro - Mantle Clothing\",\"isPartOf\":{\"@id\":\"https://mantle-clothing.com/#website\"},\"primaryImageOfPage\":{\"@id\":\"https://mantle-clothing.com/product/mantle-t-shirt-retro/#primaryimage\"},\"image\":{\"@id\":\"https://mantle-clothing.com/product/mantle-t-shirt-retro/#primaryimage\"},\"thumbnailUrl\":\"https://mantle-clothing.com/wp-content/uploads/2022/12/P1000001-removebg-e1670960437649.png\",\"datePublished\":\"2022-12-13T19:22:41+00:00\",\"dateModified\":\"2025-03-24T23:30:43+00:00\",\"breadcrumb\":{\"@id\":\"https://mantle-clothing.com/product/mantle-t-shirt-retro/#breadcrumb\"},\"inLanguage\":\"en-US\",\"potentialAction\":[{\"@type\":\"ReadAction\",\"target\":[\"https://mantle-clothing.com/product/mantle-t-shirt-retro/\"]}]},{\"@type\":\"ImageObject\",\"inLanguage\":\"en-US\",\"@id\":\"https://mantle-clothing.com/product/mantle-t-shirt-retro/#primaryimage\",\"url\":\"https://mantle-clothing.com/wp-content/uploads/2022/12/P1000001-removebg-e1670960437649.png\",\"contentUrl\":\"https://mantle-clothing.com/wp-content/uploads/2022/12/P1000001-removebg-e1670960437649.png\",\"width\":3225,\"height\":3857},{\"@type\":\"BreadcrumbList\",\"@id\":\"https://mantle-clothing.com/product/mantle-t-shirt-retro/#breadcrumb\",\"itemListElement\":[{\"@type\":\"ListItem\",\"position\":1,\"name\":\"Home\",\"item\":\"https://mantle-clothing.com/\"},{\"@type\":\"ListItem\",\"position\":2,\"name\":\"Shop\",\"item\":\"https://mantle-clothing.com/shop/\"},{\"@type\":\"ListItem\",\"position\":3,\"name\":\"Mantle T-Shirt &#8211; Retro\"}]},{\"@type\":\"WebSite\",\"@id\":\"https://mantle-clothing.com/#website\",\"url\":\"https://mantle-clothing.com/\",\"name\":\"Mantle Clothing\",\"description\":\"\",\"publisher\":{\"@id\":\"https://mantle-clothing.com/#organization\"},\"potentialAction\":[{\"@type\":\"SearchAction\",\"target\":{\"@type\":\"EntryPoint\",\"urlTemplate\":\"https://mantle-clothing.com/?s={search_term_string}\"},\"query-input\":{\"@type\":\"PropertyValueSpecification\",\"valueRequired\":true,\"valueName\":\"search_term_string\"}}],\"inLanguage\":\"en-US\"},{\"@type\":\"Organization\",\"@id\":\"https://mantle-clothing.com/#organization\",\"name\":\"Mantle Clothing\",\"url\":\"https://mantle-clothing.com/\",\"logo\":{\"@type\":\"ImageObject\",\"inLanguage\":\"en-US\",\"@id\":\"https://mantle-clothing.com/#/schema/logo/image/\",\"url\":\"https://mantle-clothing.com/wp-content/uploads/2020/12/MANTLE_LOGO.svg\",\"contentUrl\":\"https://mantle-clothing.com/wp-content/uploads/2020/12/MANTLE_LOGO.svg\",\"width\":900,\"height\":600,\"caption\":\"Mantle Clothing\"},\"image\":{\"@id\":\"https://mantle-clothing.com/#/schema/logo/image/\"}}]}</script>\n<!-- / Yoast SEO plugin. -->",
+  "yoast_head_json": {
+    "title": "Mantle T-Shirt - Retro - Mantle Clothing",
+    "robots": {
+      "index": "index",
+      "follow": "follow",
+      "max-snippet": "max-snippet:-1",
+      "max-image-preview": "max-image-preview:large",
+      "max-video-preview": "max-video-preview:-1"
+    },
+    "canonical": "https://mantle-clothing.com/product/mantle-t-shirt-retro/",
+    "og_locale": "en_US",
+    "og_type": "article",
+    "og_title": "Mantle T-Shirt - Retro - Mantle Clothing",
+    "og_url": "https://mantle-clothing.com/product/mantle-t-shirt-retro/",
+    "og_site_name": "Mantle Clothing",
+    "article_modified_time": "2025-03-24T23:30:43+00:00",
+    "og_image": [
+      {
+        "width": 856,
+        "height": 1024,
+        "url": "https://mantle-clothing.com/wp-content/uploads/2022/12/P1000001-removebg-e1670960437649-856x1024.png",
+        "type": "image/png"
+      }
+    ],
+    "twitter_card": "summary_large_image",
+    "schema": {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebPage",
+          "@id": "https://mantle-clothing.com/product/mantle-t-shirt-retro/",
+          "url": "https://mantle-clothing.com/product/mantle-t-shirt-retro/",
+          "name": "Mantle T-Shirt - Retro - Mantle Clothing",
+          "isPartOf": {
+            "@id": "https://mantle-clothing.com/#website"
+          },
+          "primaryImageOfPage": {
+            "@id": "https://mantle-clothing.com/product/mantle-t-shirt-retro/#primaryimage"
+          },
+          "image": {
+            "@id": "https://mantle-clothing.com/product/mantle-t-shirt-retro/#primaryimage"
+          },
+          "thumbnailUrl": "https://mantle-clothing.com/wp-content/uploads/2022/12/P1000001-removebg-e1670960437649.png",
+          "datePublished": "2022-12-13T19:22:41+00:00",
+          "dateModified": "2025-03-24T23:30:43+00:00",
+          "breadcrumb": {
+            "@id": "https://mantle-clothing.com/product/mantle-t-shirt-retro/#breadcrumb"
+          },
+          "inLanguage": "en-US",
+          "potentialAction": [
+            {
+              "@type": "ReadAction",
+              "target": [
+                "https://mantle-clothing.com/product/mantle-t-shirt-retro/"
+              ]
+            }
+          ]
+        },
+        {
+          "@type": "ImageObject",
+          "inLanguage": "en-US",
+          "@id": "https://mantle-clothing.com/product/mantle-t-shirt-retro/#primaryimage",
+          "url": "https://mantle-clothing.com/wp-content/uploads/2022/12/P1000001-removebg-e1670960437649.png",
+          "contentUrl": "https://mantle-clothing.com/wp-content/uploads/2022/12/P1000001-removebg-e1670960437649.png",
+          "width": 3225,
+          "height": 3857
+        },
+        {
+          "@type": "BreadcrumbList",
+          "@id": "https://mantle-clothing.com/product/mantle-t-shirt-retro/#breadcrumb",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://mantle-clothing.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Shop",
+              "item": "https://mantle-clothing.com/shop/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": "Mantle T-Shirt &#8211; Retro"
+            }
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://mantle-clothing.com/#website",
+          "url": "https://mantle-clothing.com/",
+          "name": "Mantle Clothing",
+          "description": "",
+          "publisher": {
+            "@id": "https://mantle-clothing.com/#organization"
+          },
+          "potentialAction": [
+            {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://mantle-clothing.com/?s={search_term_string}"
+              },
+              "query-input": {
+                "@type": "PropertyValueSpecification",
+                "valueRequired": true,
+                "valueName": "search_term_string"
+              }
+            }
+          ],
+          "inLanguage": "en-US"
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://mantle-clothing.com/#organization",
+          "name": "Mantle Clothing",
+          "url": "https://mantle-clothing.com/",
+          "logo": {
+            "@type": "ImageObject",
+            "inLanguage": "en-US",
+            "@id": "https://mantle-clothing.com/#/schema/logo/image/",
+            "url": "https://mantle-clothing.com/wp-content/uploads/2020/12/MANTLE_LOGO.svg",
+            "contentUrl": "https://mantle-clothing.com/wp-content/uploads/2020/12/MANTLE_LOGO.svg",
+            "width": 900,
+            "height": 600,
+            "caption": "Mantle Clothing"
+          },
+          "image": {
+            "@id": "https://mantle-clothing.com/#/schema/logo/image/"
+          }
+        }
+      ]
+    }
+  },
+  "uagb_featured_image_src": [],
+  "uagb_author_info": {
+    "display_name": "",
+    "author_link": "https://mantle-clothing.com/author/"
+  },
+  "uagb_comment_info": 0,
+  "uagb_excerpt": null,
+  "brands": [],
+  "google_listings_and_ads__channel_visibility": {
+    "is_visible": true,
+    "channel_visibility": "dont-sync-and-show",
+    "sync_status": null,
+    "issues": []
+  },
+  "_links": {
+    "self": [
+      {
+        "href": "https://mantle-clothing.com/wp-json/wc/v3/products/2338",
+        "targetHints": {
+          "allow": [
+            "GET",
+            "POST",
+            "PUT",
+            "PATCH",
+            "DELETE"
+          ]
+        }
+      }
+    ],
+    "collection": [
+      {
+        "href": "https://mantle-clothing.com/wp-json/wc/v3/products"
+      }
+    ]
+  }
+}

@@ -1,0 +1,626 @@
+{
+  "id": 3138,
+  "name": "Shirt - Mod 3",
+  "slug": "shirt-mod-3-lw",
+  "permalink": "https://mantle-clothing.com/product/shirt-mod-3-lw/",
+  "date_created": "2023-06-20T17:06:50",
+  "date_created_gmt": "2023-06-20T23:06:50",
+  "date_modified": "2025-05-28T18:49:57",
+  "date_modified_gmt": "2025-05-29T00:49:57",
+  "type": "variable",
+  "status": "publish",
+  "featured": false,
+  "catalog_visibility": "visible",
+  "description": "<h3 class=\"p1\"><span class=\"s1\">Product Features</span></h3>\n<ul>\n<li>Quick-dry, super stretch, water-repellent fabric.</li>\n<li>Laser perforated underarm panels for ventilation</li>\n<li>Zipper sleeve pockets</li>\n<li>Adjustable cuffs</li>\n<li>YKK zippers</li>\n</ul>\n",
+  "short_description": "",
+  "sku": "",
+  "price": "100",
+  "regular_price": "",
+  "sale_price": "",
+  "date_on_sale_from": null,
+  "date_on_sale_from_gmt": null,
+  "date_on_sale_to": null,
+  "date_on_sale_to_gmt": null,
+  "on_sale": false,
+  "purchasable": true,
+  "total_sales": 201,
+  "virtual": false,
+  "downloadable": false,
+  "downloads": [],
+  "download_limit": -1,
+  "download_expiry": -1,
+  "external_url": "",
+  "button_text": "",
+  "tax_status": "taxable",
+  "tax_class": "",
+  "manage_stock": false,
+  "stock_quantity": null,
+  "backorders": "no",
+  "backorders_allowed": false,
+  "backordered": false,
+  "low_stock_amount": null,
+  "sold_individually": false,
+  "weight": "0",
+  "dimensions": {
+    "length": "",
+    "width": "",
+    "height": ""
+  },
+  "shipping_required": true,
+  "shipping_taxable": true,
+  "shipping_class": "ups-ground",
+  "shipping_class_id": 63,
+  "reviews_allowed": true,
+  "average_rating": "4.88",
+  "rating_count": 8,
+  "upsell_ids": [],
+  "cross_sell_ids": [],
+  "parent_id": 0,
+  "purchase_note": "",
+  "categories": [
+    {
+      "id": 22,
+      "name": "Tops",
+      "slug": "tops"
+    }
+  ],
+  "tags": [
+    {
+      "id": 25,
+      "name": "The Range Collection",
+      "slug": "range-collection"
+    }
+  ],
+  "images": [
+    {
+      "id": 3158,
+      "date_created": "2023-06-21T09:17:05",
+      "date_created_gmt": "2023-06-21T21:17:05",
+      "date_modified": "2023-06-21T09:17:05",
+      "date_modified_gmt": "2023-06-21T21:17:05",
+      "src": "https://mantle-clothing.com/wp-content/uploads/2023/06/JIM_6791.jpg",
+      "name": "JIM_6791",
+      "alt": ""
+    },
+    {
+      "id": 3159,
+      "date_created": "2023-06-21T09:17:13",
+      "date_created_gmt": "2023-06-21T21:17:13",
+      "date_modified": "2023-06-21T09:17:13",
+      "date_modified_gmt": "2023-06-21T21:17:13",
+      "src": "https://mantle-clothing.com/wp-content/uploads/2023/06/JIM_6794.jpg",
+      "name": "JIM_6794",
+      "alt": ""
+    },
+    {
+      "id": 3157,
+      "date_created": "2023-06-21T09:16:56",
+      "date_created_gmt": "2023-06-21T21:16:56",
+      "date_modified": "2023-06-21T09:16:56",
+      "date_modified_gmt": "2023-06-21T21:16:56",
+      "src": "https://mantle-clothing.com/wp-content/uploads/2023/06/JIM_6479.jpg",
+      "name": "JIM_6479",
+      "alt": ""
+    },
+    {
+      "id": 3156,
+      "date_created": "2023-06-21T09:16:46",
+      "date_created_gmt": "2023-06-21T21:16:46",
+      "date_modified": "2023-06-21T09:16:46",
+      "date_modified_gmt": "2023-06-21T21:16:46",
+      "src": "https://mantle-clothing.com/wp-content/uploads/2023/06/JIM_6478.jpg",
+      "name": "JIM_6478",
+      "alt": ""
+    },
+    {
+      "id": 3155,
+      "date_created": "2023-06-21T09:16:35",
+      "date_created_gmt": "2023-06-21T21:16:35",
+      "date_modified": "2023-06-21T09:16:35",
+      "date_modified_gmt": "2023-06-21T21:16:35",
+      "src": "https://mantle-clothing.com/wp-content/uploads/2023/06/JIM_6477-scaled.jpg",
+      "name": "JIM_6477",
+      "alt": ""
+    },
+    {
+      "id": 3154,
+      "date_created": "2023-06-21T09:16:20",
+      "date_created_gmt": "2023-06-21T21:16:20",
+      "date_modified": "2023-06-21T09:16:20",
+      "date_modified_gmt": "2023-06-21T21:16:20",
+      "src": "https://mantle-clothing.com/wp-content/uploads/2023/06/JIM_6475-scaled.jpg",
+      "name": "JIM_6475",
+      "alt": ""
+    },
+    {
+      "id": 3153,
+      "date_created": "2023-06-21T09:16:07",
+      "date_created_gmt": "2023-06-21T21:16:07",
+      "date_modified": "2023-06-21T09:16:07",
+      "date_modified_gmt": "2023-06-21T21:16:07",
+      "src": "https://mantle-clothing.com/wp-content/uploads/2023/06/JIM_6474.jpg",
+      "name": "JIM_6474",
+      "alt": ""
+    },
+    {
+      "id": 3152,
+      "date_created": "2023-06-21T09:15:55",
+      "date_created_gmt": "2023-06-21T21:15:55",
+      "date_modified": "2023-06-21T09:15:55",
+      "date_modified_gmt": "2023-06-21T21:15:55",
+      "src": "https://mantle-clothing.com/wp-content/uploads/2023/06/JIM_6473-scaled.jpg",
+      "name": "JIM_6473",
+      "alt": ""
+    },
+    {
+      "id": 3151,
+      "date_created": "2023-06-21T09:15:38",
+      "date_created_gmt": "2023-06-21T21:15:38",
+      "date_modified": "2023-06-21T09:15:38",
+      "date_modified_gmt": "2023-06-21T21:15:38",
+      "src": "https://mantle-clothing.com/wp-content/uploads/2023/06/JIM_6472.jpg",
+      "name": "JIM_6472",
+      "alt": ""
+    },
+    {
+      "id": 3150,
+      "date_created": "2023-06-21T09:15:16",
+      "date_created_gmt": "2023-06-21T21:15:16",
+      "date_modified": "2023-06-21T09:15:16",
+      "date_modified_gmt": "2023-06-21T21:15:16",
+      "src": "https://mantle-clothing.com/wp-content/uploads/2023/06/JIM_6471.jpg",
+      "name": "JIM_6471",
+      "alt": ""
+    },
+    {
+      "id": 3191,
+      "date_created": "2023-06-22T03:42:12",
+      "date_created_gmt": "2023-06-22T15:42:12",
+      "date_modified": "2023-06-22T03:42:12",
+      "date_modified_gmt": "2023-06-22T15:42:12",
+      "src": "https://mantle-clothing.com/wp-content/uploads/2023/06/JIM_7964-scaled.jpg",
+      "name": "JIM_7964",
+      "alt": ""
+    },
+    {
+      "id": 3192,
+      "date_created": "2023-06-22T03:42:26",
+      "date_created_gmt": "2023-06-22T15:42:26",
+      "date_modified": "2023-06-22T03:42:26",
+      "date_modified_gmt": "2023-06-22T15:42:26",
+      "src": "https://mantle-clothing.com/wp-content/uploads/2023/06/JIM_7931-scaled.jpg",
+      "name": "JIM_7931",
+      "alt": ""
+    },
+    {
+      "id": 3197,
+      "date_created": "2023-06-22T03:43:33",
+      "date_created_gmt": "2023-06-22T15:43:33",
+      "date_modified": "2023-06-22T03:43:33",
+      "date_modified_gmt": "2023-06-22T15:43:33",
+      "src": "https://mantle-clothing.com/wp-content/uploads/2023/06/JIM_7816-scaled.jpg",
+      "name": "JIM_7816",
+      "alt": ""
+    }
+  ],
+  "attributes": [
+    {
+      "id": 1,
+      "name": "Color",
+      "slug": "pa_color",
+      "position": 0,
+      "visible": true,
+      "variation": true,
+      "options": [
+        "Navy"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Size",
+      "slug": "pa_size",
+      "position": 1,
+      "visible": false,
+      "variation": true,
+      "options": [
+        "XS",
+        "S",
+        "M",
+        "M - Long",
+        "L",
+        "L - Long",
+        "XL",
+        "XL - Long",
+        "XXL"
+      ]
+    }
+  ],
+  "default_attributes": [],
+  "variations": [
+    3139,
+    3141,
+    3143,
+    3144,
+    3147
+  ],
+  "grouped_products": [],
+  "menu_order": 0,
+  "price_html": "<span class=\"woocommerce-Price-amount amount\"><bdi><span class=\"woocommerce-Price-currencySymbol\">&#36;</span>100.00</bdi></span>",
+  "related_ids": [
+    3120,
+    4288,
+    140,
+    524,
+    5403
+  ],
+  "meta_data": [
+    {
+      "id": 116011,
+      "key": "image_gallery",
+      "value": ""
+    },
+    {
+      "id": 116012,
+      "key": "_image_gallery",
+      "value": "field_5fbd83e61c8c3"
+    },
+    {
+      "id": 116013,
+      "key": "fabric_technology_heading",
+      "value": "Fabric Technology"
+    },
+    {
+      "id": 116014,
+      "key": "_fabric_technology_heading",
+      "value": "field_5fbc3e1c72550"
+    },
+    {
+      "id": 116015,
+      "key": "fabric_technology",
+      "value": "\t\r\n95% NYLON, 5% SPANDEX, STRETCH WOVEN WITH DWR FINISH"
+    },
+    {
+      "id": 116016,
+      "key": "_fabric_technology",
+      "value": "field_5fbc3e4256a2f"
+    },
+    {
+      "id": 116017,
+      "key": "care_heading",
+      "value": "Care Instructions"
+    },
+    {
+      "id": 116018,
+      "key": "_care_heading",
+      "value": "field_5fbd472f1b2e2"
+    },
+    {
+      "id": 116019,
+      "key": "care_info",
+      "value": "MACHINE WASH COLD, DO NOT BLEACH, TUMBLE DRY LOW, DO NOT DRY CLEAN"
+    },
+    {
+      "id": 116020,
+      "key": "_care_info",
+      "value": "field_5fbd4752e90a9"
+    },
+    {
+      "id": 116021,
+      "key": "description",
+      "value": "The Mantle Shirt Mod 3, a streamlined adaptation of our signature operational attire that optimizes functionality without compromise.\r\n\r\nEngineered from ultra-lightweight, quick-drying, super-stretch, and water-repellant fabric, the Mod 3 ensures peak performance in all field conditions.\r\n\r\nIt boasts laser-perforated underarm panels for premium ventilation, YKK zipper sleeve pockets for secure gear storage, and adjustable cuffs for an impeccable fit.\r\n\r\nWhile lighter, it maintains the stellar design of the Mod 1, facilitating strategic movement and positional efficiency.\r\n\r\nCombine it with the matching pants for a complete, sophisticated uniform.\r\n\r\nExperience operational clothing redefined with the Mantle Pant Mod 3."
+    },
+    {
+      "id": 116023,
+      "key": "sizing_heading",
+      "value": "Size Chart"
+    },
+    {
+      "id": 116024,
+      "key": "_sizing_heading",
+      "value": "field_5fbd41743f812"
+    },
+    {
+      "id": 116025,
+      "key": "table_shortcode",
+      "value": "[supsystic-tables id=1]"
+    },
+    {
+      "id": 116026,
+      "key": "_table_shortcode",
+      "value": "field_5fbd41903f813"
+    },
+    {
+      "id": 116027,
+      "key": "spec_sheet",
+      "value": ""
+    },
+    {
+      "id": 116028,
+      "key": "_spec_sheet",
+      "value": "field_604a76f482352"
+    },
+    {
+      "id": 116029,
+      "key": "_yith_wcbm_badge_from_date",
+      "value": ""
+    },
+    {
+      "id": 116030,
+      "key": "_yith_wcbm_badge_to_date",
+      "value": ""
+    },
+    {
+      "id": 116031,
+      "key": "_yith_wcbm_badge_schedule",
+      "value": "0"
+    },
+    {
+      "id": 116032,
+      "key": "_yoast_wpseo_primary_product_cat",
+      "value": "22"
+    },
+    {
+      "id": 116033,
+      "key": "_yoast_wpseo_primary_fb_product_set",
+      "value": ""
+    },
+    {
+      "id": 116034,
+      "key": "_yoast_wpseo_estimated-reading-time-minutes",
+      "value": "1"
+    },
+    {
+      "id": 116035,
+      "key": "_yoast_wpseo_wordproof_timestamp",
+      "value": ""
+    },
+    {
+      "id": 116169,
+      "key": "_yoast_wpseo_content_score",
+      "value": "90"
+    },
+    {
+      "id": 253340,
+      "key": "_uag_migration_processed",
+      "value": "1"
+    },
+    {
+      "id": 253887,
+      "key": "_coupon_title",
+      "value": []
+    },
+    {
+      "id": 253888,
+      "key": "send_coupons_on_renewals",
+      "value": "no"
+    },
+    {
+      "id": 275446,
+      "key": "_yoast_wpseo_primary_product_brand",
+      "value": ""
+    },
+    {
+      "id": 277761,
+      "key": "_wc_gla_visibility",
+      "value": "sync-and-show"
+    },
+    {
+      "id": 277763,
+      "key": "_wc_gla_synced_at",
+      "value": "1748479799"
+    },
+    {
+      "id": 277764,
+      "key": "_wc_gla_sync_status",
+      "value": "synced"
+    },
+    {
+      "id": 277765,
+      "key": "_wc_gla_google_ids",
+      "value": {
+        "US": "online:en:US:gla_3147"
+      }
+    },
+    {
+      "id": 297558,
+      "key": "_wc_gla_mc_status",
+      "value": "approved"
+    },
+    {
+      "id": 298520,
+      "key": "_uag_page_assets",
+      "value": {
+        "css": "",
+        "js": "",
+        "current_block_list": [],
+        "uag_flag": false,
+        "uag_version": 1748479211,
+        "gfonts": [],
+        "gfonts_url": "",
+        "gfonts_files": [],
+        "uag_faq_layout": false
+      }
+    }
+  ],
+  "stock_status": "instock",
+  "has_options": true,
+  "post_password": "",
+  "global_unique_id": "",
+  "yoast_head": "<!-- This site is optimized with the Yoast SEO plugin v25.0 - https://yoast.com/wordpress/plugins/seo/ -->\n<title>Shirt - Mod 3 - Mantle Clothing</title>\n<!-- Admin only notice: this page does not show a meta description because it does not have one, either write it for this page specifically or go into the [Yoast SEO - Settings] menu and set up a template. -->\n<meta name=\"robots\" content=\"index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1\" />\n<link rel=\"canonical\" href=\"https://mantle-clothing.com/product/shirt-mod-3-lw/\" />\n<meta property=\"og:locale\" content=\"en_US\" />\n<meta property=\"og:type\" content=\"article\" />\n<meta property=\"og:title\" content=\"Shirt - Mod 3 - Mantle Clothing\" />\n<meta property=\"og:description\" content=\"Product Features Quick-dry, super stretch, water-repellent fabric. Laser perforated underarm panels for ventilation Zipper sleeve pockets Adjustable cuffs YKK zippers\" />\n<meta property=\"og:url\" content=\"https://mantle-clothing.com/product/shirt-mod-3-lw/\" />\n<meta property=\"og:site_name\" content=\"Mantle Clothing\" />\n<meta property=\"article:modified_time\" content=\"2025-05-29T00:49:57+00:00\" />\n<meta property=\"og:image\" content=\"https://mantle-clothing.com/wp-content/uploads/2023/06/JIM_6791-683x1024.jpg\" />\n\t<meta property=\"og:image:width\" content=\"683\" />\n\t<meta property=\"og:image:height\" content=\"1024\" />\n\t<meta property=\"og:image:type\" content=\"image/jpeg\" />\n<meta name=\"twitter:card\" content=\"summary_large_image\" />\n<meta name=\"twitter:label1\" content=\"Est. reading time\" />\n\t<meta name=\"twitter:data1\" content=\"1 minute\" />\n<script type=\"application/ld+json\" class=\"yoast-schema-graph\">{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"WebPage\",\"@id\":\"https://mantle-clothing.com/product/shirt-mod-3-lw/\",\"url\":\"https://mantle-clothing.com/product/shirt-mod-3-lw/\",\"name\":\"Shirt - Mod 3 - Mantle Clothing\",\"isPartOf\":{\"@id\":\"https://mantle-clothing.com/#website\"},\"primaryImageOfPage\":{\"@id\":\"https://mantle-clothing.com/product/shirt-mod-3-lw/#primaryimage\"},\"image\":{\"@id\":\"https://mantle-clothing.com/product/shirt-mod-3-lw/#primaryimage\"},\"thumbnailUrl\":\"https://mantle-clothing.com/wp-content/uploads/2023/06/JIM_6791.jpg\",\"datePublished\":\"2023-06-20T23:06:50+00:00\",\"dateModified\":\"2025-05-29T00:49:57+00:00\",\"breadcrumb\":{\"@id\":\"https://mantle-clothing.com/product/shirt-mod-3-lw/#breadcrumb\"},\"inLanguage\":\"en-US\",\"potentialAction\":[{\"@type\":\"ReadAction\",\"target\":[\"https://mantle-clothing.com/product/shirt-mod-3-lw/\"]}]},{\"@type\":\"ImageObject\",\"inLanguage\":\"en-US\",\"@id\":\"https://mantle-clothing.com/product/shirt-mod-3-lw/#primaryimage\",\"url\":\"https://mantle-clothing.com/wp-content/uploads/2023/06/JIM_6791.jpg\",\"contentUrl\":\"https://mantle-clothing.com/wp-content/uploads/2023/06/JIM_6791.jpg\",\"width\":5464,\"height\":8192},{\"@type\":\"BreadcrumbList\",\"@id\":\"https://mantle-clothing.com/product/shirt-mod-3-lw/#breadcrumb\",\"itemListElement\":[{\"@type\":\"ListItem\",\"position\":1,\"name\":\"Home\",\"item\":\"https://mantle-clothing.com/\"},{\"@type\":\"ListItem\",\"position\":2,\"name\":\"Shop\",\"item\":\"https://mantle-clothing.com/shop/\"},{\"@type\":\"ListItem\",\"position\":3,\"name\":\"Shirt &#8211; Mod 3\"}]},{\"@type\":\"WebSite\",\"@id\":\"https://mantle-clothing.com/#website\",\"url\":\"https://mantle-clothing.com/\",\"name\":\"Mantle Clothing\",\"description\":\"\",\"publisher\":{\"@id\":\"https://mantle-clothing.com/#organization\"},\"potentialAction\":[{\"@type\":\"SearchAction\",\"target\":{\"@type\":\"EntryPoint\",\"urlTemplate\":\"https://mantle-clothing.com/?s={search_term_string}\"},\"query-input\":{\"@type\":\"PropertyValueSpecification\",\"valueRequired\":true,\"valueName\":\"search_term_string\"}}],\"inLanguage\":\"en-US\"},{\"@type\":\"Organization\",\"@id\":\"https://mantle-clothing.com/#organization\",\"name\":\"Mantle Clothing\",\"url\":\"https://mantle-clothing.com/\",\"logo\":{\"@type\":\"ImageObject\",\"inLanguage\":\"en-US\",\"@id\":\"https://mantle-clothing.com/#/schema/logo/image/\",\"url\":\"https://mantle-clothing.com/wp-content/uploads/2020/12/MANTLE_LOGO.svg\",\"contentUrl\":\"https://mantle-clothing.com/wp-content/uploads/2020/12/MANTLE_LOGO.svg\",\"width\":900,\"height\":600,\"caption\":\"Mantle Clothing\"},\"image\":{\"@id\":\"https://mantle-clothing.com/#/schema/logo/image/\"}}]}</script>\n<!-- / Yoast SEO plugin. -->",
+  "yoast_head_json": {
+    "title": "Shirt - Mod 3 - Mantle Clothing",
+    "robots": {
+      "index": "index",
+      "follow": "follow",
+      "max-snippet": "max-snippet:-1",
+      "max-image-preview": "max-image-preview:large",
+      "max-video-preview": "max-video-preview:-1"
+    },
+    "canonical": "https://mantle-clothing.com/product/shirt-mod-3-lw/",
+    "og_locale": "en_US",
+    "og_type": "article",
+    "og_title": "Shirt - Mod 3 - Mantle Clothing",
+    "og_description": "Product Features Quick-dry, super stretch, water-repellent fabric. Laser perforated underarm panels for ventilation Zipper sleeve pockets Adjustable cuffs YKK zippers",
+    "og_url": "https://mantle-clothing.com/product/shirt-mod-3-lw/",
+    "og_site_name": "Mantle Clothing",
+    "article_modified_time": "2025-05-29T00:49:57+00:00",
+    "og_image": [
+      {
+        "width": 683,
+        "height": 1024,
+        "url": "https://mantle-clothing.com/wp-content/uploads/2023/06/JIM_6791-683x1024.jpg",
+        "type": "image/jpeg"
+      }
+    ],
+    "twitter_card": "summary_large_image",
+    "twitter_misc": {
+      "Est. reading time": "1 minute"
+    },
+    "schema": {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebPage",
+          "@id": "https://mantle-clothing.com/product/shirt-mod-3-lw/",
+          "url": "https://mantle-clothing.com/product/shirt-mod-3-lw/",
+          "name": "Shirt - Mod 3 - Mantle Clothing",
+          "isPartOf": {
+            "@id": "https://mantle-clothing.com/#website"
+          },
+          "primaryImageOfPage": {
+            "@id": "https://mantle-clothing.com/product/shirt-mod-3-lw/#primaryimage"
+          },
+          "image": {
+            "@id": "https://mantle-clothing.com/product/shirt-mod-3-lw/#primaryimage"
+          },
+          "thumbnailUrl": "https://mantle-clothing.com/wp-content/uploads/2023/06/JIM_6791.jpg",
+          "datePublished": "2023-06-20T23:06:50+00:00",
+          "dateModified": "2025-05-29T00:49:57+00:00",
+          "breadcrumb": {
+            "@id": "https://mantle-clothing.com/product/shirt-mod-3-lw/#breadcrumb"
+          },
+          "inLanguage": "en-US",
+          "potentialAction": [
+            {
+              "@type": "ReadAction",
+              "target": [
+                "https://mantle-clothing.com/product/shirt-mod-3-lw/"
+              ]
+            }
+          ]
+        },
+        {
+          "@type": "ImageObject",
+          "inLanguage": "en-US",
+          "@id": "https://mantle-clothing.com/product/shirt-mod-3-lw/#primaryimage",
+          "url": "https://mantle-clothing.com/wp-content/uploads/2023/06/JIM_6791.jpg",
+          "contentUrl": "https://mantle-clothing.com/wp-content/uploads/2023/06/JIM_6791.jpg",
+          "width": 5464,
+          "height": 8192
+        },
+        {
+          "@type": "BreadcrumbList",
+          "@id": "https://mantle-clothing.com/product/shirt-mod-3-lw/#breadcrumb",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://mantle-clothing.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Shop",
+              "item": "https://mantle-clothing.com/shop/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": "Shirt &#8211; Mod 3"
+            }
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://mantle-clothing.com/#website",
+          "url": "https://mantle-clothing.com/",
+          "name": "Mantle Clothing",
+          "description": "",
+          "publisher": {
+            "@id": "https://mantle-clothing.com/#organization"
+          },
+          "potentialAction": [
+            {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://mantle-clothing.com/?s={search_term_string}"
+              },
+              "query-input": {
+                "@type": "PropertyValueSpecification",
+                "valueRequired": true,
+                "valueName": "search_term_string"
+              }
+            }
+          ],
+          "inLanguage": "en-US"
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://mantle-clothing.com/#organization",
+          "name": "Mantle Clothing",
+          "url": "https://mantle-clothing.com/",
+          "logo": {
+            "@type": "ImageObject",
+            "inLanguage": "en-US",
+            "@id": "https://mantle-clothing.com/#/schema/logo/image/",
+            "url": "https://mantle-clothing.com/wp-content/uploads/2020/12/MANTLE_LOGO.svg",
+            "contentUrl": "https://mantle-clothing.com/wp-content/uploads/2020/12/MANTLE_LOGO.svg",
+            "width": 900,
+            "height": 600,
+            "caption": "Mantle Clothing"
+          },
+          "image": {
+            "@id": "https://mantle-clothing.com/#/schema/logo/image/"
+          }
+        }
+      ]
+    }
+  },
+  "uagb_featured_image_src": [],
+  "uagb_author_info": {
+    "display_name": "",
+    "author_link": "https://mantle-clothing.com/author/"
+  },
+  "uagb_comment_info": 8,
+  "uagb_excerpt": "Product Features Quick-dry, super stretch, water-repellent fabric. Laser perforated underarm panels for ventilation Zipper sleeve pockets Adjustable cuffs YKK zippers",
+  "brands": [],
+  "google_listings_and_ads__channel_visibility": {
+    "is_visible": true,
+    "channel_visibility": "sync-and-show",
+    "sync_status": "synced",
+    "issues": []
+  },
+  "_links": {
+    "self": [
+      {
+        "href": "https://mantle-clothing.com/wp-json/wc/v3/products/3138",
+        "targetHints": {
+          "allow": [
+            "GET",
+            "POST",
+            "PUT",
+            "PATCH",
+            "DELETE"
+          ]
+        }
+      }
+    ],
+    "collection": [
+      {
+        "href": "https://mantle-clothing.com/wp-json/wc/v3/products"
+      }
+    ]
+  }
+}

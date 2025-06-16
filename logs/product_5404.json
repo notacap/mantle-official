@@ -1,0 +1,189 @@
+{
+  "id": 5404,
+  "name": "Rain Jacket - Mod 2 - Mantle Green, S",
+  "slug": "mantle-rain-jacket-mod-1-black-s-2",
+  "permalink": "https://mantle-clothing.com/product/rain-jacket-mod-2/?attribute_pa_color=mantle-green&attribute_pa_size=small",
+  "date_created": "2025-02-12T15:27:10",
+  "date_created_gmt": "2025-02-12T22:27:10",
+  "date_modified": "2025-05-27T18:15:22",
+  "date_modified_gmt": "2025-05-28T00:15:22",
+  "type": "variation",
+  "status": "publish",
+  "featured": false,
+  "catalog_visibility": "visible",
+  "description": "<p>Rain Jacket Mod 2 Green - Small.</p>\n",
+  "short_description": "",
+  "sku": "M-RJ-1 - 002",
+  "price": "475.0000",
+  "regular_price": "475.0000",
+  "sale_price": "",
+  "date_on_sale_from": null,
+  "date_on_sale_from_gmt": null,
+  "date_on_sale_to": null,
+  "date_on_sale_to_gmt": null,
+  "on_sale": false,
+  "purchasable": true,
+  "total_sales": "0",
+  "virtual": false,
+  "downloadable": false,
+  "downloads": [],
+  "download_limit": -1,
+  "download_expiry": -1,
+  "external_url": "",
+  "button_text": "",
+  "tax_status": "taxable",
+  "tax_class": "",
+  "manage_stock": false,
+  "stock_quantity": null,
+  "backorders": "no",
+  "backorders_allowed": false,
+  "backordered": false,
+  "low_stock_amount": null,
+  "sold_individually": false,
+  "weight": "0",
+  "dimensions": {
+    "length": "",
+    "width": "",
+    "height": ""
+  },
+  "shipping_required": true,
+  "shipping_taxable": true,
+  "shipping_class": "ups-ground",
+  "shipping_class_id": 63,
+  "reviews_allowed": false,
+  "average_rating": "0.00",
+  "rating_count": 0,
+  "upsell_ids": [],
+  "cross_sell_ids": [],
+  "parent_id": 5403,
+  "purchase_note": "",
+  "categories": [],
+  "tags": [],
+  "images": [
+    {
+      "id": 5396,
+      "date_created": "2025-02-11T05:23:37",
+      "date_created_gmt": "2025-02-11T19:23:37",
+      "date_modified": "2025-02-11T05:23:37",
+      "date_modified_gmt": "2025-02-11T19:23:37",
+      "src": "https://mantle-clothing.com/wp-content/uploads/2020/11/JBR_0480-Edit.jpg",
+      "name": "JBR_0480-Edit",
+      "alt": ""
+    }
+  ],
+  "attributes": [
+    {
+      "id": 1,
+      "name": "Color",
+      "slug": "pa_color",
+      "option": "Mantle Green"
+    },
+    {
+      "id": 3,
+      "name": "Size",
+      "slug": "pa_size",
+      "option": "S"
+    }
+  ],
+  "default_attributes": [],
+  "variations": [],
+  "grouped_products": [],
+  "menu_order": 1,
+  "price_html": "<span class=\"woocommerce-Price-amount amount\"><bdi><span class=\"woocommerce-Price-currencySymbol\">&#36;</span>475.00</bdi></span>",
+  "related_ids": [],
+  "meta_data": [
+    {
+      "id": 274615,
+      "key": "_subscription_payment_sync_date",
+      "value": "0"
+    },
+    {
+      "id": 274616,
+      "key": "_wp_old_date",
+      "value": "2020-12-30"
+    },
+    {
+      "id": 274617,
+      "key": "wavi_value",
+      "value": ""
+    },
+    {
+      "id": 274618,
+      "key": "_coupon_title",
+      "value": []
+    },
+    {
+      "id": 274619,
+      "key": "send_coupons_on_renewals",
+      "value": "no"
+    },
+    {
+      "id": 277720,
+      "key": "_wc_gla_sync_status",
+      "value": "synced"
+    },
+    {
+      "id": 277948,
+      "key": "_wc_gla_synced_at",
+      "value": "1748391417"
+    },
+    {
+      "id": 277949,
+      "key": "_wc_gla_google_ids",
+      "value": {
+        "US": "online:en:US:gla_5404"
+      }
+    },
+    {
+      "id": 297547,
+      "key": "_wc_gla_mc_status",
+      "value": "approved"
+    }
+  ],
+  "stock_status": "instock",
+  "has_options": false,
+  "post_password": "",
+  "global_unique_id": "",
+  "yoast_head": null,
+  "yoast_head_json": null,
+  "uagb_featured_image_src": [],
+  "uagb_author_info": {
+    "display_name": "",
+    "author_link": "https://mantle-clothing.com/author/"
+  },
+  "uagb_comment_info": 0,
+  "uagb_excerpt": "Color: Mantle Green, Size: S",
+  "brands": [],
+  "google_listings_and_ads__channel_visibility": {
+    "is_visible": true,
+    "channel_visibility": "sync-and-show",
+    "sync_status": "synced",
+    "issues": []
+  },
+  "_links": {
+    "self": [
+      {
+        "href": "https://mantle-clothing.com/wp-json/wc/v3/products/5404",
+        "targetHints": {
+          "allow": [
+            "GET",
+            "POST",
+            "PUT",
+            "PATCH",
+            "DELETE"
+          ]
+        }
+      }
+    ],
+    "collection": [
+      {
+        "href": "https://mantle-clothing.com/wp-json/wc/v3/products"
+      }
+    ],
+    "up": [
+      {
+        "href": "https://mantle-clothing.com/wp-json/wc/v3/products/5403"
+      }
+    ]
+  }
+}

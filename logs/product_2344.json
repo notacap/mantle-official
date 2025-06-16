@@ -1,0 +1,147 @@
+{
+  "id": 2344,
+  "name": "Mantle T-Shirt - Retro - Heather Gray, M",
+  "slug": "mantle-t-shirt-retro-heather-gray-m",
+  "permalink": "https://mantle-clothing.com/product/mantle-t-shirt-retro/?attribute_pa_color=heather-gray&attribute_pa_size=medium",
+  "date_created": "2022-12-13T12:22:54",
+  "date_created_gmt": "2022-12-13T19:22:54",
+  "date_modified": "2024-10-04T14:05:11",
+  "date_modified_gmt": "2024-10-04T20:05:11",
+  "type": "variation",
+  "status": "publish",
+  "featured": false,
+  "catalog_visibility": "visible",
+  "description": "",
+  "short_description": "",
+  "sku": "TSHIRT-001 - 014",
+  "price": "18.0000",
+  "regular_price": "18.0000",
+  "sale_price": "",
+  "date_on_sale_from": null,
+  "date_on_sale_from_gmt": null,
+  "date_on_sale_to": null,
+  "date_on_sale_to_gmt": null,
+  "on_sale": false,
+  "purchasable": true,
+  "total_sales": "0",
+  "virtual": false,
+  "downloadable": false,
+  "downloads": [],
+  "download_limit": -1,
+  "download_expiry": -1,
+  "external_url": "",
+  "button_text": "",
+  "tax_status": "taxable",
+  "tax_class": "",
+  "manage_stock": true,
+  "stock_quantity": 4,
+  "backorders": "no",
+  "backorders_allowed": false,
+  "backordered": false,
+  "low_stock_amount": null,
+  "sold_individually": false,
+  "weight": "0",
+  "dimensions": {
+    "length": "",
+    "width": "",
+    "height": ""
+  },
+  "shipping_required": true,
+  "shipping_taxable": true,
+  "shipping_class": "first-class",
+  "shipping_class_id": 62,
+  "reviews_allowed": false,
+  "average_rating": "0.00",
+  "rating_count": 0,
+  "upsell_ids": [],
+  "cross_sell_ids": [],
+  "parent_id": 2338,
+  "purchase_note": "",
+  "categories": [],
+  "tags": [],
+  "images": [
+    {
+      "id": 2367,
+      "date_created": "2022-12-13T05:25:19",
+      "date_created_gmt": "2022-12-13T19:25:19",
+      "date_modified": "2022-12-13T05:25:19",
+      "date_modified_gmt": "2022-12-13T19:25:19",
+      "src": "https://mantle-clothing.com/wp-content/uploads/2022/12/P1000001-removebg-e1670960437649.png",
+      "name": "P1000001-removebg",
+      "alt": ""
+    }
+  ],
+  "attributes": [
+    {
+      "id": 1,
+      "name": "Color",
+      "slug": "pa_color",
+      "option": "Heather Gray"
+    },
+    {
+      "id": 3,
+      "name": "Size",
+      "slug": "pa_size",
+      "option": "M"
+    }
+  ],
+  "default_attributes": [],
+  "variations": [],
+  "grouped_products": [],
+  "menu_order": 5,
+  "price_html": "<span class=\"woocommerce-Price-amount amount\"><bdi><span class=\"woocommerce-Price-currencySymbol\">&#36;</span>18.00</bdi></span>",
+  "related_ids": [],
+  "meta_data": [
+    {
+      "id": 79955,
+      "key": "_subscription_payment_sync_date",
+      "value": "0"
+    }
+  ],
+  "stock_status": "instock",
+  "has_options": false,
+  "post_password": "",
+  "global_unique_id": "",
+  "yoast_head": null,
+  "yoast_head_json": null,
+  "uagb_featured_image_src": [],
+  "uagb_author_info": {
+    "display_name": "",
+    "author_link": "https://mantle-clothing.com/author/"
+  },
+  "uagb_comment_info": 0,
+  "uagb_excerpt": "Color: Heather Gray, Size: M",
+  "brands": [],
+  "google_listings_and_ads__channel_visibility": {
+    "is_visible": true,
+    "channel_visibility": "dont-sync-and-show",
+    "sync_status": null,
+    "issues": []
+  },
+  "_links": {
+    "self": [
+      {
+        "href": "https://mantle-clothing.com/wp-json/wc/v3/products/2344",
+        "targetHints": {
+          "allow": [
+            "GET",
+            "POST",
+            "PUT",
+            "PATCH",
+            "DELETE"
+          ]
+        }
+      }
+    ],
+    "collection": [
+      {
+        "href": "https://mantle-clothing.com/wp-json/wc/v3/products"
+      }
+    ],
+    "up": [
+      {
+        "href": "https://mantle-clothing.com/wp-json/wc/v3/products/2338"
+      }
+    ]
+  }
+}
