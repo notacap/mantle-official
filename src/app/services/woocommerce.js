@@ -238,6 +238,48 @@ function getBaseUrl(context) {
   }
   
   /**
+   * Fetch a single product by slug from the WooCommerce API (server-side)
+   * @param {string} slug - Product slug to fetch
+   * @returns {Promise<Object|null>} - Product object or null if not found
+   */
+  export async function getProductBySlug(slug) {
+    if (!slug) {
+      console.error('Error: Product slug is required for getProductBySlug.');
+      return null;
+    }
+  
+    try {
+      const apiUrl = new URL(`${process.env.NEXT_PUBLIC_WORDPRESS_URL}/wp-json/wc/v3/products`);
+      apiUrl.searchParams.append('slug', slug);
+      apiUrl.searchParams.append('consumer_key', process.env.WOOCOMMERCE_CONSUMER_KEY);
+      apiUrl.searchParams.append('consumer_secret', process.env.WOOCOMMERCE_CONSUMER_SECRET);
+  
+      const response = await fetch(apiUrl.toString(), {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        next: { revalidate: 3600 }, // Revalidate every hour
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Failed to fetch product by slug: ${slug}. Status: ${response.status}`);
+      }
+  
+      const products = await response.json();
+      if (products.length === 0) {
+        console.warn(`Product with slug "${slug}" not found.`);
+        return null;
+      }
+  
+      return products[0];
+    } catch (error) {
+      console.error(`Error in getProductBySlug for slug "${slug}":`, error);
+      return null;
+    }
+  }
+  
+  /**
    * Fetch all collections (tags) from the internal API
    * @param {number} limit - Number of collections to fetch
    * @param {number} page - Page number for pagination

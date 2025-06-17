@@ -1,8 +1,60 @@
 import { Suspense } from 'react';
 import SingleProductComponent from '@/app/components/shop/SingleProduct';
 import NewsletterSignup from '@/app/components/NewsletterSignup';
+import { getProductBySlug } from '@/app/services/woocommerce';
 import '../loading.css';
 import '../product.css';
+
+// Function to generate metadata
+export async function generateMetadata({ params }) {
+    const { slug } = await params;
+    const product = await getProductBySlug(slug);
+
+    if (!product) {
+        return {
+            title: 'Product Not Found',
+            description: 'The product you are looking for could not be found.',
+        };
+    }
+
+    const { yoast_head_json } = product;
+
+    // Fallback for description
+    const description = yoast_head_json?.og_description || product.short_description?.replace(/<[^>]*>?/gm, '') || product.description?.replace(/<[^>]*>?/gm, '');
+
+    const metadata = {
+        title: yoast_head_json?.title || product.name,
+        description: description,
+        keywords: product.tags?.map(tag => tag.name),
+        openGraph: {
+            title: yoast_head_json?.og_title || product.name,
+            description: description,
+            url: yoast_head_json?.og_url || `${process.env.NEXT_PUBLIC_SITE_URL}/product/${product.slug}`,
+            siteName: yoast_head_json?.og_site_name || 'Mantle',
+            images: yoast_head_json?.og_image || product.images?.map(img => ({
+                url: img.src,
+                width: img.src_w || 800,
+                height: img.src_h || 600,
+                alt: img.alt || product.name,
+            })),
+            locale: yoast_head_json?.og_locale || 'en_US',
+            type: yoast_head_json?.og_type || 'article',
+        },
+        twitter: {
+            card: yoast_head_json?.twitter_card || 'summary_large_image',
+            title: yoast_head_json?.og_title || product.name,
+            description: description,
+            images: yoast_head_json?.og_image?.map(img => img.url) || product.images?.map(img => img.src),
+        },
+        alternates: {
+            canonical: yoast_head_json?.canonical,
+        },
+    };
+
+    // console.log('Generated Metadata:', JSON.stringify(metadata, null, 2));
+
+    return metadata;
+}
 
 // Main component that wraps everything
 export default async function ProductPage({ params }) {
