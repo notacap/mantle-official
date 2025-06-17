@@ -71,7 +71,7 @@ export default function ProductGrid({ products }) {
 
         return (
           <Link 
-            href={`/shop/product/${product.id}`} 
+            href={`/product/${product.slug}`} 
             key={product.id}
             style={{
               textDecoration: 'none',

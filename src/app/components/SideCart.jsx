@@ -78,13 +78,23 @@ export default function SideCart() {
       const product = Array.isArray(productData) ? productData[0] : productData;
 
       if (product && product.parent_id && product.parent_id !== 0) {
-        router.push(`/shop/product/${product.parent_id}`);
+        const parentResponse = await fetch(`/api/products?id=${product.parent_id}`);
+        if (!parentResponse.ok) throw new Error('Failed to fetch parent product');
+        const parentProductData = await parentResponse.json();
+        const parentProduct = Array.isArray(parentProductData) ? parentProductData[0] : parentProductData;
+        if (parentProduct && parentProduct.slug) {
+          router.push(`/product/${parentProduct.slug}`);
+        } else {
+          router.push(`/product/${product.parent_id}`);
+        }
+      } else if (product && product.slug) {
+        router.push(`/product/${product.slug}`);
       } else {
-        router.push(`/shop/product/${itemId}`);
+        router.push(`/product/${itemId}`);
       }
     } catch (err) {
       console.error("Failed to fetch parent product ID:", err);
-      router.push(`/shop/product/${itemId}`);
+      router.push(`/product/${itemId}`);
     }
   };
 

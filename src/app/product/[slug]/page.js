@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import SingleProduct from '@/app/components/shop/SingleProduct';
+import SingleProductComponent from '@/app/components/shop/SingleProduct';
 import NewsletterSignup from '@/app/components/NewsletterSignup';
 import '../loading.css';
 import '../product.css';
@@ -16,7 +16,7 @@ export default async function ProductPage({ params }) {
       padding: '2rem 1rem',
     }}>
       <Suspense fallback={<ProductLoadingSkeleton />}>
-        <SingleProduct productIdentifier={slug} />
+        <SingleProductComponent productIdentifier={slug} />
       </Suspense>
       <NewsletterSignup />
     </div>

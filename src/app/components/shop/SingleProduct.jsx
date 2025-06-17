@@ -98,7 +98,7 @@ function Breadcrumbs({ product, categories }) {
   );
 }
 
-export default function SingleProduct({ productId }) {
+export default function SingleProduct({ productIdentifier }) {
   const [currentImage, setCurrentImage] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImageForModal, setSelectedImageForModal] = useState(null);
@@ -115,10 +115,14 @@ export default function SingleProduct({ productId }) {
     isLoading: isLoadingProduct, 
     error: productError 
   } = useQuery({
-    queryKey: ['product', productId],
+    queryKey: ['product', productIdentifier],
     queryFn: async () => {
       const url = new URL('/api/products', window.location.origin);
-      url.searchParams.append('id', productId.toString());
+      if (isNaN(parseInt(productIdentifier, 10))) {
+        url.searchParams.append('slug', productIdentifier);
+      } else {
+        url.searchParams.append('id', productIdentifier);
+      }
       
       const response = await fetch(url.toString());
       if (!response.ok) {
@@ -127,9 +131,11 @@ export default function SingleProduct({ productId }) {
       
       return response.json();
     },
-    enabled: !!productId,
+    enabled: !!productIdentifier,
   });
   
+  const productId = product?.id;
+
   // Fetch product variations
   const { 
     data: variations, 
@@ -268,12 +274,12 @@ export default function SingleProduct({ productId }) {
   useEffect(() => {
     if (product && (product.error || product.stock_status === 'outofstock')) {
       setIsProductNotFound(true);
-    } else if (!product && !isLoadingProduct && productId) {
+    } else if (!product && !isLoadingProduct && productIdentifier) {
       setIsProductNotFound(true);
     } else {
       setIsProductNotFound(false);
     }
-  }, [product, isLoadingProduct, productId]);
+  }, [product, isLoadingProduct, productIdentifier]);
   
   useEffect(() => {
     if (product?.meta_data) {
@@ -335,7 +341,7 @@ export default function SingleProduct({ productId }) {
     );
   }
 
-  if (isLoadingProduct || isLoadingCategories || isLoadingVariations) {
+  if (isLoadingProduct || isLoadingCategories || (product && !variations && product.type === 'variable')) {
     return <ProductLoadingSkeleton />;
   }
 

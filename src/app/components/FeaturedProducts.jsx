@@ -329,7 +329,7 @@ export default function FeaturedProducts() {
             {products.length > 0 ? (
               products.map((product, index) => (
                 <Link 
-                  href={`/shop/product/${product.id}`} 
+                  href={`/product/${product.slug}`} 
                   key={product.id}
                   style={{ 
                     flex: '0 0 auto',
