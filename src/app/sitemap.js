@@ -1,4 +1,4 @@
-const URL = process.env.NEXT_PUBLIC_SITE_URL;
+const URL = 'https://www.mantle-clothing.com';
 
 async function fetchAllWooCommerceItems(endpoint) {
   let allItems = [];
