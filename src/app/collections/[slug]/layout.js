@@ -13,7 +13,7 @@ export async function generateMetadata({ params: rawParams }) {
   
   if (!collection) {
     return {
-      title: 'Collection Not Found | Mantle Clothing',
+      title: 'Shop Collections | Mantle Clothing',
       description: 'The requested collection could not be found.'
     };
   }

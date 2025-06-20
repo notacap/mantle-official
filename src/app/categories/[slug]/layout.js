@@ -10,7 +10,7 @@ export async function generateMetadata({ params: rawParams }) {
   
   if (!category) {
     return {
-      title: 'Category Not Found | Mantle Clothing',
+      title: 'Shop Categories | Mantle Clothing',
       description: 'The requested category could not be found.'
     };
   }
