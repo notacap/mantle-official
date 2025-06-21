@@ -1,10 +1,12 @@
 import { NextResponse } from 'next/server';
 
+const BLOCKED_COUNTRIES = ['LB', 'TR', 'UA', 'IL', 'TW', 'RU', 'EG', 'EE', 'SA', 'SC', 'UZ'];
+
 export function middleware(request) {
   const { geo } = request;
   const country = geo?.country;
 
-  if (country === 'LB') {
+  if (country && BLOCKED_COUNTRIES.includes(country)) {
     return new NextResponse('Forbidden', { status: 403 });
   }
 
