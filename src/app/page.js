@@ -61,7 +61,7 @@ export const metadata = {
 };
 
 export default function Home() {
-  console.log('Homepage Metadata:', JSON.stringify(metadata, null, 2));
+  // console.log('Homepage Metadata:', JSON.stringify(metadata, null, 2));
   return (
     <main style={{ backgroundColor: '#F8F8F8' }}>
     {/* Hero Slideshow */}
