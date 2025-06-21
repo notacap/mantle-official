@@ -14,7 +14,7 @@ export const metadata = {
     description: 'Trusted by experienced law enforcement professionals. See how Chase Jenkins, Dan Smith, Fred Hawkins, and Bryan Veliz use Mantle gear in real-world operations.',
     type: 'website',
     locale: 'en_US',
-    url: 'https://mantle-clothing.com/in-the-wild',
+    url: 'https://www.mantle-clothing.com/in-the-wild',
     siteName: 'Mantle Clothing',
     images: [
       {
@@ -32,7 +32,7 @@ export const metadata = {
     images: ['/images/banner-1.jpg'],
   },
   alternates: {
-    canonical: 'https://mantle-clothing.com/in-the-wild',
+    canonical: 'https://www.mantle-clothing.com/in-the-wild',
   },
   robots: {
     index: true,

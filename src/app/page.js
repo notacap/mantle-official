@@ -7,12 +7,12 @@ import NewsletterSignup from "./components/NewsletterSignup";
 import Image from "next/image";
 
 export const metadata = {
-  title: "Mantle Clothing | Premium Sustainable Apparel",
+  title: "Mantle Clothing - Premium Tactical & Outdoor Apparel",
   description: "Discover Mantle Clothing's premium sustainable apparel. Shop our collection of eco-friendly, ethically-made clothing for conscious consumers.",
   openGraph: {
-    title: "Mantle Clothing | Premium Sustainable Apparel",
+    title: "Mantle Clothing - Premium Tactical & Outdoor Apparel",
     description: "Discover Mantle Clothing's premium sustainable apparel. Shop our collection of eco-friendly, ethically-made clothing for conscious consumers.",
-    url: "https://mantleclothing.com",
+    url: "https://www.mantle-clothing.com",
     siteName: "Mantle Clothing",
     type: "website",
   },

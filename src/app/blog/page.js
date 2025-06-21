@@ -14,7 +14,7 @@ export const metadata = {
     description: 'Real-world tactical gear insights, product deep dives, and professional tips from 200+ days on the range. Written by cops, for cops.',
     type: 'website',
     locale: 'en_US',
-    url: 'https://mantle-clothing.com/blog',
+    url: 'https://www.mantle-clothing.com/blog',
     siteName: 'Mantle Clothing',
     images: [
       {
@@ -32,7 +32,7 @@ export const metadata = {
     images: ['/images/banner-1.jpg'],
   },
   alternates: {
-    canonical: 'https://mantle-clothing.com/blog',
+    canonical: 'https://www.mantle-clothing.com/blog',
   },
   robots: {
     index: true,

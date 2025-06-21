@@ -11,7 +11,7 @@ export const metadata = {
     description: 'Questions about your order or our tactical gear? Contact our team for general inquiries or order support. Purpose-built customer service for those who serve.',
     type: 'website',
     locale: 'en_US',
-    url: 'https://mantle-clothing.com/contact',
+    url: 'https://www.mantle-clothing.com/contact',
     siteName: 'Mantle Clothing',
     images: [
       {
@@ -29,7 +29,7 @@ export const metadata = {
     images: ['/images/banner-1.jpg'],
   },
   alternates: {
-    canonical: 'https://mantle-clothing.com/contact',
+    canonical: 'https://www.mantle-clothing.com/contact',
   },
   robots: {
     index: true,

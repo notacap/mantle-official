@@ -31,7 +31,7 @@ export const metadata = {
       url: '/images/MANTLE_LOGO.svg?v=2',
     },
   },
-  metadataBase: new URL('https://mantleclothing.com'),
+  metadataBase: new URL('https://www.mantle-clothing.com'),
   alternates: {
     canonical: '/',
   },
@@ -51,7 +51,7 @@ export const metadata = {
     description: 'Purpose-built technical clothing merging high-end outdoor performance with tactical functionality. Designed for law enforcement, security, and outdoor professionals.',
     type: 'website',
     locale: 'en_US',
-    url: 'https://mantle-clothing.com',
+    url: 'https://www.mantle-clothing.com',
     siteName: 'Mantle Clothing',
     images: [
       {

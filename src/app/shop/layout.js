@@ -7,7 +7,7 @@ export const metadata = {
     description: 'Explore our 9-piece collection of premium tactical apparel. Purpose-built technical clothing with integrated protection, articulated cuts, and weatherproof materials.',
     type: 'website',
     locale: 'en_US',
-    url: 'https://mantle-clothing.com/shop',
+    url: 'https://www.mantle-clothing.com/shop',
     siteName: 'Mantle Clothing',
     images: [
       {
@@ -25,7 +25,7 @@ export const metadata = {
     images: ['/images/banner-1.jpg'],
   },
   alternates: {
-    canonical: 'https://mantle-clothing.com/shop',
+    canonical: 'https://www.mantle-clothing.com/shop',
   },
   robots: {
     index: true,

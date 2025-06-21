@@ -12,7 +12,7 @@ export const metadata = {
     description: 'Founded by range instructor William Petty after 200+ days training officers. We create technical clothing that performs correctly, allowing first responders to focus on their job.',
     type: 'website',
     locale: 'en_US',
-    url: 'https://mantle-clothing.com/about',
+    url: 'https://www.mantle-clothing.com/about',
     siteName: 'Mantle Clothing',
     images: [
       {
@@ -30,7 +30,7 @@ export const metadata = {
     images: ['/images/banner-1.jpg'],
   },
   alternates: {
-    canonical: 'https://mantle-clothing.com/about',
+    canonical: 'https://www.mantle-clothing.com/about',
   },
   robots: {
     index: true,

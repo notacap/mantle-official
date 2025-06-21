@@ -11,7 +11,7 @@ export const metadata = {
     description: 'Partnering with the best in tactical gear: Triarc Systems, Velocity Systems, Team Wendy, D3O, and High Speed Gear. Visit our exclusive dealer Khimaria for in-store purchases.',
     type: 'website',
     locale: 'en_US',
-    url: 'https://mantle-clothing.com/partners',
+    url: 'https://www.mantle-clothing.com/partners',
     siteName: 'Mantle Clothing',
     images: [
       {
@@ -29,7 +29,7 @@ export const metadata = {
     images: ['/images/banner-1.jpg'],
   },
   alternates: {
-    canonical: 'https://mantle-clothing.com/partners',
+    canonical: 'https://www.mantle-clothing.com/partners',
   },
   robots: {
     index: true,
