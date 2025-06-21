@@ -19,6 +19,20 @@ export async function generateMetadata({ params }) {
 
     const { yoast_head_json } = product;
 
+    // Define base URLs for replacement
+    const oldBaseUrl = 'https://mantle-clothing.com';
+    const newBaseUrl = 'https://www.mantle-clothing.com';
+
+    // Replace base URL in Yoast data
+    const ogUrl = yoast_head_json?.og_url?.replace(oldBaseUrl, newBaseUrl);
+    const canonicalUrl = yoast_head_json?.canonical?.replace(oldBaseUrl, newBaseUrl);
+
+    // Replace base URL in image URLs from Yoast
+    const updatedOgImage = yoast_head_json?.og_image?.map(img => ({
+        ...img,
+        url: img.url?.replace(oldBaseUrl, process.env.NEXT_PUBLIC_WORDPRESS_URL)
+    }));
+
     // Fallback for description
     const description = yoast_head_json?.og_description || product.short_description?.replace(/<[^>]*>?/gm, '') || product.description?.replace(/<[^>]*>?/gm, '');
 
@@ -29,9 +43,9 @@ export async function generateMetadata({ params }) {
         openGraph: {
             title: yoast_head_json?.og_title || product.name,
             description: description,
-            url: yoast_head_json?.og_url || `${process.env.NEXT_PUBLIC_SITE_URL}/product/${product.slug}`,
+            url: ogUrl || `${newBaseUrl}/product/${product.slug}`,
             siteName: yoast_head_json?.og_site_name || 'Mantle',
-            images: yoast_head_json?.og_image || product.images?.map(img => ({
+            images: updatedOgImage || product.images?.map(img => ({
                 url: img.src,
                 width: img.src_w || 800,
                 height: img.src_h || 600,
@@ -44,14 +58,14 @@ export async function generateMetadata({ params }) {
             card: yoast_head_json?.twitter_card || 'summary_large_image',
             title: yoast_head_json?.og_title || product.name,
             description: description,
-            images: yoast_head_json?.og_image?.map(img => img.url) || product.images?.map(img => img.src),
+            images: updatedOgImage?.map(img => img.url) || product.images?.map(img => img.src),
         },
         alternates: {
-            canonical: yoast_head_json?.canonical,
+            canonical: canonicalUrl,
         },
     };
 
-    // console.log('Generated Metadata:', JSON.stringify(metadata, null, 2));
+    console.log('Generated Metadata:', JSON.stringify(metadata, null, 2));
 
     return metadata;
 }
