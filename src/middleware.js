@@ -1,12 +1,44 @@
 import { NextResponse } from 'next/server';
 
-const BLOCKED_COUNTRIES = ['LB', 'TR', 'UA', 'IL', 'TW', 'RU', 'EG', 'EE', 'SA', 'SC', 'UZ'];
+const ALLOWED_COUNTRIES = [
+  // North America
+  'US', // United States
+  'CA', // Canada
+
+  // Western Europe
+  'AT', // Austria
+  'BE', // Belgium
+  'FR', // France
+  'DE', // Germany
+  'IE', // Ireland
+  'LI', // Liechtenstein
+  'LU', // Luxembourg
+  'MC', // Monaco
+  'NL', // Netherlands
+  'CH', // Switzerland
+  'GB', // United Kingdom
+
+  // Southern Europe
+  'AD', // Andorra
+  'IT', // Italy
+  'PT', // Portugal
+  'SM', // San Marino
+  'ES', // Spain
+  'VA', // Vatican City
+
+  // Northern Europe
+  'DK', // Denmark
+  'FI', // Finland
+  'IS', // Iceland
+  'NO', // Norway
+  'SE', // Sweden
+];
 
 export function middleware(request) {
   const { geo } = request;
   const country = geo?.country;
 
-  if (country && BLOCKED_COUNTRIES.includes(country)) {
+  if (country && !ALLOWED_COUNTRIES.includes(country)) {
     return new NextResponse('Forbidden', { status: 403 });
   }
 
