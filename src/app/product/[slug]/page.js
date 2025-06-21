@@ -65,7 +65,7 @@ export async function generateMetadata({ params }) {
         },
     };
 
-    console.log('Generated Metadata:', JSON.stringify(metadata, null, 2));
+    // console.log('Generated Metadata:', JSON.stringify(metadata, null, 2));
 
     return metadata;
 }

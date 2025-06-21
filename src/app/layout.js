@@ -33,7 +33,7 @@ export const metadata = {
   },
   metadataBase: new URL('https://www.mantle-clothing.com'),
   alternates: {
-    canonical: '/',
+    canonical: 'https://www.mantle-clothing.com',
   },
   robots: {
     index: true,
