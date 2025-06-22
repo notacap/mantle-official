@@ -20,14 +20,28 @@ const ALLOWED_COUNTRIES = [
 ];
 
 export function middleware(request) {
-  // Get country from header instead of geo object
   const country = request.headers.get('x-vercel-ip-country');
   
-  console.log('Country detected:', country);
-  
-  // Block if country is detected and not in allowed list
   if (country && !ALLOWED_COUNTRIES.includes(country)) {
-    return new NextResponse(`Access Denied - Country: ${country}`, { status: 403 });
+    // Return minimal HTML with no GA tracking
+    return new Response(
+      `<!DOCTYPE html>
+      <html>
+        <head>
+          <title>Access Denied</title>
+        </head>
+        <body>
+          <h1>Access Denied</h1>
+          <p>This website is not available in your region.</p>
+        </body>
+      </html>`,
+      {
+        status: 403,
+        headers: {
+          'Content-Type': 'text/html',
+        },
+      }
+    );
   }
 
   return NextResponse.next();
