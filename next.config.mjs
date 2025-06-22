@@ -3,6 +3,9 @@ const nextConfig = {
   images: {
     domains: ['api.mantle-clothing.com'],
   },
+  experimental: {
+    edge: ['middleware'],
+  },
 };
 
 export default nextConfig;
