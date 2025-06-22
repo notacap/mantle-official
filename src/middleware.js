@@ -19,45 +19,22 @@ const ALLOWED_COUNTRIES = [
   'GB', // United Kingdom
 ];
 
-// export function middleware(request) {
-//   const { geo } = request;
-//   const country = geo?.country;
-
-//   if (country && !ALLOWED_COUNTRIES.includes(country)) {
-//     return new NextResponse('Forbidden', { status: 403 });
-//   }
-
-//   return NextResponse.next();
-// }
-
-// export const config = {
-//   matcher: [
-//     /*
-//      * Match all request paths except for the ones starting with:
-//      * - api (API routes)
-//      * - _next/static (static files)
-//      * - _next/image (image optimization files)
-//      * - favicon.ico (favicon file)
-//      */
-//     '/((?!api|_next/static|_next/image|favicon.ico).*)',
-//   ],
-// }; 
-
 export function middleware(request) {
-  const { geo } = request;
-  const country = geo?.country;
+  // Get country from header instead of geo object
+  const country = request.headers.get('x-vercel-ip-country');
   
-  // Debug logging
-  console.log('Geo data:', geo);
-  console.log('Country:', country);
+  console.log('Country detected:', country);
   
-  // Also check headers that might contain geo info
-  console.log('X-Vercel-IP-Country:', request.headers.get('x-vercel-ip-country'));
-  console.log('X-Real-IP:', request.headers.get('x-real-ip'));
-  
+  // Block if country is detected and not in allowed list
   if (country && !ALLOWED_COUNTRIES.includes(country)) {
-    return new NextResponse('Forbidden', { status: 403 });
+    return new NextResponse(`Access Denied - Country: ${country}`, { status: 403 });
   }
 
   return NextResponse.next();
 }
+
+export const config = {
+  matcher: [
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+  ],
+};
