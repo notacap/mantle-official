@@ -23,11 +23,9 @@ export function middleware(request) {
   const { geo } = request;
   const country = geo?.country;
 
-  if (country && !ALLOWED_COUNTRIES.includes(country)) {
-    return new NextResponse('Forbidden', { status: 403 });
-  }
-
-  return NextResponse.next();
+  // This is a temporary change for debugging. It will display the detected country.
+  // After debugging, you should revert this to the original blocking logic.
+  return new NextResponse(`Vercel detected your country as: ${country || 'None'}`);
 }
 
 export const config = {
