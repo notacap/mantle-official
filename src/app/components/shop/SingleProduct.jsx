@@ -23,6 +23,7 @@ import {
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import ProductReviewsSection from './ProductReviewsSection';
 import StarRating from './StarRating';
+import * as gtag from '@/lib/gtag';
 
 // Function to strip HTML tags
 function stripHtml(html) {
@@ -239,6 +240,28 @@ export default function SingleProduct({ productIdentifier }) {
   const colorOptions = colorTermsData?.terms || [];
   const amountOptions = amountTermsData?.terms || [];
   
+  useEffect(() => {
+    if (product) {
+      const { price, name, id, sku, categories } = product;
+      const categoryName = categories?.[0]?.name || 'Uncategorized';
+
+      gtag.event({
+        action: 'view_item',
+        params: {
+          currency: 'USD', // Assuming USD, you can make this dynamic if needed
+          value: parseFloat(price),
+          items: [{
+            item_id: sku || id.toString(),
+            item_name: name,
+            item_category: categoryName,
+            price: parseFloat(price),
+            quantity: 1
+          }]
+        }
+      });
+    }
+  }, [product]);
+
   useEffect(() => {
     if (product && product.images && product.images.length > 0) {
       const newUniqueImages = [];
@@ -569,7 +592,9 @@ export default function SingleProduct({ productIdentifier }) {
             sizeOptions={sizeOptions}
             colorOptions={colorOptions}
             amountOptions={amountOptions}
-            variations={variations || []}
+            variations={variations}
+            productName={product.name}
+            categoryName={product.categories?.[0]?.name || 'Uncategorized'}
           />
         </div>
       </div>

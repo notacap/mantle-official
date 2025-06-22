@@ -17,6 +17,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import * as gtag from '@/lib/gtag';
 
 // START PAYPAL IMPORTS
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
@@ -142,6 +143,28 @@ export default function CheckoutPage() {
     setIsPaymentDeclineError(false);
     setSubmissionError(null);
   };
+
+  useEffect(() => {
+    if (cart && !isCartLoading && cart.items?.length > 0) {
+      const currencyCode = cart.totals?.currency_code || 'USD';
+      const minorUnit = cart.totals?.currency_minor_unit || 2;
+      const totalPrice = parseFloat(cart.totals?.total_price) / Math.pow(10, minorUnit) || 0;
+
+      gtag.event({
+        action: 'begin_checkout',
+        params: {
+          currency: currencyCode,
+          value: totalPrice,
+          items: cart.items.map(item => ({
+            item_id: item.sku || item.id.toString(),
+            item_name: item.name,
+            price: parseFloat(item.prices.price) / Math.pow(10, item.prices.currency_minor_unit || 2),
+            quantity: item.quantity,
+          })),
+        },
+      });
+    }
+  }, [cart, isCartLoading]);
 
   useEffect(() => {
     // console.log("[CheckoutPage] Cart data received:", cart);
@@ -299,6 +322,24 @@ export default function CheckoutPage() {
       // console.log("Stripe Order placement result:", orderResult);
 
       if (orderResult && (orderResult.order_id || orderResult.order_number)) {
+        const minorUnit = orderResult.totals?.currency_minor_unit || 2;
+        gtag.event({
+          action: 'purchase',
+          params: {
+            transaction_id: orderResult.order_number.toString(),
+            value: parseFloat(orderResult.totals.total_price) / Math.pow(10, minorUnit),
+            tax: parseFloat(orderResult.totals.total_tax) / Math.pow(10, minorUnit),
+            shipping: parseFloat(orderResult.totals.total_shipping) / Math.pow(10, minorUnit),
+            currency: orderResult.totals.currency_code,
+            items: orderResult.items.map(item => ({
+              item_id: item.sku || item.id.toString(),
+              item_name: item.name,
+              price: parseFloat(item.prices.price) / Math.pow(10, minorUnit),
+              quantity: item.quantity,
+            })),
+          },
+        });
+        
         await fetchCartAndNonce(); // Clear cart, get new nonce
 
         const orderNumber = orderResult.order_number || orderResult.order_id;
@@ -421,6 +462,22 @@ export default function CheckoutPage() {
         return;
       }
       
+      gtag.event({
+        action: 'purchase',
+        params: {
+          transaction_id: wooOrderIdToConfirm.toString(),
+          value: parseFloat(createdWooOrder.total),
+          currency: createdWooOrder.currency,
+          // Tax and shipping are not easily available here, might need to enhance createdWooOrder
+          items: cart.items.map(item => ({
+            item_id: item.sku || item.id.toString(),
+            item_name: item.name,
+            price: parseFloat(item.prices.price) / Math.pow(10, item.prices.currency_minor_unit || 2),
+            quantity: item.quantity,
+          })),
+        },
+      });
+
       await fetchCartAndNonce(); // Clear original cart, get new nonce
       
       router.push(`/order-confirmation?order_number=${wooOrderIdToConfirm}&order_key=${wooOrderKeyToConfirm}`);

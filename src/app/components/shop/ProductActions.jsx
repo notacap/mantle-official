@@ -4,8 +4,9 @@ import { useState, useEffect } from 'react';
 import { formatPrice } from '@/app/services/woocommerce';
 import { useCart } from '@/context/CartContext'; // Import useCart hook
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import * as gtag from '@/lib/gtag';
 
-export default function ProductActions({ productId, price, sizes, colors, amounts, sizeOptions, colorOptions, amountOptions, variations }) {
+export default function ProductActions({ productId, price, sizes, colors, amounts, sizeOptions, colorOptions, amountOptions, variations, productName, categoryName }) {
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
@@ -202,8 +203,24 @@ export default function ProductActions({ productId, price, sizes, colors, amount
     };
 
     try {
-      const updatedCart = await callCartApi('/wp-json/wc/store/v1/cart/add-item', 'POST', itemData);
-      // alert('Product added to cart!'); // Remove existing alert
+      await callCartApi('/wp-json/wc/store/v1/cart/add-item', 'POST', itemData);
+      
+      gtag.event({
+        action: 'add_to_cart',
+        params: {
+          currency: 'USD',
+          value: unitPrice * quantity,
+          items: [{
+            item_id: productId.toString(),
+            item_name: productName,
+            item_category: categoryName,
+            item_variant: [selectedColor, selectedSize].filter(Boolean).join(' / ') || undefined,
+            price: unitPrice,
+            quantity: quantity,
+          }]
+        }
+      });
+
       openSideCart(); // Open the side cart instead
     } catch (error) {
       console.error('Failed to add to cart:', error);
