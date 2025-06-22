@@ -17,21 +17,6 @@ const ALLOWED_COUNTRIES = [
   'NL', // Netherlands
   'CH', // Switzerland
   'GB', // United Kingdom
-
-  // Southern Europe
-  'AD', // Andorra
-  'IT', // Italy
-  'PT', // Portugal
-  'SM', // San Marino
-  'ES', // Spain
-  'VA', // Vatican City
-
-  // Northern Europe
-  'DK', // Denmark
-  'FI', // Finland
-  'IS', // Iceland
-  'NO', // Norway
-  'SE', // Sweden
 ];
 
 export function middleware(request) {
