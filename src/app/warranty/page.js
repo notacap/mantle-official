@@ -87,11 +87,11 @@ export default function Warranty() {
                   <li>Include a copy of the original receipt.</li>
                 </ul>
                 
-                <div className="warranty-address">
+                {/* <div className="warranty-address">
                   <p>Mantle Clothing</p>
                   <p>208 Ellen Street Unit B</p>
                   <p>Garden City, ID 83714</p>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
