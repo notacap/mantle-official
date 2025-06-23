@@ -8,66 +8,73 @@ import '../product.css';
 // Function to generate metadata
 export async function generateMetadata({ params }) {
     const { slug } = await params;
-    const product = await getProductBySlug(slug);
+    
+    try {
+        const product = await getProductBySlug(slug);
 
-    if (!product) {
+        if (!product) {
+            return {
+                title: 'Product Not Found',
+                description: 'The product you are looking for could not be found.',
+            };
+        }
+
+        const { yoast_head_json } = product;
+
+        // Define base URLs for replacement
+        const oldBaseUrl = 'https://mantle-clothing.com';
+        const newBaseUrl = 'https://www.mantle-clothing.com';
+
+        // Replace base URL in Yoast data
+        const ogUrl = yoast_head_json?.og_url?.replace(oldBaseUrl, newBaseUrl);
+        const canonicalUrl = yoast_head_json?.canonical?.replace(oldBaseUrl, newBaseUrl);
+
+        // Replace base URL in image URLs from Yoast
+        const updatedOgImage = yoast_head_json?.og_image?.map(img => ({
+            ...img,
+            url: img.url?.replace(oldBaseUrl, process.env.NEXT_PUBLIC_WORDPRESS_URL)
+        }));
+
+        // Fallback for description
+        const description = yoast_head_json?.og_description || product.short_description?.replace(/<[^>]*>?/gm, '') || product.description?.replace(/<[^>]*>?/gm, '');
+
+        const metadata = {
+            title: yoast_head_json?.title || product.name,
+            description: description,
+            keywords: product.tags?.map(tag => tag.name),
+            openGraph: {
+                title: yoast_head_json?.og_title || product.name,
+                description: description,
+                url: ogUrl || `${newBaseUrl}/product/${product.slug}`,
+                siteName: yoast_head_json?.og_site_name || 'Mantle',
+                images: updatedOgImage || product.images?.map(img => ({
+                    url: img.src,
+                    width: img.src_w || 800,
+                    height: img.src_h || 600,
+                    alt: img.alt || product.name,
+                })),
+                locale: yoast_head_json?.og_locale || 'en_US',
+                type: yoast_head_json?.og_type || 'article',
+            },
+            twitter: {
+                card: yoast_head_json?.twitter_card || 'summary_large_image',
+                title: yoast_head_json?.og_title || product.name,
+                description: description,
+                images: updatedOgImage?.map(img => img.url) || product.images?.map(img => img.src),
+            },
+            alternates: {
+                canonical: canonicalUrl,
+            },
+        };
+
+        return metadata;
+    } catch (error) {
+        console.error(`Error generating metadata for slug "${slug}":`, error);
         return {
-            title: 'Product Not Found',
-            description: 'The product you are looking for could not be found.',
+            title: "Error",
+            description: "An error occurred while generating page metadata."
         };
     }
-
-    const { yoast_head_json } = product;
-
-    // Define base URLs for replacement
-    const oldBaseUrl = 'https://mantle-clothing.com';
-    const newBaseUrl = 'https://www.mantle-clothing.com';
-
-    // Replace base URL in Yoast data
-    const ogUrl = yoast_head_json?.og_url?.replace(oldBaseUrl, newBaseUrl);
-    const canonicalUrl = yoast_head_json?.canonical?.replace(oldBaseUrl, newBaseUrl);
-
-    // Replace base URL in image URLs from Yoast
-    const updatedOgImage = yoast_head_json?.og_image?.map(img => ({
-        ...img,
-        url: img.url?.replace(oldBaseUrl, process.env.NEXT_PUBLIC_WORDPRESS_URL)
-    }));
-
-    // Fallback for description
-    const description = yoast_head_json?.og_description || product.short_description?.replace(/<[^>]*>?/gm, '') || product.description?.replace(/<[^>]*>?/gm, '');
-
-    const metadata = {
-        title: yoast_head_json?.title || product.name,
-        description: description,
-        keywords: product.tags?.map(tag => tag.name),
-        openGraph: {
-            title: yoast_head_json?.og_title || product.name,
-            description: description,
-            url: ogUrl || `${newBaseUrl}/product/${product.slug}`,
-            siteName: yoast_head_json?.og_site_name || 'Mantle',
-            images: updatedOgImage || product.images?.map(img => ({
-                url: img.src,
-                width: img.src_w || 800,
-                height: img.src_h || 600,
-                alt: img.alt || product.name,
-            })),
-            locale: yoast_head_json?.og_locale || 'en_US',
-            type: yoast_head_json?.og_type || 'article',
-        },
-        twitter: {
-            card: yoast_head_json?.twitter_card || 'summary_large_image',
-            title: yoast_head_json?.og_title || product.name,
-            description: description,
-            images: updatedOgImage?.map(img => img.url) || product.images?.map(img => img.src),
-        },
-        alternates: {
-            canonical: canonicalUrl,
-        },
-    };
-
-    // console.log('Generated Metadata:', JSON.stringify(metadata, null, 2));
-
-    return metadata;
 }
 
 // Main component that wraps everything
