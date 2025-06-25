@@ -1,7 +1,6 @@
 "use client";
 
 import React, { createContext, useState, useEffect, useContext, useCallback, useRef } from 'react';
-import * as gtag from '@/lib/gtag';
 
 const CartContext = createContext();
 
@@ -270,27 +269,8 @@ export function CartProvider({ children }) {
   }, [isTokenLoadAttempted, fetchCartAndNonce]); // Only depends on fetchCartAndNonce (which is stable)
 
   const openSideCart = useCallback(() => {
-    if (cart) {
-      const currencyCode = cart.totals?.currency_code || 'USD';
-      const minorUnit = cart.totals?.currency_minor_unit || 2;
-      const totalPrice = parseFloat(cart.totals?.total_price) / Math.pow(10, minorUnit) || 0;
-
-      gtag.event({
-        action: 'view_cart',
-        params: {
-          currency: currencyCode,
-          value: totalPrice,
-          items: cart.items?.map(item => ({
-            item_id: item.sku || item.id.toString(),
-            item_name: item.name,
-            price: parseFloat(item.prices.price) / Math.pow(10, item.prices.currency_minor_unit || 2),
-            quantity: item.quantity,
-          })) || []
-        }
-      });
-    }
     setIsSideCartOpen(true);
-  }, [cart]);
+  }, []);
 
   const closeSideCart = useCallback(() => {
     setIsSideCartOpen(false);
