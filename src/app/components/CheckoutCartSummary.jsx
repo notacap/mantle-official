@@ -1,146 +1,90 @@
 "use client";
 
-import React from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
-
-// Helper function to decode HTML entities (can be moved to a utility file later if not already present)
-function decodeHtmlEntities(text) {
-  if (typeof window === 'undefined') {
-    let decodedText = text?.replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec));
-    decodedText = decodedText?.replace(/&#8211;/g, '–'); // En dash
-    decodedText = decodedText?.replace(/&mdash;/g, '—');  // Em dash
-    decodedText = decodedText?.replace(/&amp;/g, '&');    // Ampersand
-    return decodedText || '';
-  }
-  try {
-    const doc = new DOMParser().parseFromString(text || '', 'text/html');
-    return doc.body.textContent || '';
-  } catch (e) {
-    console.error("Error decoding HTML entities:", e);
-    return text || ''; // Fallback to original text on error
-  }
-}
+import { formatPrice } from '@/app/services/woocommerce';
+import Image from 'next/image';
 
 export default function CheckoutCartSummary() {
-  const { cart, isLoading: isCartLoading } = useCart();
-  const router = useRouter();
+  const { cart, isLoading, error } = useCart();
 
-  if (isCartLoading && !cart) {
-    return (
-      <div className="p-6 bg-gray-50 rounded-lg shadow">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">Order Summary</h2>
-        <p className="text-gray-500">Loading summary...</p>
-      </div>
-    );
+  if (isLoading) {
+    return <div>Loading cart summary...</div>;
+  }
+
+  if (error) {
+    return <div className="text-red-600">Error: {error}</div>;
   }
 
   if (!cart || !cart.items || cart.items.length === 0) {
-    return (
-      <div className="p-6 bg-gray-50 rounded-lg shadow">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">Order Summary</h2>
-        <p className="text-gray-600">Your cart is empty.</p>
-      </div>
-    );
+    return <div>Your cart is empty.</div>;
   }
 
-  const cartItems = cart.items || [];
-  const currencySymbol = cart.totals?.currency_symbol || '$';
-  const currencyMinorUnit = cart.totals?.currency_minor_unit || 2;
+  const { items, totals, currency } = cart;
 
-  const subtotal = cart.totals?.total_items ? parseFloat(cart.totals.total_items) / (10**currencyMinorUnit) : 0;
-  const shipping = cart.totals?.total_shipping ? parseFloat(cart.totals.total_shipping) / (10**currencyMinorUnit) : 0;
-  const taxes = cart.totals?.total_tax ? parseFloat(cart.totals.total_tax) / (10**currencyMinorUnit) : 0; // Assuming total_tax exists
-  const total = cart.totals?.total_price ? parseFloat(cart.totals.total_price) / (10**currencyMinorUnit) : 0;
-
-  const handleProductLinkClick = async (itemId) => {
-    try {
-      const response = await fetch(`/api/products?id=${itemId}`);
-      if (!response.ok) {
-        throw new Error(`API request failed with status ${response.status}`);
-      }
-      const productData = await response.json();
-      const product = Array.isArray(productData) ? productData[0] : productData;
-
-      if (product && product.parent_id && product.parent_id !== 0) {
-        const parentResponse = await fetch(`/api/products?id=${product.parent_id}`);
-        if (!parentResponse.ok) throw new Error('Failed to fetch parent product');
-        const parentProductData = await parentResponse.json();
-        const parentProduct = Array.isArray(parentProductData) ? parentProductData[0] : parentProductData;
-        if (parentProduct && parentProduct.slug) {
-          router.push(`/product/${parentProduct.slug}`);
-        } else {
-          router.push(`/product/${product.parent_id}`);
-        }
-      } else if (product && product.slug) {
-        router.push(`/product/${product.slug}`);
-      } else {
-        router.push(`/product/${itemId}`);
-      }
-    } catch (err) {
-      console.error("Failed to fetch parent product ID:", err);
-      router.push(`/product/${itemId}`);
-    }
-  };
+  const subtotal = totals.total_items ? parseFloat(totals.total_items) / (10**totals.currency_minor_unit) : 0;
+  const shipping = totals.total_shipping ? parseFloat(totals.total_shipping) / (10**totals.currency_minor_unit) : 0;
+  const total = totals.total_price ? parseFloat(totals.total_price) / (10**totals.currency_minor_unit) : 0;
+  const discount = totals.total_discount ? parseFloat(totals.total_discount) / (10**totals.currency_minor_unit) : 0;
+  const currencySymbol = totals.currency_symbol || '$';
 
   return (
-    <div className="p-6 bg-gray-100 rounded-lg shadow-md">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6 border-b pb-3">Order Summary</h2>
-      
-      <div className="space-y-4 mb-6 max-h-96 overflow-y-auto pr-2">
-        {cartItems.map((item) => {
-          const imageUrl = item.images && item.images.length > 0 ? item.images[0].src : '/placeholder.png';
-          const itemLineTotal = item.totals?.line_total ? parseFloat(item.totals.line_total) / (10**currencyMinorUnit) : 0;
-          const variationText = item.variation?.map(v => `${v.attribute}: ${v.value}`).join(', ') || '';
+    <div className="bg-gray-100 p-6 rounded-lg">
+      <h2 className="text-lg font-medium text-gray-900 mb-6">Order summary</h2>
 
-          return (
-            <div key={item.key} className="flex items-start space-x-4 py-3 border-b border-gray-200 last:border-b-0">
-              <div onClick={() => handleProductLinkClick(item.id)} className="w-20 h-20 relative flex-shrink-0 rounded-md overflow-hidden border border-gray-200 bg-white cursor-pointer">
+      <div className="flow-root">
+        <ul role="list" className="-my-6 divide-y divide-gray-200">
+          {items.map((item) => (
+            <li key={item.key} className="flex py-6">
+              <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                 <Image
-                  src={imageUrl}
-                  alt={decodeHtmlEntities(item.name)}
-                  fill
-                  style={{ objectFit: 'cover' }}
-                  sizes="(max-width: 768px) 20vw, 80px"
+                  src={item.images?.[0]?.thumbnail || '/placeholder.png'}
+                  alt={item.name}
+                  width={96}
+                  height={96}
+                  className="h-full w-full object-cover object-center"
                 />
               </div>
-              <div className="flex-grow">
-                <div onClick={() => handleProductLinkClick(item.id)} className="text-md font-medium text-gray-800 hover:text-[#9CB24D] cursor-pointer">
-                  {decodeHtmlEntities(item.name)}
+
+              <div className="ml-4 flex flex-1 flex-col">
+                <div>
+                  <div className="flex justify-between text-base font-medium text-gray-900">
+                    <h3>{item.name}</h3>
+                    <p className="ml-4">{formatPrice(item.totals.line_total, currency)}</p>
+                  </div>
+                  {item.variation.map(v => (
+                     <p key={`${v.attribute}-${v.value}`} className="mt-1 text-sm text-gray-500">{v.attribute}: {v.value}</p>
+                  ))}
                 </div>
-                {variationText && <p className="text-xs text-gray-500 mt-0.5">{variationText}</p>}
-                <p className="text-sm text-gray-600 mt-1">Quantity: {item.quantity}</p>
+                <div className="flex flex-1 items-end justify-between text-sm">
+                  <p className="text-gray-500">Qty {item.quantity}</p>
+                </div>
               </div>
-              <div className="text-md font-medium text-gray-900 whitespace-nowrap">
-                {currencySymbol}{itemLineTotal.toFixed(2)}
-              </div>
-            </div>
-          );
-        })}
+            </li>
+          ))}
+        </ul>
       </div>
 
-      <div className="space-y-2 border-t pt-6">
-        <div className="flex justify-between text-md text-gray-700">
-          <span>Subtotal</span>
-          <span className="font-medium">{currencySymbol}{subtotal.toFixed(2)}</span>
+      <div className="mt-6 border-t border-gray-200 pt-6 space-y-3">
+         <div className="flex items-center justify-between">
+          <dt className="text-sm text-gray-600">Subtotal</dt>
+          <dd className="text-sm font-medium text-gray-900">{currencySymbol}{subtotal.toFixed(2)}</dd>
         </div>
-        {shipping > 0 && (
-          <div className="flex justify-between text-md text-gray-700">
-            <span>Shipping</span>
-            <span className="font-medium">{currencySymbol}{shipping.toFixed(2)}</span>
+        
+        {discount > 0 && (
+          <div className="flex items-center justify-between text-green-600">
+            <dt className="text-sm">Discount</dt>
+            <dd className="text-sm font-medium">-{currencySymbol}{discount.toFixed(2)}</dd>
           </div>
         )}
-        {taxes > 0 && (
-           <div className="flex justify-between text-md text-gray-700">
-            <span>Taxes</span>
-            <span className="font-medium">{currencySymbol}{taxes.toFixed(2)}</span>
-          </div>
-        )}
-        <div className="flex justify-between text-xl font-semibold text-gray-900 pt-2 mt-2 border-t border-gray-300">
-          <span>Total</span>
-          <span>{currencySymbol}{total.toFixed(2)}</span>
+
+        <div className="flex items-center justify-between">
+          <dt className="text-sm text-gray-600">Shipping</dt>
+          <dd className="text-sm font-medium text-gray-900">{currencySymbol}{shipping.toFixed(2)}</dd>
+        </div>
+
+        <div className="flex items-center justify-between border-t border-gray-200 pt-3">
+          <dt className="text-base font-medium text-gray-900">Order total</dt>
+          <dd className="text-base font-medium text-gray-900">{currencySymbol}{total.toFixed(2)}</dd>
         </div>
       </div>
     </div>

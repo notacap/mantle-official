@@ -244,6 +244,14 @@ export function CartProvider({ children }) {
     }
   }, [nonce, persistCartToken, setError, setLastKnownCartUpdateTimestamp]); // Removed cartToken, relies on cartTokenRef.current internally. Added setters.
 
+  const applyCoupon = useCallback(async (couponCode) => {
+    return callCartApi('/wp-json/wc/store/v1/cart/apply-coupon', 'POST', { code: couponCode });
+  }, [callCartApi]);
+
+  const removeCoupon = useCallback(async (couponCode) => {
+    return callCartApi('/wp-json/wc/store/v1/cart/remove-coupon', 'POST', { code: couponCode });
+  }, [callCartApi]);
+
   // Effect for cross-tab synchronization
   useEffect(() => {
     const handleStorageChange = (event) => {
@@ -286,6 +294,8 @@ export function CartProvider({ children }) {
       fetchCartAndNonce, 
       updateCartAndNonce, 
       callCartApi, 
+      applyCoupon,
+      removeCoupon,
       setIsLoading, 
       lastKnownCartUpdateTimestamp,
       isSideCartOpen,

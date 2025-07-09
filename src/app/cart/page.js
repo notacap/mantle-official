@@ -34,9 +34,12 @@ function decodeHtmlEntities(text) {
 }
 
 export default function Cart() {
-  const { cart, isLoading, error, callCartApi } = useCart();
+  const { cart, isLoading, error, callCartApi, applyCoupon, removeCoupon } = useCart();
   const [isUpdatingCartItems, setIsUpdatingCartItems] = useState(false);
   const [editableQuantities, setEditableQuantities] = useState({});
+  const [couponCode, setCouponCode] = useState('');
+  const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
+  const [couponMessage, setCouponMessage] = useState({ type: '', text: '' }); // type: 'success' or 'error'
   const router = useRouter();
 
   // Effect to initialize/synchronize editableQuantities when cart items change
@@ -54,8 +57,12 @@ export default function Cart() {
       if (Object.keys(initialQuantities).length > 0) {
          setEditableQuantities(prev => ({ ...prev, ...initialQuantities }));
       }
+      // Clear coupon messages if cart changes (e.g., item removed)
+      if (couponMessage.text) {
+          setCouponMessage({ type: '', text: '' });
+      }
     }
-  }, [cart?.items, editableQuantities]); // Removed editableQuantities from deps to avoid loops, sync is one-way from cart.items
+  }, [cart?.items]); // Removed editableQuantities and couponMessage from deps to avoid loops
 
   const handleQuantityInputChange = (itemKey, value) => {
     setEditableQuantities(prev => ({ ...prev, [itemKey]: value }));
@@ -110,6 +117,37 @@ export default function Cart() {
     } catch (err) {
       console.error("Failed to remove item:", err);
       alert(`Error removing item: ${err.message}`);
+    } finally {
+      setIsUpdatingCartItems(false);
+    }
+  };
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) {
+      setCouponMessage({ type: 'error', text: 'Please enter a coupon code.' });
+      return;
+    }
+    setIsApplyingCoupon(true);
+    setCouponMessage({ type: '', text: '' });
+    try {
+      await applyCoupon(couponCode);
+      setCouponMessage({ type: 'success', text: `Coupon "${couponCode}" applied successfully.` });
+      setCouponCode('');
+    } catch (err) {
+      setCouponMessage({ type: 'error', text: err.message || 'Invalid coupon code.' });
+    } finally {
+      setIsApplyingCoupon(false);
+    }
+  };
+
+  const handleRemoveCoupon = async (code) => {
+    setIsUpdatingCartItems(true); // Use main loader
+    setCouponMessage({ type: '', text: '' });
+    try {
+      await removeCoupon(code);
+      setCouponMessage({ type: 'success', text: `Coupon "${code}" removed.` });
+    } catch (err) {
+      setCouponMessage({ type: 'error', text: err.message || `Could not remove coupon.` });
     } finally {
       setIsUpdatingCartItems(false);
     }
@@ -200,7 +238,9 @@ export default function Cart() {
   const subtotal = cart.totals?.total_items ? parseFloat(cart.totals.total_items) / (10**cart.totals.currency_minor_unit) : 0;
   const shipping = cart.totals?.total_shipping ? parseFloat(cart.totals.total_shipping) / (10**cart.totals.currency_minor_unit) : 0;
   const total = cart.totals?.total_price ? parseFloat(cart.totals.total_price) / (10**cart.totals.currency_minor_unit) : 0;
+  const discount = cart.totals?.total_discount ? parseFloat(cart.totals.total_discount) / (10**cart.totals.currency_minor_unit) : 0;
   const currencySymbol = cart.totals?.currency_symbol || '';
+  const appliedCoupons = cart.coupons || [];
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -327,6 +367,13 @@ export default function Cart() {
                 <span className="text-gray-500">Subtotal</span>
                 <span className="text-gray-900">{currencySymbol}{subtotal.toFixed(2)}</span>
               </div>
+
+              {discount > 0 && (
+                <div className="flex justify-between text-green-600">
+                  <span className="text-gray-500">Discount</span>
+                  <span>-{currencySymbol}{discount.toFixed(2)}</span>
+                </div>
+              )}
               
               <div className="flex justify-between">
                 <span className="text-gray-500">Shipping</span>
@@ -362,6 +409,27 @@ export default function Cart() {
             </div>
             
             <div className="mt-6 pt-6 border-t border-gray-200">
+              {appliedCoupons.length > 0 && (
+                <div className="mb-4">
+                  <h3 className="text-sm font-medium text-gray-900 mb-2">Applied Coupons</h3>
+                  <div className="space-y-2">
+                    {appliedCoupons.map((coupon) => (
+                      <div key={coupon.code} className="flex justify-between items-center bg-gray-100 p-2 rounded-md">
+                        <span className="text-sm text-gray-700 font-semibold">{coupon.code}</span>
+                        <button
+                          onClick={() => handleRemoveCoupon(coupon.code)}
+                          disabled={isUpdatingCartItems || isLoading}
+                          className="text-red-500 hover:text-red-700 disabled:opacity-50"
+                          aria-label={`Remove coupon ${coupon.code}`}
+                        >
+                          <FiTrash2 />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <label htmlFor="promo-code" className="block text-sm font-medium text-gray-700 mb-2">
                 Promotional Code
               </label>
@@ -370,15 +438,25 @@ export default function Cart() {
                   type="text"
                   id="promo-code"
                   name="promo-code"
-                  className="block w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+                  value={couponCode}
+                  onChange={(e) => setCouponCode(e.target.value)}
+                  disabled={isApplyingCoupon}
+                  className="block w-full border border-gray-300 rounded-md px-3 py-2 text-sm disabled:bg-gray-100"
                   placeholder="Enter code"
                 />
                 <button 
-                  className="flex-shrink-0 px-3 py-2 border border-[#9CB24D] text-[#9CB24D] rounded-md hover:bg-[#9CB24D] hover:text-white transition-colors text-sm font-medium"
+                  onClick={handleApplyCoupon}
+                  disabled={isApplyingCoupon || !couponCode}
+                  className="flex-shrink-0 px-3 py-2 border border-[#9CB24D] text-[#9CB24D] rounded-md hover:bg-[#9CB24D] hover:text-white transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Apply
+                  {isApplyingCoupon ? 'Applying...' : 'Apply'}
                 </button>
               </div>
+              {couponMessage.text && (
+                <p className={`mt-2 text-sm ${couponMessage.type === 'error' ? 'text-red-600' : 'text-green-600'}`}>
+                  {couponMessage.text}
+                </p>
+              )}
             </div>
           </div>
         </div>
