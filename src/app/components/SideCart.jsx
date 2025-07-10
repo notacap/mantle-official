@@ -28,8 +28,11 @@ function decodeHtmlEntities(text) {
 }
 
 export default function SideCart() {
-  const { cart, callCartApi, isSideCartOpen, closeSideCart, isLoading: isCartLoading } = useCart();
+  const { cart, callCartApi, isSideCartOpen, closeSideCart, isLoading: isCartLoading, applyCoupon, removeCoupon } = useCart();
   const [isUpdatingItem, setIsUpdatingItem] = useState(false);
+  const [couponCode, setCouponCode] = useState('');
+  const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
+  const [couponMessage, setCouponMessage] = useState({ type: '', text: '' });
   const router = useRouter();
 
   const handleUpdateQuantity = async (itemKey, newQuantity) => {
@@ -63,9 +66,46 @@ export default function SideCart() {
     }
   };
 
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) {
+      setCouponMessage({ type: 'error', text: 'Please enter a code.' });
+      return;
+    }
+    setIsApplyingCoupon(true);
+    setCouponMessage({ type: '', text: '' });
+    try {
+      await applyCoupon(couponCode);
+      setCouponMessage({ type: 'success', text: 'Coupon applied!' });
+      setCouponCode('');
+    } catch (err) {
+      // WooCommerce often returns HTML in errors, let's try to clean it.
+      const message = err.message ? err.message.replace(/<[^>]*>?/gm, '') : 'Invalid coupon code.';
+      setCouponMessage({ type: 'error', text: message });
+    } finally {
+      setIsApplyingCoupon(false);
+    }
+  };
+
+  const handleRemoveCoupon = async (code) => {
+    setIsUpdatingItem(true); // Re-use existing spinner for simplicity
+    setCouponMessage({ type: '', text: '' });
+    try {
+      await removeCoupon(code);
+      setCouponMessage({ type: 'success', text: `Coupon "${code}" removed.` });
+    } catch (err) {
+      setCouponMessage({ type: 'error', text: err.message || `Could not remove coupon.` });
+    } finally {
+      setIsUpdatingItem(false);
+    }
+  };
+
   const cartItems = cart?.items || [];
-  const subtotal = cart?.totals?.total_items ? parseFloat(cart.totals.total_items) / (10**(cart.totals.currency_minor_unit || 2)) : 0;
+  const minorUnit = cart?.totals?.currency_minor_unit || 2;
+  const subtotal = cart?.totals?.total_items ? parseFloat(cart.totals.total_items) / (10**minorUnit) : 0;
+  const discount = cart?.totals?.total_discount ? parseFloat(cart.totals.total_discount) / (10**minorUnit) : 0;
+  const total = cart?.totals?.total_price ? parseFloat(cart.totals.total_price) / (10**minorUnit) : 0;
   const currencySymbol = cart?.totals?.currency_symbol || '$';
+  const appliedCoupons = cart?.coupons || [];
 
   const handleProductLinkClick = async (itemId) => {
     closeSideCart();
@@ -197,31 +237,81 @@ export default function SideCart() {
         {/* Footer */}
         {cartItems.length > 0 && (
           <div className="p-4 border-t border-gray-200 bg-gray-50">
-            <div className="flex justify-between items-center mb-3">
-              <span className="text-md font-semibold text-gray-700">Subtotal:</span>
-              <span className="text-lg font-bold text-gray-900">{currencySymbol}{subtotal.toFixed(2)}</span>
+            {/* Coupon Section */}
+            <div className="mb-4">
+              {appliedCoupons.length > 0 && (
+                <div className="mb-3 space-y-1">
+                  {appliedCoupons.map((coupon) => (
+                    <div key={coupon.code} className="flex justify-between items-center bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
+                      <span><strong>{coupon.code}</strong> applied!</span>
+                      <button onClick={() => handleRemoveCoupon(coupon.code)} className="text-green-800 hover:text-red-500"><FiX /></button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div className="flex space-x-2">
+                <input
+                  type="text"
+                  value={couponCode}
+                  onChange={(e) => setCouponCode(e.target.value)}
+                  placeholder="Gift card or discount code"
+                  disabled={isApplyingCoupon || isUpdatingItem}
+                  className="block w-full border-gray-300 rounded-md shadow-sm text-sm focus:ring-[#9CB24D] focus:border-[#9CB24D]"
+                />
+                <button
+                  onClick={handleApplyCoupon}
+                  disabled={isApplyingCoupon || !couponCode || isUpdatingItem}
+                  className="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#9CB24D] hover:bg-[#8CA23D] disabled:opacity-50"
+                >
+                  {isApplyingCoupon ? '...' : 'Apply'}
+                </button>
+              </div>
+              {couponMessage.text && (
+                <p className={`mt-2 text-xs ${couponMessage.type === 'error' ? 'text-red-600' : 'text-green-600'}`}>
+                  {couponMessage.text}
+                </p>
+              )}
             </div>
+
+            {/* Totals Section */}
+            <div className="space-y-1 mb-4 text-sm">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Subtotal:</span>
+                <span className="font-medium text-gray-800">{currencySymbol}{subtotal.toFixed(2)}</span>
+              </div>
+              {discount > 0 && (
+                 <div className="flex justify-between items-center text-green-600">
+                    <span className="text-gray-600">Discount:</span>
+                    <span className="font-medium">-{currencySymbol}{discount.toFixed(2)}</span>
+                 </div>
+              )}
+              <div className="flex justify-between items-center text-base pt-1 border-t mt-1">
+                <span className="font-semibold text-gray-800">Total:</span>
+                <span className="font-bold text-gray-900">{currencySymbol}{total.toFixed(2)}</span>
+              </div>
+            </div>
+
             <p className="text-xs text-gray-500 mb-4 text-center">Shipping & taxes calculated at checkout.</p>
-            <div className="flex justify-center items-center space-x-4">
+            
+            {/* Action Buttons */}
+            <div className="space-y-3">
               <ButtonWithHover
                 href="/checkout"
                 variant="filled"
-                onClick={(e) => {
-                  closeSideCart();
-                }}
+                onClick={closeSideCart}
                 disabled={isCartLoading || isUpdatingItem}
+                className="w-full text-center"
               >
                 Checkout
               </ButtonWithHover>
               <ButtonWithHover
                 href="/cart"
                 variant="outline"
-                onClick={(e) => {
-                  closeSideCart();
-                }}
+                onClick={closeSideCart}
                 disabled={isCartLoading || isUpdatingItem}
+                className="w-full text-center"
               >
-                Edit Cart
+                View Cart
               </ButtonWithHover>
             </div>
           </div>
