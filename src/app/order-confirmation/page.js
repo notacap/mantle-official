@@ -24,7 +24,7 @@ function OrderConfirmationContent() {
 
   return (
     <main className="order-confirmation-page bg-gray-50 min-h-screen flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-lg text-center">
+      <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-lg text-center mb-8">
         <div>
           {/* You can use an SVG icon for success here */}
           <svg className="mx-auto h-12 w-12 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
