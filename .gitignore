@@ -41,7 +41,7 @@ yarn-error.log*
 next-env.d.ts
 
 # Product JSON logs
-# logs/
+logs/
 
 # Product JSON Scripts
 scripts/fetchProductJson.js

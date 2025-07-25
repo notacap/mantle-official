@@ -68,6 +68,21 @@ function getProductAttributes(product) {
   };
 }
 
+// Function to calculate combined rating from reviews
+function calculateCombinedRating(reviews) {
+  if (!reviews || reviews.length === 0) {
+    return { averageRating: 0, totalCount: 0 };
+  }
+  
+  const totalRating = reviews.reduce((sum, review) => sum + parseFloat(review.rating || 0), 0);
+  const averageRating = totalRating / reviews.length;
+  
+  return {
+    averageRating: averageRating,
+    totalCount: reviews.length
+  };
+}
+
 // Breadcrumb navigation component
 function Breadcrumbs({ product, categories }) {
   // Find the first category of the product
@@ -238,6 +253,21 @@ export default function SingleProduct({ productIdentifier }) {
   const sizeOptions = sizeTermsData?.terms || [];
   const colorOptions = colorTermsData?.terms || [];
   const amountOptions = amountTermsData?.terms || [];
+
+  // Fetch combined reviews for product 5403 to calculate accurate rating
+  const { 
+    data: combinedReviews 
+  } = useQuery({
+    queryKey: ['combinedReviews', productId],
+    queryFn: async () => {
+      const response = await fetch(`/api/product-reviews?product_id=${productId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch combined reviews');
+      }
+      return response.json();
+    },
+    enabled: !!productId && productId.toString() === '5403',
+  });
   
   useEffect(() => {
     if (product && product.images && product.images.length > 0) {
@@ -351,8 +381,16 @@ export default function SingleProduct({ productIdentifier }) {
     return null;
   }
   
-  const rating = product?.average_rating || 0;
-  const reviewCount = product?.rating_count || 0;
+  // Calculate rating and review count - use combined data for product 5403
+  let rating, reviewCount;
+  if (productId?.toString() === '5403' && combinedReviews) {
+    const combinedRating = calculateCombinedRating(combinedReviews);
+    rating = combinedRating.averageRating;
+    reviewCount = combinedRating.totalCount;
+  } else {
+    rating = product?.average_rating || 0;
+    reviewCount = product?.rating_count || 0;
+  }
   const categories = categoriesData.categories || [];
   
   // Extract care_info and fabric_technology from meta_data

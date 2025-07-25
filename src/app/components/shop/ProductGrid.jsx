@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import Image from 'next/image';
 import { getProductImageUrl, getProductSecondaryImageUrl, formatPrice } from '@/app/services/woocommerce';
@@ -35,8 +36,41 @@ function getShortDescription(product) {
   return 'Sustainable eco-friendly apparel';
 }
 
+// Function to calculate combined rating from reviews
+function calculateCombinedRating(reviews) {
+  if (!reviews || reviews.length === 0) {
+    return { averageRating: 0, totalCount: 0 };
+  }
+  
+  const totalRating = reviews.reduce((sum, review) => sum + parseFloat(review.rating || 0), 0);
+  const averageRating = totalRating / reviews.length;
+  
+  return {
+    averageRating: averageRating,
+    totalCount: reviews.length
+  };
+}
+
 export default function ProductGrid({ products }) {
   const [hoveredProductId, setHoveredProductId] = useState(null);
+
+  // Check if product 5403 exists in the current products list
+  const has5403Product = products?.some(product => product.id.toString() === '5403');
+
+  // Fetch combined reviews for product 5403 if it's in the current grid
+  const { 
+    data: combinedReviews5403 
+  } = useQuery({
+    queryKey: ['combinedReviews5403Grid'],
+    queryFn: async () => {
+      const response = await fetch('/api/product-reviews?product_id=5403');
+      if (!response.ok) {
+        throw new Error('Failed to fetch combined reviews for product 5403');
+      }
+      return response.json();
+    },
+    enabled: has5403Product,
+  });
 
   // Display loading skeletons if no products are available yet
   if (!products || products.length === 0) {
@@ -68,6 +102,17 @@ export default function ProductGrid({ products }) {
           hoveredProductId === product.id && hasSecondaryImage 
             ? getProductSecondaryImageUrl(product) 
             : getProductImageUrl(product);
+
+        // Calculate rating and review count - use combined data for product 5403
+        let rating, reviewCount;
+        if (product.id.toString() === '5403' && combinedReviews5403) {
+          const combinedRating = calculateCombinedRating(combinedReviews5403);
+          rating = combinedRating.averageRating;
+          reviewCount = combinedRating.totalCount;
+        } else {
+          rating = product.average_rating || 0;
+          reviewCount = product.rating_count || 0;
+        }
 
         return (
           <Link 
@@ -117,7 +162,7 @@ export default function ProductGrid({ products }) {
                   {getShortDescription(product)}
                 </p>
                 <div style={{ marginBottom: '0.75rem' }}>
-                  <StarRating rating={product.average_rating || 0} count={product.rating_count || 0} />
+                  <StarRating rating={rating} count={reviewCount} />
                 </div>
                 <p style={{ fontWeight: 'bold', color: '#9CB24D' }}>
                   {(() => {
