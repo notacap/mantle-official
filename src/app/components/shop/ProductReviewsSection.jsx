@@ -266,6 +266,8 @@ export default function ProductReviewsSection({ productId }) {
     <div className="mt-12 py-8 border-t">
       <h2 className="text-2xl font-bold mb-6">Customer Reviews</h2>
       
+      <ReviewForm productId={productId} onSuccess={handleReviewSuccess} />
+      
       <ReviewStats stats={reviewStats} onSelectStar={handleSelectStarFilter} currentFilter={selectedStarFilter} />
 
       {filteredReviews.length === 0 && selectedStarFilter !== null && (
@@ -282,7 +284,6 @@ export default function ProductReviewsSection({ productId }) {
           <ReviewCard key={review.id || review.date_created} review={review} />
         ))
       )}
-      <ReviewForm productId={productId} onSuccess={handleReviewSuccess} />
     </div>
   );
 } 
