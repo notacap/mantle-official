@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { fetchFromWooCommerce, handleApiError, extractPaginationData } from '@/app/lib/woocommerce-api';
 
 export const revalidate = 300; // Revalidate this route every 5 minutes
 
@@ -9,48 +10,25 @@ export const revalidate = 300; // Revalidate this route every 5 minutes
  */
 export async function GET(request) {
   try {
-    // WooCommerce API URL for product tags
-    const apiUrl = new URL(`${process.env.NEXT_PUBLIC_WORDPRESS_URL}/wp-json/wc/v3/products/tags`);
+    const params = {
+      per_page: '100'
+    };
     
-    // Add parameters
-    apiUrl.searchParams.append('per_page', '100');
-    
-    // Add authentication
-    apiUrl.searchParams.append('consumer_key', process.env.WOOCOMMERCE_CONSUMER_KEY);
-    apiUrl.searchParams.append('consumer_secret', process.env.WOOCOMMERCE_CONSUMER_SECRET);
-    
-    // Simplified approach: Just fetch collections from WooCommerce
-    const response = await fetch(apiUrl.toString(), {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
+    // Fetch collections from WooCommerce
+    const response = await fetchFromWooCommerce('products/tags', {
+      params,
       next: { revalidate: 300 } // Use Next.js built-in cache
     });
     
-    if (!response.ok) {
-      throw new Error(`Failed to fetch collections: ${response.status}`);
-    }
-    
     const collections = await response.json();
-    
-    // Get total collections from headers
-    const totalCollections = response.headers.get('X-WP-Total') || 0;
-    const totalPages = response.headers.get('X-WP-TotalPages') || 0;
+    const pagination = extractPaginationData(response, 100);
     
     // Return collections with pagination info
     return NextResponse.json({
       collections,
-      pagination: {
-        total: totalCollections,
-        totalPages,
-        currentPage: 1,
-        perPage: 100
-      }
+      pagination
     });
   } catch (error) {
-    console.error('Error fetching collections:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch collections', message: error.message },
-      { status: 500 }
-    );
+    return handleApiError(error, 'Failed to fetch collections');
   }
 } 

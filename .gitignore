@@ -45,3 +45,6 @@ logs/
 
 # Product JSON Scripts
 scripts/fetchProductJson.js
+
+# Unused Images
+originalImages/

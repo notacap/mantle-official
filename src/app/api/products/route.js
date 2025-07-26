@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { fetchFromWooCommerce, handleApiError } from '@/app/lib/woocommerce-api';
 
 /**
  * GET handler for a single product
@@ -18,30 +19,17 @@ export async function GET(request) {
       );
     }
 
-    let apiUrl;
+    let endpoint, params = {};
     if (productSlug) {
-      apiUrl = new URL(`${process.env.NEXT_PUBLIC_WORDPRESS_URL}/wp-json/wc/v3/products`);
-      apiUrl.searchParams.append('slug', productSlug);
+      endpoint = 'products';
+      params.slug = productSlug;
     } else {
-      apiUrl = new URL(`${process.env.NEXT_PUBLIC_WORDPRESS_URL}/wp-json/wc/v3/products/${productId}`);
+      endpoint = `products/${productId}`;
     }
-
-    // Add authentication
-    apiUrl.searchParams.append('consumer_key', process.env.WOOCOMMERCE_CONSUMER_KEY);
-    apiUrl.searchParams.append('consumer_secret', process.env.WOOCOMMERCE_CONSUMER_SECRET);
 
     // Fetch product from WooCommerce
-    const response = await fetch(apiUrl.toString(), {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch product: ${response.status}`);
-    }
-
+    const response = await fetchFromWooCommerce(endpoint, { params });
+    
     let product;
     if (productSlug) {
       const products = await response.json();
@@ -67,10 +55,6 @@ export async function GET(request) {
     // Return the product
     return NextResponse.json(product);
   } catch (error) {
-    console.error('Error fetching product:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch product' },
-      { status: 500 }
-    );
+    return handleApiError(error, 'Failed to fetch product');
   }
 } 
