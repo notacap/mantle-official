@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(for file in *.jpg *.png)",
+      "Bash(do [ -f \"$file\" ])",
+      "Bash(magick:*)",
+      "Bash(done)",
+      "Bash(python:*)",
+      "Bash(curl:*)"
+    ],
+    "deny": []
+  }
+}
