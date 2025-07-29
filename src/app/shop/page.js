@@ -41,7 +41,7 @@ export default function Shop() {
         <span className="font-medium text-gray-700">Shop</span>
       </div>
       
-      <h1 style={{ 
+      {/* <h1 style={{ 
         fontSize: '2.5rem', 
         fontWeight: 'bold', 
         textAlign: 'center', 
@@ -49,10 +49,10 @@ export default function Shop() {
         color: '#333'
       }}>
         Shop All Products
-      </h1>
+      </h1> */}
 
       {isMobileScreen && (
-        <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+        <div style={{ textAlign: 'center', marginBottom: '1.5rem'}}>
           <button 
             onClick={() => setIsMobileNavOpen(true)}
             style={{
