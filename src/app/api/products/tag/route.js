@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { sanitizeSlug, sanitizeNumericId, sanitizeLimit } from '@/app/lib/sanitization';
 
 /**
  * Mapping of collection slugs to their WooCommerce tag IDs
@@ -10,24 +11,29 @@ const tagMappings = {
 };
 
 /**
- * Get a tag ID from a slug
+ * Get a tag ID from a slug with sanitization
  * @param {string} slug - The tag slug
- * @returns {number|string} - The tag ID or the original slug if not found
+ * @returns {number|null} - The tag ID or null if not found/invalid
  */
 function getTagIdFromSlug(slug) {
-  // If slug is already numeric, it might be an ID
-  if (!isNaN(Number(slug))) {
-    return slug;
+  // First sanitize the slug
+  const sanitizedSlug = sanitizeSlug(slug);
+  if (!sanitizedSlug) return null;
+  
+  // If slug is already numeric, validate it as ID
+  const numericId = sanitizeNumericId(sanitizedSlug);
+  if (numericId) {
+    return numericId;
   }
   
   // Check our mapping
-  if (tagMappings[slug]) {
-    return tagMappings[slug];
+  if (tagMappings[sanitizedSlug]) {
+    return tagMappings[sanitizedSlug];
   }
   
   // Log that we don't have a mapping for this slug
-  console.warn(`No tag ID mapping found for slug: ${slug}`);
-  return slug;
+  console.warn(`No tag ID mapping found for slug: ${sanitizedSlug}`);
+  return null;
 }
 
 /**
@@ -38,18 +44,28 @@ function getTagIdFromSlug(slug) {
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
-    const tagSlug = searchParams.get('tag');
-    const limit = searchParams.get('limit') || 8;
+    const rawTagSlug = searchParams.get('tag');
+    const rawLimit = searchParams.get('limit');
     
-    if (!tagSlug) {
+    // Sanitize inputs
+    const limit = sanitizeLimit(rawLimit, 8, 100);
+    
+    if (!rawTagSlug) {
       return NextResponse.json(
         { error: 'Tag parameter is required' },
         { status: 400 }
       );
     }
     
-    // Convert the slug to an ID for WooCommerce API
-    const tagId = getTagIdFromSlug(tagSlug);
+    // Convert the slug to an ID for WooCommerce API with sanitization
+    const tagId = getTagIdFromSlug(rawTagSlug);
+    
+    if (!tagId) {
+      return NextResponse.json(
+        { error: 'Valid tag parameter is required' },
+        { status: 400 }
+      );
+    }
     
     // WooCommerce API URL
     const apiUrl = new URL(`${process.env.NEXT_PUBLIC_WORDPRESS_URL}/wp-json/wc/v3/products`);
@@ -58,8 +74,8 @@ export async function GET(request) {
     apiUrl.searchParams.append('consumer_key', process.env.WOOCOMMERCE_CONSUMER_KEY);
     apiUrl.searchParams.append('consumer_secret', process.env.WOOCOMMERCE_CONSUMER_SECRET);
     
-    // Then add query parameters for the products
-    apiUrl.searchParams.append('tag', tagId); // Use tag for querying by ID
+    // Then add query parameters for the products - now sanitized
+    apiUrl.searchParams.append('tag', tagId.toString());
     apiUrl.searchParams.append('status', 'publish');
     apiUrl.searchParams.append('per_page', limit.toString());
     apiUrl.searchParams.append('stock_status', 'instock'); // Only get in-stock items

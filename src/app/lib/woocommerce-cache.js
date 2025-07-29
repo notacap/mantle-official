@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { fetchWithCache, getResponseHeaders } from '@/app/lib/cache';
+import { sanitizePage, sanitizeLimit, sanitizeOrder, sanitizeOrderBy } from '@/app/lib/sanitization';
 
 const DEFAULT_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 const DEFAULT_REVALIDATE = 300; // 5 minutes in seconds
@@ -56,8 +57,26 @@ export function withWooCommerceCache(config = {}) {
 
   return async function cachedApiHandler(request) {
     try {
-      // Create API URL with parameters
-      const apiUrl = createWooCommerceUrl(endpoint, defaultParams);
+      // Extract and sanitize query parameters from request
+      const { searchParams } = new URL(request.url);
+      const requestParams = { ...defaultParams };
+      
+      // Sanitize common parameters if they exist in the request
+      if (searchParams.has('page')) {
+        requestParams.page = sanitizePage(searchParams.get('page'));
+      }
+      if (searchParams.has('per_page')) {
+        requestParams.per_page = sanitizeLimit(searchParams.get('per_page'), defaultParams.per_page || 20, 100);
+      }
+      if (searchParams.has('order')) {
+        requestParams.order = sanitizeOrder(searchParams.get('order'));
+      }
+      if (searchParams.has('orderby')) {
+        requestParams.orderby = sanitizeOrderBy(searchParams.get('orderby'));
+      }
+      
+      // Create API URL with sanitized parameters
+      const apiUrl = createWooCommerceUrl(endpoint, requestParams);
       
       // Fetch options
       const fetchOptions = {
@@ -101,8 +120,8 @@ export function withWooCommerceCache(config = {}) {
           responseData.pagination = {
             total: parseInt(headers['x-wp-total']) || 0,
             totalPages: parseInt(headers['x-wp-totalpages']) || 0,
-            currentPage: parseInt(defaultParams.page) || 1,
-            perPage: parseInt(defaultParams.per_page) || 10
+            currentPage: parseInt(requestParams.page) || 1,
+            perPage: parseInt(requestParams.per_page) || 10
           };
         } catch (headerError) {
           console.warn('Failed to fetch pagination headers:', headerError);

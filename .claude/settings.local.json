@@ -7,7 +7,8 @@
       "Bash(done)",
       "Bash(python:*)",
       "Bash(curl:*)",
-      "Bash(npm install zod dompurify)"
+      "Bash(npm install zod dompurify)",
+      "Bash(node:*)"
     ],
     "deny": []
   }

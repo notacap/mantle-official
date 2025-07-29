@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { fetchFromWooCommerce, handleApiError } from '@/app/lib/woocommerce-api';
+import { sanitizeNumericId, sanitizeSlug } from '@/app/lib/sanitization';
 
 /**
  * GET handler for a single product
@@ -9,12 +10,16 @@ import { fetchFromWooCommerce, handleApiError } from '@/app/lib/woocommerce-api'
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
-    const productId = searchParams.get('id');
-    const productSlug = searchParams.get('slug');
+    const rawProductId = searchParams.get('id');
+    const rawProductSlug = searchParams.get('slug');
+
+    // Sanitize inputs
+    const productId = sanitizeNumericId(rawProductId);
+    const productSlug = sanitizeSlug(rawProductSlug);
 
     if (!productId && !productSlug) {
       return NextResponse.json(
-        { error: 'Product ID or slug is required' },
+        { error: 'Valid product ID or slug is required' },
         { status: 400 }
       );
     }

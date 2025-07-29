@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { sanitizeNumericId, sanitizeLimit } from '@/app/lib/sanitization';
 
 /**
  * GET handler for products by category
@@ -8,12 +9,16 @@ import { NextResponse } from 'next/server';
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
-    const categoryId = searchParams.get('category');
-    const limit = searchParams.get('limit') || 8;
+    const rawCategoryId = searchParams.get('category');
+    const rawLimit = searchParams.get('limit');
+    
+    // Sanitize inputs
+    const categoryId = sanitizeNumericId(rawCategoryId);
+    const limit = sanitizeLimit(rawLimit, 8, 100);
     
     if (!categoryId) {
       return NextResponse.json(
-        { error: 'Category ID is required' },
+        { error: 'Valid category ID is required' },
         { status: 400 }
       );
     }
@@ -21,8 +26,8 @@ export async function GET(request) {
     // WooCommerce API URL
     const apiUrl = new URL(`${process.env.NEXT_PUBLIC_WORDPRESS_URL}/wp-json/wc/v3/products`);
     
-    // Add query parameters
-    apiUrl.searchParams.append('category', categoryId);
+    // Add query parameters - now sanitized
+    apiUrl.searchParams.append('category', categoryId.toString());
     apiUrl.searchParams.append('status', 'publish');
     apiUrl.searchParams.append('per_page', limit.toString());
     apiUrl.searchParams.append('stock_status', 'instock');

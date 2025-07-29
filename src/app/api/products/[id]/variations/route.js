@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { sanitizeNumericId } from '@/app/lib/sanitization';
 
 /**
  * GET handler for product variations
@@ -10,16 +11,19 @@ import { NextResponse } from 'next/server';
  */
 export async function GET(request, { params }) {
   try {
-    const { id: productId } = await params;
+    const { id: rawProductId } = await params;
+
+    // Sanitize the product ID
+    const productId = sanitizeNumericId(rawProductId);
 
     if (!productId) {
       return NextResponse.json(
-        { error: 'Product ID is required' },
+        { error: 'Valid product ID is required' },
         { status: 400 }
       );
     }
 
-    // WooCommerce API URL for product variations
+    // WooCommerce API URL for product variations - now safe from injection
     const apiUrl = new URL(`${process.env.NEXT_PUBLIC_WORDPRESS_URL}/wp-json/wc/v3/products/${productId}/variations`);
 
     // Add authentication
