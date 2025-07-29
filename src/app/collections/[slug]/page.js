@@ -113,7 +113,7 @@ export default function CollectionPage({ params }) {
         <span className="font-medium text-gray-700">{collection.name}</span>
       </div>
       
-      <h1 style={{ 
+      {/* <h1 style={{ 
         fontSize: '2.5rem', 
         fontWeight: 'bold', 
         textAlign: 'center', 
@@ -121,7 +121,7 @@ export default function CollectionPage({ params }) {
         color: '#333'
       }}>
         {collection.name}
-      </h1>
+      </h1> */}
       
       {isMobileScreen && (
         <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
