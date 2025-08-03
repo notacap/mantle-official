@@ -225,13 +225,17 @@ export default function CheckoutPage() {
       ...(formData.order_notes && { customer_note: formData.order_notes }),
     };
 
-    // console.log("Submitting customer and payment method data:", dataToSend);
+    console.log("Submitting customer and payment method data:", dataToSend);
 
     try {
       // Step 1: Update customer information (common for Stripe)
       // For PayPal, this will be called before creating the WC order inside createOrderForPaypal
-      await callCartApi('/wp-json/wc/store/v1/cart/update-customer', 'POST', dataToSend);
-      // console.log("Customer data updated successfully for Stripe.");
+      const customerUpdateData = {
+        billing_address: formData.billing_address,
+        shipping_address: shipToDifferentAddress ? formData.shipping_address : formData.billing_address,
+      };
+      await callCartApi('/wp-json/wc/store/v1/cart/update-customer', 'POST', customerUpdateData);
+      console.log("Customer data updated successfully for Stripe.");
 
       // Step 2: Process Payment & Place Order (Stripe specific)
       if (!stripe || !elements) {
@@ -278,7 +282,17 @@ export default function CheckoutPage() {
 
         // Add paymentMethod.id to dataToSend for the final checkout call
         dataToSend.payment_data = [
-          { key: 'stripe_token', value: paymentMethod.id }
+          { key: 'stripe_token', value: paymentMethod.id },
+          { key: 'billing_email', value: formData.billing_address.email },
+          { key: 'billing_first_name', value: formData.billing_address.first_name },
+          { key: 'billing_last_name', value: formData.billing_address.last_name },
+          { key: 'billing_address_1', value: formData.billing_address.address_1 },
+          { key: 'billing_address_2', value: formData.billing_address.address_2 || '' },
+          { key: 'billing_city', value: formData.billing_address.city },
+          { key: 'billing_state', value: formData.billing_address.state },
+          { key: 'billing_postcode', value: formData.billing_address.postcode },
+          { key: 'billing_country', value: formData.billing_address.country },
+          { key: 'billing_phone', value: formData.billing_address.phone }
         ];
         
         // console.log("Payment method created (pm_...):", paymentMethod.id);
@@ -294,7 +308,7 @@ export default function CheckoutPage() {
       }
       
       // Actual call to /checkout endpoint (for Stripe)
-      // console.log("Calling /wc/store/v1/checkout with Stripe data:", dataToSend);
+      console.log("Calling /wc/store/v1/checkout with Stripe data:", dataToSend);
       const orderResult = await callCartApi('/wp-json/wc/store/v1/checkout', 'POST', dataToSend);
       // console.log("Stripe Order placement result:", orderResult);
 
