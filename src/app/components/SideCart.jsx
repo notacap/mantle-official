@@ -294,13 +294,13 @@ export default function SideCart() {
             <p className="text-xs text-gray-500 mb-4 text-center">Shipping & taxes calculated at checkout.</p>
             
             {/* Action Buttons */}
-            <div className="space-y-3">
+            <div className="flex justify-center gap-3">
               <ButtonWithHover
                 href="/checkout"
                 variant="filled"
                 onClick={closeSideCart}
                 disabled={isCartLoading || isUpdatingItem}
-                className="w-full text-center"
+                className="px-8 py-2"
               >
                 Checkout
               </ButtonWithHover>
@@ -309,7 +309,7 @@ export default function SideCart() {
                 variant="outline"
                 onClick={closeSideCart}
                 disabled={isCartLoading || isUpdatingItem}
-                className="w-full text-center"
+                className="px-8 py-2"
               >
                 View Cart
               </ButtonWithHover>
