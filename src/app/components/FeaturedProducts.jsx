@@ -14,7 +14,6 @@ export default function FeaturedProducts() {
   const [canScrollRight, setCanScrollRight] = useState(true);
   const [imageErrors, setImageErrors] = useState({});
   const [hoveredProduct, setHoveredProduct] = useState(null);
-  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
 
   // Fetch featured products with React Query
   const { 
@@ -36,45 +35,12 @@ export default function FeaturedProducts() {
   const products = data?.products || [];
   const isFeatured = data?.isFeatured ?? true;
 
-  // Determine card dimensions based on product count
-  const getCardDimensions = () => {
-    if (typeof window !== 'undefined') {
-      // When stacking vertically (≤3 products and <1060px width)
-      if (products.length <= 3 && windowWidth < 1060) {
-        if (windowWidth <= 480) {
-          return { width: '100%', imageHeight: '280px' };
-        } else if (windowWidth <= 768) {
-          return { width: '400px', imageHeight: '350px' };
-        } else {
-          return { width: '500px', imageHeight: '400px' };
-        }
-      }
-      
-      // Normal horizontal layout
-      if (windowWidth <= 480) {
-        return { width: '280px', imageHeight: '280px' };
-      }
-      // Tablet: medium cards
-      if (windowWidth <= 768) {
-        return { width: '300px', imageHeight: '300px' };
-      }
-      // Medium screens: prevent overflow
-      if (windowWidth <= 1060) {
-        return { width: '280px', imageHeight: '280px' };
-      }
-    }
-    // Desktop: larger cards when <= 3 products
-    return products.length <= 3 
-      ? { width: '500px', imageHeight: '400px' }
-      : { width: '360px', imageHeight: '300px' };
-  };
-
   // Check if scrolling is possible in either direction
   const checkScrollability = () => {
     if (!scrollContainerRef.current) return;
     
-    // If we have 3 or fewer products, or they're stacked vertically, disable scrolling
-    if (products.length <= 3 || (products.length <= 3 && windowWidth < 1060)) {
+    // If we have 3 or fewer products, disable scrolling completely
+    if (products.length <= 3) {
       setCanScrollLeft(false);
       setCanScrollRight(false);
       return;
@@ -95,15 +61,11 @@ export default function FeaturedProducts() {
       scrollContainer.addEventListener('scroll', checkScrollability);
       
       // Add resize event listener
-      const handleResize = () => {
-        checkScrollability();
-        setWindowWidth(window.innerWidth);
-      };
-      window.addEventListener('resize', handleResize);
+      window.addEventListener('resize', checkScrollability);
       
       return () => {
         scrollContainer.removeEventListener('scroll', checkScrollability);
-        window.removeEventListener('resize', handleResize);
+        window.removeEventListener('resize', checkScrollability);
       };
     }
   }, [products]); // Re-run when products change
@@ -115,8 +77,7 @@ export default function FeaturedProducts() {
     setIsScrolling(true);
     
     // Calculate scroll distance based on item width + gap
-    const cardDimensions = getCardDimensions();
-    const itemWidth = parseInt(cardDimensions.width);
+    const itemWidth = 280; // Width of each product card
     const gap = 24; // Gap between items (1.5rem)
     const scrollDistance = -(itemWidth + gap);
     
@@ -140,8 +101,7 @@ export default function FeaturedProducts() {
     setIsScrolling(true);
     
     // Calculate scroll distance based on item width + gap
-    const cardDimensions = getCardDimensions();
-    const itemWidth = parseInt(cardDimensions.width);
+    const itemWidth = 280; // Width of each product card
     const gap = 24; // Gap between items (1.5rem)
     const scrollDistance = itemWidth + gap;
     
@@ -169,22 +129,14 @@ export default function FeaturedProducts() {
 
   // Function to get short description
   const getShortDescription = (product) => {
-    // Show more text based on card size and screen width
-    let maxLength = 100;
-    if (windowWidth > 1060 && products.length <= 3) {
-      maxLength = 150;
-    } else if (windowWidth <= 768) {
-      maxLength = 80;
-    }
-    
     if (product.short_description) {
       const text = stripHtml(product.short_description);
-      return text.substring(0, maxLength) + (text.length > maxLength ? '...' : '');
+      return text.substring(0, 60) + (text.length > 60 ? '...' : '');
     }
     
     if (product.description) {
       const text = stripHtml(product.description);
-      return text.substring(0, maxLength) + (text.length > maxLength ? '...' : '');
+      return text.substring(0, 60) + (text.length > 60 ? '...' : '');
     }
     
     return 'Sustainable eco-friendly apparel';
@@ -216,8 +168,8 @@ export default function FeaturedProducts() {
   const ProductSkeleton = () => (
     <div style={{ 
       flex: '0 0 auto',
-      width: '320px',
-      height: '500px',
+      width: '280px',
+      height: '470px',
       backgroundColor: 'white', 
       borderRadius: '0.5rem', 
       overflow: 'hidden', 
@@ -275,13 +227,13 @@ export default function FeaturedProducts() {
 
   return (
     <section style={{ 
-      maxWidth: products.length <= 3 ? '1400px' : '1200px', 
+      maxWidth: '1200px', 
       margin: '0 auto', 
       padding: '4rem 1rem',
       overflow: 'hidden', // Prevent content from extending beyond container
       position: 'relative'
     }}>
-      <h2 style={{ fontSize: '1.875rem', fontWeight: 'bold', textAlign: 'center', marginBottom: '3rem' }}>
+      <h2 style={{ fontSize: '1.875rem', fontWeight: 'bold', textAlign: 'center', marginBottom: '2.5rem' }}>
         {isFeatured ? 'Featured Products' : 'Our Products'}
       </h2>
       
@@ -313,16 +265,16 @@ export default function FeaturedProducts() {
           <p>{error.message}</p>
         </div>
       ) : (
-        <div style={{ position: 'relative', padding: (products.length <= 3 && windowWidth < 1060) ? '0' : products.length <= 3 ? '0' : windowWidth <= 1060 ? '0 30px' : '0 40px' }}>
+        <div style={{ position: 'relative', padding: products.length <= 3 ? '0' : '0 40px' }}>
           {/* Left scroll button */}
-          {products.length > 0 && products.length > 3 && !(products.length <= 3 && windowWidth < 1060) && (
+          {products.length > 0 && products.length > 3 && (
             <button 
               onClick={scrollLeft}
               aria-label="Scroll left"
               disabled={!canScrollLeft}
               style={{
                 position: 'absolute',
-                left: windowWidth <= 1060 ? '0' : '-10px',
+                left: '-10px',
                 top: '50%',
                 transform: 'translateY(-50%)',
                 zIndex: 10,
@@ -361,10 +313,8 @@ export default function FeaturedProducts() {
             className="featured-products"
             style={{ 
               display: 'flex',
-              flexDirection: products.length <= 3 && windowWidth < 1060 ? 'column' : 'row',
               overflowX: products.length <= 3 ? 'visible' : 'auto',
-              overflowY: 'visible',
-              gap: products.length <= 3 && windowWidth < 1060 ? '2rem' : '1.5rem',
+              gap: '1.5rem',
               paddingBottom: '0.75rem',
               scrollbarWidth: 'thin',
               scrollbarColor: '#9CB24D #e5e7eb',
@@ -373,8 +323,7 @@ export default function FeaturedProducts() {
               scrollSnapType: products.length <= 3 ? 'none' : 'x mandatory',
               scrollBehavior: 'smooth',
               width: '100%',
-              justifyContent: products.length <= 3 ? 'center' : 'flex-start',
-              alignItems: products.length <= 3 && windowWidth < 1060 ? 'center' : 'stretch'
+              justifyContent: products.length <= 3 ? 'center' : 'flex-start'
             }}
           >
             {products.length > 0 ? (
@@ -384,8 +333,7 @@ export default function FeaturedProducts() {
                   key={product.id}
                   style={{ 
                     flex: '0 0 auto',
-                    width: getCardDimensions().width,
-                    maxWidth: products.length <= 3 && windowWidth < 1060 && windowWidth <= 480 ? 'calc(100vw - 2rem)' : 'none',
+                    width: '280px',
                     textDecoration: 'none',
                     color: 'inherit',
                     scrollSnapAlign: 'start'
@@ -412,7 +360,7 @@ export default function FeaturedProducts() {
                     setHoveredProduct(null);
                   }}
                   >
-                    <div style={{ height: getCardDimensions().imageHeight, position: 'relative', backgroundColor: '#f3f4f6', overflow: 'hidden' }}>
+                    <div style={{ height: '300px', position: 'relative', backgroundColor: '#f3f4f6', overflow: 'hidden' }}>
                       <Image
                         src={hoveredProduct === product.id
                           ? (imageErrors[product.id]?.secondary 
@@ -429,37 +377,22 @@ export default function FeaturedProducts() {
                           transform: hoveredProduct === product.id ? 'scale(1.1)' : 'scale(1)',
                           opacity: 1
                         }}
-                        sizes={getCardDimensions().width}
+                        sizes="280px"
                         onError={() => handleImageError(product.id, hoveredProduct === product.id)}
                         priority={index < 2}
                       />
                     </div>
                     <div style={{ padding: '1.5rem', flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                      <h3 style={{ 
-                        fontSize: products.length <= 3 ? '1.25rem' : '1.125rem', 
-                        fontWeight: '600', 
-                        marginBottom: '0.75rem',
-                        lineHeight: '1.4'
-                      }}>
+                      <h3 style={{ fontSize: '1.125rem', fontWeight: '500', marginBottom: '0.5rem' }}>
                         {product.name}
                       </h3>
-                      <p style={{ 
-                        color: '#4b5563', 
-                        marginBottom: '1rem', 
-                        flexGrow: 1,
-                        lineHeight: '1.6',
-                        fontSize: products.length <= 3 ? '1rem' : '0.875rem'
-                      }}>
+                      <p style={{ color: '#4b5563', marginBottom: '1rem', flexGrow: 1 }}>
                         {getShortDescription(product)}
                       </p>
                       <div style={{ marginBottom: '0.75rem' }}>
                         <StarRating rating={product.average_rating || 0} count={product.rating_count || 0} />
                       </div>
-                      <p style={{ 
-                        fontWeight: 'bold', 
-                        color: '#9CB24D',
-                        fontSize: products.length <= 3 ? '1.25rem' : '1rem'
-                      }}>
+                      <p style={{ fontWeight: 'bold', color: '#9CB24D' }}>
                         {formatPrice(product.price)}
                       </p>
                     </div>
@@ -474,14 +407,14 @@ export default function FeaturedProducts() {
           </div>
           
           {/* Right scroll button */}
-          {products.length > 0 && products.length > 3 && !(products.length <= 3 && windowWidth < 1060) && (
+          {products.length > 0 && products.length > 3 && (
             <button 
               onClick={scrollRight}
               aria-label="Scroll right"
               disabled={!canScrollRight}
               style={{
                 position: 'absolute',
-                right: windowWidth <= 1060 ? '0' : '-10px',
+                right: '-10px',
                 top: '50%',
                 transform: 'translateY(-50%)',
                 zIndex: 10,
@@ -545,32 +478,6 @@ export default function FeaturedProducts() {
           }
           100% {
             background-position: 200% 0;
-          }
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 1060px) {
-          .featured-products {
-            padding: 0 0.5rem !important;
-          }
-        }
-        
-        @media (max-width: 768px) {
-          .featured-products {
-            gap: 1rem !important;
-            padding: 0 !important;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .featured-products {
-            gap: 0.75rem !important;
-          }
-          
-          /* Ensure cards don't overflow on very small screens */
-          .featured-products > a {
-            width: min(280px, calc(100vw - 2rem)) !important;
-            max-width: calc(100vw - 2rem) !important;
           }
         }
       `}</style>
