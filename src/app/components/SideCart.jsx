@@ -256,7 +256,7 @@ export default function SideCart() {
                   onChange={(e) => setCouponCode(e.target.value)}
                   placeholder="Gift card or discount code"
                   disabled={isApplyingCoupon || isUpdatingItem}
-                  className="block w-full border-gray-300 rounded-md shadow-sm text-sm focus:ring-[#9CB24D] focus:border-[#9CB24D]"
+                  className="block w-full px-3 py-2 border-gray-300 rounded-md shadow-sm text-sm focus:ring-[#9CB24D] focus:border-[#9CB24D]"
                 />
                 <button
                   onClick={handleApplyCoupon}
