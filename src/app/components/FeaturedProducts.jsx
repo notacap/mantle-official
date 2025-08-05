@@ -6,6 +6,9 @@ import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 import { formatPrice, getProductImageUrl, getProductSecondaryImageUrl } from '../services/woocommerce';
 import StarRating from './shop/StarRating';
+import FeaturedProductsSingle from './FeaturedProductsSingle';
+import FeaturedProductsDouble from './FeaturedProductsDouble';
+import FeaturedProductsTriple from './FeaturedProductsTriple';
 
 export default function FeaturedProducts() {
   const scrollContainerRef = useRef(null);
@@ -224,6 +227,19 @@ export default function FeaturedProducts() {
       </div>
     </div>
   );
+
+  // If we have 1, 2, or 3 products, render the specialized components
+  if (!isLoading && products.length === 1) {
+    return <FeaturedProductsSingle product={products[0]} />;
+  }
+  
+  if (!isLoading && products.length === 2) {
+    return <FeaturedProductsDouble products={products} />;
+  }
+  
+  if (!isLoading && products.length === 3) {
+    return <FeaturedProductsTriple products={products} />;
+  }
 
   return (
     <section style={{ 
