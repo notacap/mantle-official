@@ -5,10 +5,12 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { formatPrice, getProductImageUrl, getProductSecondaryImageUrl } from '../services/woocommerce';
 import StarRating from './shop/StarRating';
+import { useCombinedRating } from '../utils/productRatings';
 
 export default function FeaturedProductsSingle({ product }) {
   const [imageError, setImageError] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const { rating, count } = useCombinedRating(product);
 
   const stripHtml = (html) => {
     if (typeof window === 'undefined') {
@@ -137,7 +139,7 @@ export default function FeaturedProductsSingle({ product }) {
             </p>
             
             <div style={{ marginBottom: '1.5rem' }}>
-              <StarRating rating={product.average_rating || 0} count={product.rating_count || 0} />
+              <StarRating rating={rating} count={count} />
             </div>
             
             <p style={{ 

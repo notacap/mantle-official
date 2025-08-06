@@ -9,6 +9,7 @@ import StarRating from './shop/StarRating';
 import FeaturedProductsSingle from './FeaturedProductsSingle';
 import FeaturedProductsDouble from './FeaturedProductsDouble';
 import FeaturedProductsTriple from './FeaturedProductsTriple';
+import { useCombinedRating } from '../utils/productRatings';
 
 export default function FeaturedProducts() {
   const scrollContainerRef = useRef(null);
@@ -228,6 +229,84 @@ export default function FeaturedProducts() {
     </div>
   );
 
+  // Product Card component with combined rating logic
+  const ProductCard = ({ product, index }) => {
+    const { rating, count } = useCombinedRating(product);
+
+    return (
+      <Link 
+        href={`/product/${product.slug}`} 
+        key={product.id}
+        style={{ 
+          flex: '0 0 auto',
+          width: '280px',
+          textDecoration: 'none',
+          color: 'inherit',
+          scrollSnapAlign: 'start'
+        }}
+      >
+        <div style={{ 
+          backgroundColor: 'white', 
+          borderRadius: '0.5rem', 
+          overflow: 'hidden', 
+          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+          transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'translateY(-5px)';
+          e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+          setHoveredProduct(product.id);
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+          setHoveredProduct(null);
+        }}
+        >
+          <div style={{ height: '300px', position: 'relative', backgroundColor: '#f3f4f6', overflow: 'hidden' }}>
+            <Image
+              src={hoveredProduct === product.id
+                ? (imageErrors[product.id]?.secondary 
+                    ? getFallbackImage((index + 1) % 4)
+                    : getProductSecondaryImageUrl(product))
+                : (imageErrors[product.id]?.primary 
+                    ? getFallbackImage(index)
+                    : getProductImageUrl(product))}
+              alt={product.name}
+              fill
+              style={{ 
+                objectFit: 'cover',
+                transition: 'transform 0.3s ease-in-out, opacity 0.3s ease-in-out',
+                transform: hoveredProduct === product.id ? 'scale(1.1)' : 'scale(1)',
+                opacity: 1
+              }}
+              sizes="280px"
+              onError={() => handleImageError(product.id, hoveredProduct === product.id)}
+              priority={index < 2}
+            />
+          </div>
+          <div style={{ padding: '1.5rem', flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+            <h3 style={{ fontSize: '1.125rem', fontWeight: '500', marginBottom: '0.5rem' }}>
+              {product.name}
+            </h3>
+            <p style={{ color: '#4b5563', marginBottom: '1rem', flexGrow: 1 }}>
+              {getShortDescription(product)}
+            </p>
+            <div style={{ marginBottom: '0.75rem' }}>
+              <StarRating rating={rating} count={count} />
+            </div>
+            <p style={{ fontWeight: 'bold', color: '#9CB24D' }}>
+              {formatPrice(product.price)}
+            </p>
+          </div>
+        </div>
+      </Link>
+    );
+  };
+
   // If we have 1, 2, or 3 products, render the specialized components
   if (!isLoading && products.length === 1) {
     return <FeaturedProductsSingle product={products[0]} />;
@@ -344,76 +423,7 @@ export default function FeaturedProducts() {
           >
             {products.length > 0 ? (
               products.map((product, index) => (
-                <Link 
-                  href={`/product/${product.slug}`} 
-                  key={product.id}
-                  style={{ 
-                    flex: '0 0 auto',
-                    width: '280px',
-                    textDecoration: 'none',
-                    color: 'inherit',
-                    scrollSnapAlign: 'start'
-                  }}
-                >
-                  <div style={{ 
-                    backgroundColor: 'white', 
-                    borderRadius: '0.5rem', 
-                    overflow: 'hidden', 
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-5px)';
-                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
-                    setHoveredProduct(product.id);
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
-                    setHoveredProduct(null);
-                  }}
-                  >
-                    <div style={{ height: '300px', position: 'relative', backgroundColor: '#f3f4f6', overflow: 'hidden' }}>
-                      <Image
-                        src={hoveredProduct === product.id
-                          ? (imageErrors[product.id]?.secondary 
-                              ? getFallbackImage((index + 1) % 4)
-                              : getProductSecondaryImageUrl(product))
-                          : (imageErrors[product.id]?.primary 
-                              ? getFallbackImage(index)
-                              : getProductImageUrl(product))}
-                        alt={product.name}
-                        fill
-                        style={{ 
-                          objectFit: 'cover',
-                          transition: 'transform 0.3s ease-in-out, opacity 0.3s ease-in-out',
-                          transform: hoveredProduct === product.id ? 'scale(1.1)' : 'scale(1)',
-                          opacity: 1
-                        }}
-                        sizes="280px"
-                        onError={() => handleImageError(product.id, hoveredProduct === product.id)}
-                        priority={index < 2}
-                      />
-                    </div>
-                    <div style={{ padding: '1.5rem', flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                      <h3 style={{ fontSize: '1.125rem', fontWeight: '500', marginBottom: '0.5rem' }}>
-                        {product.name}
-                      </h3>
-                      <p style={{ color: '#4b5563', marginBottom: '1rem', flexGrow: 1 }}>
-                        {getShortDescription(product)}
-                      </p>
-                      <div style={{ marginBottom: '0.75rem' }}>
-                        <StarRating rating={product.average_rating || 0} count={product.rating_count || 0} />
-                      </div>
-                      <p style={{ fontWeight: 'bold', color: '#9CB24D' }}>
-                        {formatPrice(product.price)}
-                      </p>
-                    </div>
-                  </div>
-                </Link>
+                <ProductCard key={product.id} product={product} index={index} />
               ))
             ) : (
               <div style={{ width: '100%', textAlign: 'center', padding: '2rem 0' }}>
