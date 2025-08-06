@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { formatPrice } from '@/app/services/woocommerce';
 import { useCart } from '@/context/CartContext'; // Import useCart hook
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 export default function ProductActions({ productId, price, sizes, colors, amounts, sizeOptions, colorOptions, amountOptions, variations }) {
   const [quantity, setQuantity] = useState(1);
@@ -12,6 +11,10 @@ export default function ProductActions({ productId, price, sizes, colors, amount
   const [selectedAmount, setSelectedAmount] = useState(amounts?.[0] || '');
   const [unitPrice, setUnitPrice] = useState(parseFloat(price) || 0);
   const [isAddingToCart, setIsAddingToCart] = useState(false); // Local loading state for the button
+  const [isColorDropdownOpen, setIsColorDropdownOpen] = useState(false);
+  const [isSizeDropdownOpen, setIsSizeDropdownOpen] = useState(false);
+  const colorDropdownRef = useRef(null);
+  const sizeDropdownRef = useRef(null);
   const { callCartApi, setIsLoading: setCartLoading, isLoading: isCartLoading, nonce, openSideCart } = useCart(); // Get context functions
   
   // This effect replaces the original "set initial selections" effect.
@@ -57,6 +60,23 @@ export default function ProductActions({ productId, price, sizes, colors, amount
       setUnitPrice(parseFloat(price) || 0); // Fallback to base price if no amounts/selection
     }
   }, [selectedAmount, price, amounts]);
+
+  // Handle clicks outside dropdowns to close them
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (colorDropdownRef.current && !colorDropdownRef.current.contains(event.target)) {
+        setIsColorDropdownOpen(false);
+      }
+      if (sizeDropdownRef.current && !sizeDropdownRef.current.contains(event.target)) {
+        setIsSizeDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
   
   // Handle quantity change
   const handleQuantityChange = (e) => {
@@ -248,101 +268,174 @@ export default function ProductActions({ productId, price, sizes, colors, amount
   // Determine if the button should be disabled
   const isButtonDisabled = isAddingToCart || isCartLoading || !nonce || isCurrentSelectionInvalid();
 
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-      {/* Size Selector */}
-      {sizes.length > 0 && (
-        <div>
-          <h3 style={{ fontSize: '1rem', fontWeight: '500', marginBottom: '0.75rem' }}>
-            Size
-          </h3>
-          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-            {sizes.map((size) => {
-              const isDisabled = isOptionDisabled('size', size, selectedColor);
-              const button = (
-                <button
-                  key={size}
-                  onClick={() => handleSelectSize(size)}
-                  disabled={isDisabled}
+  // Custom Dropdown Component
+  const CustomDropdown = ({ 
+    value, 
+    onChange, 
+    options, 
+    placeholder, 
+    isOpen, 
+    setIsOpen, 
+    dropdownRef,
+    checkDisabled 
+  }) => {
+    return (
+      <div ref={dropdownRef} style={{ position: 'relative', width: '100%' }}>
+        <button
+          type="button"
+          onClick={() => setIsOpen(!isOpen)}
+          style={{
+            width: '100%',
+            padding: '0.75rem 1rem',
+            paddingRight: '2.5rem',
+            border: '1px solid #e5e7eb',
+            borderRadius: '0.375rem',
+            backgroundColor: 'white',
+            fontSize: '1rem',
+            cursor: 'pointer',
+            textAlign: 'left',
+            transition: 'border-color 0.2s, box-shadow 0.2s',
+            outline: 'none',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+          onFocus={(e) => {
+            e.target.style.borderColor = '#9CB24D';
+            e.target.style.boxShadow = '0 0 0 3px rgba(156, 178, 77, 0.1)';
+          }}
+          onBlur={(e) => {
+            e.target.style.borderColor = '#e5e7eb';
+            e.target.style.boxShadow = 'none';
+          }}
+        >
+          <span style={{ color: value ? 'inherit' : '#9ca3af' }}>
+            {value || placeholder}
+          </span>
+          <span
+            style={{
+              width: '20px',
+              height: '20px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+              transition: 'transform 0.2s',
+            }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 20 20"
+              style={{ width: '15px', height: '15px' }}
+            >
+              <path
+                stroke="#6b7280"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="1.5"
+                d="M6 8l4 4 4-4"
+              />
+            </svg>
+          </span>
+        </button>
+
+        {isOpen && (
+          <div
+            style={{
+              position: 'absolute',
+              top: '100%',
+              left: 0,
+              right: 0,
+              backgroundColor: 'white',
+              border: '1px solid #e5e7eb',
+              borderRadius: '0.375rem',
+              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+              zIndex: 1000,
+              maxHeight: '200px',
+              overflowY: 'auto',
+            }}
+          >
+            {options.map((option) => {
+              const isDisabled = checkDisabled ? checkDisabled(option) : false;
+              return (
+                <div
+                  key={option}
+                  onClick={() => {
+                    if (!isDisabled) {
+                      onChange(option);
+                      setIsOpen(false);
+                    }
+                  }}
                   style={{
-                    padding: '0.5rem 1rem',
-                    border: `1px solid ${selectedSize === size ? '#9CB24D' : '#e5e7eb'}`,
-                    borderRadius: '0.375rem',
-                    backgroundColor: selectedSize === size ? '#f3f6e8' : 'white',
+                    padding: '0.75rem 1rem',
                     cursor: isDisabled ? 'not-allowed' : 'pointer',
-                    transition: 'all 0.2s',
-                    color: selectedSize === size ? '#9CB24D' : 'inherit',
-                    fontWeight: selectedSize === size ? '500' : 'normal',
+                    color: isDisabled ? '#9ca3af' : 'inherit',
+                    backgroundColor: 'white',
+                    borderBottom: '1px solid #f3f4f6',
+                    transition: 'background-color 0.2s',
                     opacity: isDisabled ? 0.6 : 1,
-                    textDecoration: isDisabled ? 'line-through' : 'none',
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isDisabled) {
+                      e.target.style.backgroundColor = '#9CB24D';
+                      e.target.style.color = 'white';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isDisabled) {
+                      e.target.style.backgroundColor = 'white';
+                      e.target.style.color = 'inherit';
+                    }
                   }}
                 >
-                  {size}
-                </button>
-              );
-
-              return isDisabled ? (
-                <TooltipProvider key={size}>
-                  <Tooltip>
-                    <TooltipTrigger asChild>{button}</TooltipTrigger>
-                    <TooltipContent>
-                      <p>Item is currently out of stock</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              ) : (
-                button
+                  {option} {isDisabled ? '(Out of Stock)' : ''}
+                </div>
               );
             })}
           </div>
-        </div>
-      )}
-      
-      {/* Color Selector */}
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+      {/* Color Selector - Moved to top */}
       {colors.length > 0 && (
         <div>
           <h3 style={{ fontSize: '1rem', fontWeight: '500', marginBottom: '0.75rem' }}>
             Color
           </h3>
-          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-            {colors.map((color) => {
-              const isDisabled = isOptionDisabled('color', color, selectedSize);
-              const button = (
-                <button
-                  key={color}
-                  onClick={() => handleSelectColor(color)}
-                  disabled={isDisabled}
-                  style={{
-                    padding: '0.5rem 1rem',
-                    border: `1px solid ${selectedColor === color ? '#9CB24D' : '#e5e7eb'}`,
-                    borderRadius: '0.375rem',
-                    backgroundColor: selectedColor === color ? '#f3f6e8' : 'white',
-                    cursor: isDisabled ? 'not-allowed' : 'pointer',
-                    transition: 'all 0.2s',
-                    color: selectedColor === color ? '#9CB24D' : 'inherit',
-                    fontWeight: selectedColor === color ? '500' : 'normal',
-                    opacity: isDisabled ? 0.6 : 1,
-                    textDecoration: isDisabled ? 'line-through' : 'none',
-                  }}
-                >
-                  {color}
-                </button>
-              );
+          <CustomDropdown
+            value={selectedColor}
+            onChange={handleSelectColor}
+            options={colors}
+            placeholder="Select Color"
+            isOpen={isColorDropdownOpen}
+            setIsOpen={setIsColorDropdownOpen}
+            dropdownRef={colorDropdownRef}
+            checkDisabled={(color) => isOptionDisabled('color', color, selectedSize)}
+          />
+        </div>
+      )}
 
-              return isDisabled ? (
-                <TooltipProvider key={color}>
-                  <Tooltip>
-                    <TooltipTrigger asChild>{button}</TooltipTrigger>
-                    <TooltipContent>
-                      <p>Item is currently out of stock</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              ) : (
-                button
-              );
-            })}
-          </div>
+      {/* Size Selector - Moved to bottom */}
+      {sizes.length > 0 && (
+        <div>
+          <h3 style={{ fontSize: '1rem', fontWeight: '500', marginBottom: '0.75rem' }}>
+            Size
+          </h3>
+          <CustomDropdown
+            value={selectedSize}
+            onChange={handleSelectSize}
+            options={sizes}
+            placeholder="Select Size"
+            isOpen={isSizeDropdownOpen}
+            setIsOpen={setIsSizeDropdownOpen}
+            dropdownRef={sizeDropdownRef}
+            checkDisabled={(size) => isOptionDisabled('size', size, selectedColor)}
+          />
         </div>
       )}
       
