@@ -1,11 +1,18 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
+import { useState, useEffect } from 'react';
 import ProductGrid from './ProductGrid';
 import ProductSkeleton from './ProductSkeleton';
+import SortSelector from './SortSelector';
+import { sortProductsByRating } from '@/app/utils/reviewUtils';
 import Link from 'next/link';
 
 export default function CollectionProducts({ tag }) {
+  const [sortBy, setSortBy] = useState('default');
+  const [sortedProducts, setSortedProducts] = useState([]);
+  const [isSorting, setIsSorting] = useState(false);
+  
   const { 
     data: products, 
     isLoading, 
@@ -26,6 +33,43 @@ export default function CollectionProducts({ tag }) {
     },
     enabled: !!tag,
   });
+
+  useEffect(() => {
+    const sortProducts = async () => {
+      if (!products) {
+        setSortedProducts([]);
+        return;
+      }
+      
+      const productsCopy = [...products];
+      
+      if (sortBy === 'highest-reviewed') {
+        setIsSorting(true);
+        try {
+          const sorted = await sortProductsByRating(productsCopy);
+          setSortedProducts(sorted);
+        } catch (error) {
+          console.error('Error sorting by rating:', error);
+          setSortedProducts(productsCopy);
+        } finally {
+          setIsSorting(false);
+        }
+      } else {
+        switch (sortBy) {
+          case 'price-low-high':
+            setSortedProducts(productsCopy.sort((a, b) => parseFloat(a.price) - parseFloat(b.price)));
+            break;
+          case 'price-high-low':
+            setSortedProducts(productsCopy.sort((a, b) => parseFloat(b.price) - parseFloat(a.price)));
+            break;
+          default:
+            setSortedProducts(productsCopy);
+        }
+      }
+    };
+
+    sortProducts();
+  }, [products, sortBy]);
   
   // Error state
   if (error) {
@@ -38,7 +82,7 @@ export default function CollectionProducts({ tag }) {
   }
   
   // Loading state
-  if (isLoading) {
+  if (isLoading || isSorting) {
     return (
       <div style={{
         display: 'grid',
@@ -71,5 +115,10 @@ export default function CollectionProducts({ tag }) {
   }
   
   // Successful data fetch
-  return <ProductGrid products={products} />;
+  return (
+    <div>
+      <SortSelector value={sortBy} onChange={setSortBy} />
+      <ProductGrid products={sortedProducts} />
+    </div>
+  );
 } 
