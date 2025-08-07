@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { formatPrice } from '@/app/services/woocommerce';
 import { useCart } from '@/context/CartContext'; // Import useCart hook
 
-export default function ProductActions({ productId, price, sizes, colors, amounts, sizeOptions, colorOptions, amountOptions, variations }) {
+export default function ProductActions({ productId, price, sizes, colors, amounts, sizeOptions, colorOptions, amountOptions, variations, onVariationImageChange }) {
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
@@ -16,6 +16,42 @@ export default function ProductActions({ productId, price, sizes, colors, amount
   const colorDropdownRef = useRef(null);
   const sizeDropdownRef = useRef(null);
   const { callCartApi, setIsLoading: setCartLoading, isLoading: isCartLoading, nonce, openSideCart } = useCart(); // Get context functions
+  
+  // Helper function to update variation image
+  const updateVariationImage = (color, size) => {
+    if (!variations || variations.length === 0 || !onVariationImageChange) return;
+    
+    const matchingVariation = variations.find(variation => {
+      const colorAttr = variation.attributes.find(attr => 
+        (attr.name.toLowerCase() === 'color' || attr.name.toLowerCase() === 'colours') && 
+        attr.option === color
+      );
+      const sizeAttr = variation.attributes.find(attr => 
+        (attr.name.toLowerCase() === 'size' || attr.name.toLowerCase() === 'sizes') && 
+        attr.option === size
+      );
+      
+      const hasColors = colors && colors.length > 0;
+      const hasSizes = sizes && sizes.length > 0;
+      
+      if (hasColors && hasSizes) {
+        return colorAttr && sizeAttr;
+      } else if (hasColors && !hasSizes) {
+        return colorAttr;
+      } else if (!hasColors && hasSizes) {
+        return sizeAttr;
+      }
+      
+      return false;
+    });
+    
+    if (matchingVariation && matchingVariation.image && matchingVariation.image.src) {
+      onVariationImageChange({
+        src: matchingVariation.image.src,
+        alt: matchingVariation.image.alt || `Product - ${color} ${size}`.trim()
+      });
+    }
+  };
   
   // This effect replaces the original "set initial selections" effect.
   // It intelligently sets the default options based on stock availability.
@@ -44,6 +80,11 @@ export default function ProductActions({ productId, price, sizes, colors, amount
 
     setSelectedColor(defaultColor);
     setSelectedSize(defaultSize);
+    
+    // Update variation image for initial selection
+    if (defaultColor || defaultSize) {
+      updateVariationImage(defaultColor, defaultSize);
+    }
 
   }, [variations, sizes, colors]);
 
@@ -99,12 +140,17 @@ export default function ProductActions({ productId, price, sizes, colors, amount
   
   const handleSelectSize = (size) => {
     setSelectedSize(size);
+    let finalColor = selectedColor;
     // When a size is selected, check if the current color is valid with it.
     // If not, find the first available color for this size.
     if (selectedColor && isOptionDisabled('color', selectedColor, size)) {
        const firstAvailableColor = colors.find(color => !isOptionDisabled('color', color, size));
-       setSelectedColor(firstAvailableColor || '');
+       finalColor = firstAvailableColor || '';
+       setSelectedColor(finalColor);
     }
+    
+    // Update variation image
+    updateVariationImage(finalColor, size);
   };
 
   const handleSelectColor = (color) => {
@@ -112,6 +158,9 @@ export default function ProductActions({ productId, price, sizes, colors, amount
     // When a color is selected, find the first available size for this new color.
     const firstAvailableSize = sizes.find(size => !isOptionDisabled('size', size, color));
     setSelectedSize(firstAvailableSize || '');
+    
+    // Update variation image
+    updateVariationImage(color, firstAvailableSize || '');
   };
 
   const isOptionDisabled = (type, value, localSelected) => {

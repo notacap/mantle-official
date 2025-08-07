@@ -123,6 +123,13 @@ export default function SingleProduct({ productIdentifier }) {
   const [sizeChartData, setSizeChartData] = useState(null);
   const [sizeChartError, setSizeChartError] = useState(null);
   const [sizeChartFootnote, setSizeChartFootnote] = useState('');
+  const [imageSetByVariation, setImageSetByVariation] = useState(false);
+  
+  // Callback to handle variation image changes
+  const handleVariationImageChange = (newImage) => {
+    setCurrentImage(newImage);
+    setImageSetByVariation(true);
+  };
   
   // Fetch product data
   const { 
@@ -288,8 +295,23 @@ export default function SingleProduct({ productIdentifier }) {
         return newUniqueImages;
       });
 
-      if (newUniqueImages.length > 0 && !currentImage) {
-        setCurrentImage(newUniqueImages[0]);
+      if (newUniqueImages.length > 0 && !currentImage && !imageSetByVariation) {
+        // Check if there's a pre-selected variation with an image
+        let initialImage = newUniqueImages[0]; // Default to first image
+        
+        if (variations && variations.length > 0) {
+          // Find the default/first in-stock variation
+          const firstInStockVariation = variations.find(v => v.stock_status === 'instock');
+          
+          if (firstInStockVariation && firstInStockVariation.image && firstInStockVariation.image.src) {
+            initialImage = {
+              src: firstInStockVariation.image.src,
+              alt: firstInStockVariation.image.alt || `${product.name} - Default Variation`
+            };
+          }
+        }
+        
+        setCurrentImage(initialImage);
       }
     } else if (product && (!product.images || product.images.length === 0)) {
       // Handle case where product exists but has no images
@@ -299,7 +321,7 @@ export default function SingleProduct({ productIdentifier }) {
       });
       setCurrentImage(null);
     }
-  }, [product, currentImage]);
+  }, [product, currentImage, variations, imageSetByVariation]);
 
   useEffect(() => {
     if (product && (product.error || product.stock_status === 'outofstock')) {
@@ -608,6 +630,7 @@ export default function SingleProduct({ productIdentifier }) {
             colorOptions={colorOptions}
             amountOptions={amountOptions}
             variations={variations || []}
+            onVariationImageChange={handleVariationImageChange}
           />
         </div>
       </div>
