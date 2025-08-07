@@ -166,13 +166,11 @@ export default function ProductGrid({ products }) {
                 </div>
                 <p style={{ fontWeight: 'bold', color: '#9CB24D' }}>
                   {(() => {
-                    const minPriceValue = parseFloat(product.price);
-                    const maxPriceValue = product.max_price ? parseFloat(product.max_price) : null;
-
-                    if (maxPriceValue !== null && !isNaN(minPriceValue) && !isNaN(maxPriceValue) && maxPriceValue > minPriceValue) {
-                      return `${formatPrice(product.price)} – ${formatPrice(product.max_price)}`;
-                    } else if (product.price_html && (product.price_html.includes('–') || product.price_html.includes('-'))) {
-                      return stripHtml(product.price_html);
+                    if (product.price_html && (product.price_html.includes('–') || product.price_html.includes('-'))) {
+                      const strippedHtml = stripHtml(product.price_html);
+                      // Remove the duplicate "Price range: $X through $Y" text if it exists
+                      const cleanedPrice = strippedHtml.replace(/Price range: \$[\d,]+\.?\d* through \$[\d,]+\.?\d*/gi, '').trim();
+                      return cleanedPrice;
                     } else {
                       return formatPrice(product.price);
                     }
