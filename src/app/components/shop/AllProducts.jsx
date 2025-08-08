@@ -28,45 +28,56 @@ export default function AllProducts() {
       }
       
       return response.json();
-    }
+    },
+    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
+    cacheTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
+  });
+
+  // Cached query for sorted products by rating
+  const { 
+    data: sortedByRatingData, 
+    isLoading: isLoadingSortedRating 
+  } = useQuery({
+    queryKey: ['products', 'sorted-by-rating', data?.products?.map(p => p.id).join(',')],
+    queryFn: async () => {
+      if (!data?.products) return [];
+      return sortProductsByRating([...data.products]);
+    },
+    enabled: !!data?.products && sortBy === 'highest-reviewed',
+    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
+    cacheTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
   });
 
   useEffect(() => {
-    const sortProducts = async () => {
-      if (!data?.products) {
-        setSortedProducts([]);
-        return;
-      }
-      
-      const products = [...data.products];
-      
-      if (sortBy === 'highest-reviewed') {
+    if (!data?.products) {
+      setSortedProducts([]);
+      return;
+    }
+    
+    const products = [...data.products];
+    
+    if (sortBy === 'highest-reviewed') {
+      // Use cached sorted data if available
+      if (sortedByRatingData) {
+        setSortedProducts(sortedByRatingData);
+        setIsSorting(false);
+      } else if (isLoadingSortedRating) {
         setIsSorting(true);
-        try {
-          const sorted = await sortProductsByRating(products);
-          setSortedProducts(sorted);
-        } catch (error) {
-          console.error('Error sorting by rating:', error);
-          setSortedProducts(products);
-        } finally {
-          setIsSorting(false);
-        }
-      } else {
-        switch (sortBy) {
-          case 'price-low-high':
-            setSortedProducts(products.sort((a, b) => parseFloat(a.price) - parseFloat(b.price)));
-            break;
-          case 'price-high-low':
-            setSortedProducts(products.sort((a, b) => parseFloat(b.price) - parseFloat(a.price)));
-            break;
-          default:
-            setSortedProducts(products);
-        }
       }
-    };
-
-    sortProducts();
-  }, [data?.products, sortBy]);
+    } else {
+      setIsSorting(false);
+      switch (sortBy) {
+        case 'price-low-high':
+          setSortedProducts(products.sort((a, b) => parseFloat(a.price) - parseFloat(b.price)));
+          break;
+        case 'price-high-low':
+          setSortedProducts(products.sort((a, b) => parseFloat(b.price) - parseFloat(a.price)));
+          break;
+        default:
+          setSortedProducts(products);
+      }
+    }
+  }, [data?.products, sortBy, sortedByRatingData, isLoadingSortedRating]);
   
   // Error state
   if (error) {

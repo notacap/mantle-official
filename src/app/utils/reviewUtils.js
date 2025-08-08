@@ -1,45 +1,55 @@
+// Cache for product ratings to avoid repeated API calls
+const ratingCache = new Map();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes in milliseconds
+
 export async function getProductRating(productId) {
-  try {
-    if (productId.toString() === '5403') {
-      const response = await fetch(`/api/product-reviews?product_id=${productId}`);
-      if (!response.ok) {
-        return { averageRating: 0, totalCount: 0 };
-      }
-      
-      const combinedReviews = await response.json();
-      if (!combinedReviews || combinedReviews.length === 0) {
-        return { averageRating: 0, totalCount: 0 };
-      }
-      
-      const totalRating = combinedReviews.reduce((sum, review) => sum + parseFloat(review.rating || 0), 0);
-      const averageRating = totalRating / combinedReviews.length;
-      
-      return {
-        averageRating: averageRating,
-        totalCount: combinedReviews.length
-      };
-    } else {
-      const response = await fetch(`/api/product-reviews?product_id=${productId}`);
-      if (!response.ok) {
-        return { averageRating: 0, totalCount: 0 };
-      }
-      
-      const reviews = await response.json();
-      if (!reviews || reviews.length === 0) {
-        return { averageRating: 0, totalCount: 0 };
-      }
-      
-      const totalRating = reviews.reduce((sum, review) => sum + parseFloat(review.rating || 0), 0);
-      const averageRating = totalRating / reviews.length;
-      
-      return {
-        averageRating: averageRating,
-        totalCount: reviews.length
-      };
+  const cacheKey = `rating_${productId}`;
+  const now = Date.now();
+  
+  // Check cache first
+  if (ratingCache.has(cacheKey)) {
+    const cached = ratingCache.get(cacheKey);
+    if (now - cached.timestamp < CACHE_TTL) {
+      return cached.data;
     }
+    // Remove stale cache entry
+    ratingCache.delete(cacheKey);
+  }
+  
+  try {
+    const response = await fetch(`/api/product-reviews?product_id=${productId}`);
+    if (!response.ok) {
+      const result = { averageRating: 0, totalCount: 0 };
+      // Cache the result
+      ratingCache.set(cacheKey, { data: result, timestamp: now });
+      return result;
+    }
+    
+    const reviews = await response.json();
+    if (!reviews || reviews.length === 0) {
+      const result = { averageRating: 0, totalCount: 0 };
+      // Cache the result
+      ratingCache.set(cacheKey, { data: result, timestamp: now });
+      return result;
+    }
+    
+    const totalRating = reviews.reduce((sum, review) => sum + parseFloat(review.rating || 0), 0);
+    const averageRating = totalRating / reviews.length;
+    
+    const result = {
+      averageRating: averageRating,
+      totalCount: reviews.length
+    };
+    
+    // Cache the result
+    ratingCache.set(cacheKey, { data: result, timestamp: now });
+    return result;
   } catch (error) {
     console.error(`Error fetching rating for product ${productId}:`, error);
-    return { averageRating: 0, totalCount: 0 };
+    const result = { averageRating: 0, totalCount: 0 };
+    // Cache even error results to avoid repeated failed requests
+    ratingCache.set(cacheKey, { data: result, timestamp: now });
+    return result;
   }
 }
 
