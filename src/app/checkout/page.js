@@ -274,26 +274,38 @@ export default function CheckoutPage() {
 
         // Add billing address if country is set
         if (billingCountry) {
+          // Only use dummy values if user hasn't entered real values
           const billingPostcode = formData.billing_address.postcode || getDummyPostcode(billingCountry);
           const billingState = formData.billing_address.state || getDummyState(billingCountry);
+
           updatePayload.billing_address = {
             country: billingCountry,
             ...(billingState && { state: billingState }),
-            ...(formData.billing_address.city && { city: formData.billing_address.city }),
             postcode: billingPostcode
           };
+
+          // Only include city if user has actually entered it (not dummy data)
+          if (formData.billing_address.city && formData.billing_address.city.trim()) {
+            updatePayload.billing_address.city = formData.billing_address.city;
+          }
         }
 
         // Add shipping address if country is set
         if (shipToDifferentAddress && shippingCountry) {
+          // Only use dummy values if user hasn't entered real values
           const shippingPostcode = formData.shipping_address.postcode || getDummyPostcode(shippingCountry);
           const shippingState = formData.shipping_address.state || getDummyState(shippingCountry);
+
           updatePayload.shipping_address = {
             country: shippingCountry,
             ...(shippingState && { state: shippingState }),
-            ...(formData.shipping_address.city && { city: formData.shipping_address.city }),
             postcode: shippingPostcode
           };
+
+          // Only include city if user has actually entered it (not dummy data)
+          if (formData.shipping_address.city && formData.shipping_address.city.trim()) {
+            updatePayload.shipping_address.city = formData.shipping_address.city;
+          }
         } else if (!shipToDifferentAddress && billingCountry) {
           // Use billing address as shipping address if not shipping to different address
           updatePayload.shipping_address = updatePayload.billing_address;
@@ -374,15 +386,16 @@ export default function CheckoutPage() {
           }
         };
 
-        // If country changes, reset state and postcode to avoid invalid combinations
+        // If country changes, reset state, city, and postcode to avoid invalid combinations
         if (fieldName === 'country') {
           const selectedCountry = countries.find(c => c.code === value);
-          // Clear state and postcode when country changes
+          // Clear state, city, and postcode when country changes
           newFormData[addressType].state = '';
+          newFormData[addressType].city = '';
           newFormData[addressType].postcode = '';
 
           // If the new country has states, the user will need to select one
-          // (We don't auto-select to avoid confusion with the cleared postcode)
+          // (We don't auto-select to avoid confusion with the cleared fields)
         }
 
         return newFormData;

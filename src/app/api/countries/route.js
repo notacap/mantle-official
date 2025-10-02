@@ -46,8 +46,9 @@ export async function GET() {
 
     const countries = await response.json();
 
-    // Filter to only allowed countries: US, Canada, Mexico, Guam
-    const allowedCountryCodes = ['US', 'CA', 'MX', 'GU'];
+    // Filter to only allowed countries: US, Canada, Guam
+    // Note: Mexico (MX) temporarily disabled until shipping rates are configured
+    const allowedCountryCodes = ['US', 'CA', 'GU'];
     const filteredCountries = countries.filter(country =>
       allowedCountryCodes.includes(country.code)
     );
