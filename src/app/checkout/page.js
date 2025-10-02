@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import './checkout.css';
@@ -25,29 +25,17 @@ import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 // Make sure to set this in your .env.local file
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
 
-const usStates = [
-  { name: 'Alabama', code: 'AL' }, { name: 'Alaska', code: 'AK' }, { name: 'Arizona', code: 'AZ' },
-  { name: 'Arkansas', code: 'AR' }, { name: 'California', code: 'CA' }, { name: 'Colorado', code: 'CO' },
-  { name: 'Connecticut', code: 'CT' }, { name: 'Delaware', code: 'DE' }, { name: 'District of Columbia', code: 'DC' },
-  { name: 'Florida', code: 'FL' }, { name: 'Georgia', code: 'GA' }, { name: 'Hawaii', code: 'HI' },
-  { name: 'Idaho', code: 'ID' }, { name: 'Illinois', code: 'IL' }, { name: 'Indiana', code: 'IN' },
-  { name: 'Iowa', code: 'IA' }, { name: 'Kansas', code: 'KS' }, { name: 'Kentucky', code: 'KY' },
-  { name: 'Louisiana', code: 'LA' }, { name: 'Maine', code: 'ME' }, { name: 'Maryland', code: 'MD' },
-  { name: 'Massachusetts', code: 'MA' }, { name: 'Michigan', code: 'MI' }, { name: 'Minnesota', code: 'MN' },
-  { name: 'Mississippi', code: 'MS' }, { name: 'Missouri', code: 'MO' }, { name: 'Montana', code: 'MT' },
-  { name: 'Nebraska', code: 'NE' }, { name: 'Nevada', code: 'NV' }, { name: 'New Hampshire', code: 'NH' },
-  { name: 'New Jersey', code: 'NJ' }, { name: 'New Mexico', code: 'NM' }, { name: 'New York', code: 'NY' },
-  { name: 'North Carolina', code: 'NC' }, { name: 'North Dakota', code: 'ND' }, { name: 'Ohio', code: 'OH' },
-  { name: 'Oklahoma', code: 'OK' }, { name: 'Oregon', code: 'OR' }, { name: 'Pennsylvania', code: 'PA' },
-  { name: 'Rhode Island', code: 'RI' }, { name: 'South Carolina', code: 'SC' }, { name: 'South Dakota', code: 'SD' },
-  { name: 'Tennessee', code: 'TN' }, { name: 'Texas', code: 'TX' }, { name: 'Utah', code: 'UT' },
-  { name: 'Vermont', code: 'VT' }, { name: 'Virginia', code: 'VA' }, { name: 'Washington', code: 'WA' },
-  { name: 'West Virginia', code: 'WV' }, { name: 'Wisconsin', code: 'WI' }, { name: 'Wyoming', code: 'WY' },
-  { name: 'Armed Forces (AA)', code: 'AA' }, { name: 'Armed Forces (AE)', code: 'AE' }, { name: 'Armed Forces (AP)', code: 'AP' }
-];
-
-function AddressForm({ type, formData, handleChange }) {
+function AddressForm({ type, formData, handleChange, countries = [] }) {
   const prefix = type === 'shipping' ? 'shipping_address' : 'billing_address'; // Match API structure
+
+  // Find the selected country to get its states
+  const selectedCountryCode = formData?.[prefix]?.country || '';
+  const selectedCountry = countries.find(c => c.code === selectedCountryCode);
+  const availableStates = selectedCountry?.states || [];
+  const hasStates = availableStates.length > 0;
+
+  // Determine postal code label based on country
+  const postalCodeLabel = selectedCountryCode === 'US' ? 'ZIP Code' : 'Postal Code';
 
   return (
     <div className="space-y-6">
@@ -69,9 +57,11 @@ function AddressForm({ type, formData, handleChange }) {
 
       <div>
         <label htmlFor={`${prefix}.country`} className="block text-sm font-medium leading-6 text-gray-900">Country / Region <span className="text-red-600">*</span></label>
-        <select id={`${prefix}.country`} name={`${prefix}.country`} value={formData?.[prefix]?.country || 'US'} onChange={handleChange} autoComplete="country-name" required className="checkout-input">
-          <option value="US">United States</option>
-          {/* Add other countries if needed */}
+        <select id={`${prefix}.country`} name={`${prefix}.country`} value={selectedCountryCode} onChange={handleChange} autoComplete="country-name" required className="checkout-input">
+          <option value="">Select a country...</option>
+          {countries.map(country => (
+            <option key={country.code} value={country.code}>{country.name}</option>
+          ))}
         </select>
       </div>
 
@@ -89,19 +79,42 @@ function AddressForm({ type, formData, handleChange }) {
           <input type="text" name={`${prefix}.city`} id={`${prefix}.city`} value={formData?.[prefix]?.city || ''} onChange={handleChange} autoComplete="address-level2" required className="checkout-input" />
         </div>
         <div>
-          <label htmlFor={`${prefix}.state`} className="block text-sm font-medium leading-6 text-gray-900">State <span className="text-red-600">*</span></label>
-          <select id={`${prefix}.state`} name={`${prefix}.state`} value={formData?.[prefix]?.state || ''} onChange={handleChange} autoComplete="address-level1" required className="checkout-input">
-            <option value="">Select a state...</option>
-            {usStates.map(state => (
-              <option key={state.code} value={state.code}>{state.name}</option>
-            ))}
-          </select>
+          <label htmlFor={`${prefix}.state`} className="block text-sm font-medium leading-6 text-gray-900">
+            State / Province {hasStates && <span className="text-red-600">*</span>}
+          </label>
+          {hasStates ? (
+            <select
+              id={`${prefix}.state`}
+              name={`${prefix}.state`}
+              value={formData?.[prefix]?.state || ''}
+              onChange={handleChange}
+              autoComplete="address-level1"
+              required={hasStates}
+              className="checkout-input"
+            >
+              <option value="">Select a state/province...</option>
+              {availableStates.map(state => (
+                <option key={state.code} value={state.code}>{state.name}</option>
+              ))}
+            </select>
+          ) : (
+            <input
+              type="text"
+              id={`${prefix}.state`}
+              name={`${prefix}.state`}
+              value={formData?.[prefix]?.state || ''}
+              onChange={handleChange}
+              placeholder="State / Province / Region"
+              autoComplete="address-level1"
+              className="checkout-input"
+            />
+          )}
         </div>
       </div>
 
       <div className="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2">
         <div>
-          <label htmlFor={`${prefix}.postcode`} className="block text-sm font-medium leading-6 text-gray-900">ZIP Code <span className="text-red-600">*</span></label>
+          <label htmlFor={`${prefix}.postcode`} className="block text-sm font-medium leading-6 text-gray-900">{postalCodeLabel} <span className="text-red-600">*</span></label>
           <input type="text" name={`${prefix}.postcode`} id={`${prefix}.postcode`} value={formData?.[prefix]?.postcode || ''} onChange={handleChange} autoComplete="postal-code" required className="checkout-input" />
         </div>
         <div>
@@ -124,8 +137,8 @@ export default function CheckoutPage() {
   const [shipToDifferentAddress, setShipToDifferentAddress] = useState(false);
   const { cart, callCartApi, isLoading: isCartLoading, error: cartError, fetchCartAndNonce } = useCart();
   const [formData, setFormData] = useState({
-    billing_address: { country: 'US' },
-    shipping_address: { country: 'US' },
+    billing_address: { country: '' },
+    shipping_address: { country: '' },
     payment_method: '', // For selected payment method
     order_notes: '',
   });
@@ -133,7 +146,11 @@ export default function CheckoutPage() {
   const [submissionError, setSubmissionError] = useState(null);
   const [availablePaymentMethods, setAvailablePaymentMethods] = useState([]);
   const [isPaymentDeclineError, setIsPaymentDeclineError] = useState(false);
-  
+  const [countries, setCountries] = useState([]);
+  const [isLoadingCountries, setIsLoadingCountries] = useState(true);
+  const [addressValidationError, setAddressValidationError] = useState(null);
+  const isInitialMount = useRef(true);
+
   // START PAYPAL STATE
   const [createdWooOrder, setCreatedWooOrder] = useState(null);
   // END PAYPAL STATE
@@ -142,6 +159,179 @@ export default function CheckoutPage() {
     setIsPaymentDeclineError(false);
     setSubmissionError(null);
   };
+
+  // Fetch countries on mount
+  useEffect(() => {
+    async function fetchCountries() {
+      try {
+        const response = await fetch('/api/countries');
+        if (!response.ok) {
+          throw new Error('Failed to fetch countries');
+        }
+        const data = await response.json();
+        setCountries(data);
+
+        // Set default country to US if available
+        const usCountry = data.find(c => c.code === 'US');
+        if (usCountry) {
+          setFormData(prev => ({
+            ...prev,
+            billing_address: { ...prev.billing_address, country: 'US' },
+            shipping_address: { ...prev.shipping_address, country: 'US' }
+          }));
+        }
+      } catch (error) {
+        console.error('Error fetching countries:', error);
+        // Set fallback to US only
+        setCountries([{
+          code: 'US',
+          name: 'United States (US)',
+          states: []
+        }]);
+        setFormData(prev => ({
+          ...prev,
+          billing_address: { ...prev.billing_address, country: 'US' },
+          shipping_address: { ...prev.shipping_address, country: 'US' }
+        }));
+      } finally {
+        setIsLoadingCountries(false);
+      }
+    }
+
+    fetchCountries();
+  }, []);
+
+  // Update cart when billing/shipping address changes (for shipping rate recalculation)
+  useEffect(() => {
+    // Skip on initial mount
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+
+    // Skip if countries haven't loaded yet
+    if (isLoadingCountries) {
+      return;
+    }
+
+    // Skip if cart is still loading (nonce not ready)
+    if (isCartLoading) {
+      return;
+    }
+
+    // Skip initial render when form is empty
+    const billingCountry = formData?.billing_address?.country;
+    const shippingCountry = formData?.shipping_address?.country;
+
+    if (!billingCountry && !shippingCountry) {
+      return;
+    }
+
+    // Debounce cart updates to avoid excessive API calls
+    const timeoutId = setTimeout(async () => {
+      // Clear previous address validation errors
+      setAddressValidationError(null);
+
+      try {
+        const updatePayload = {};
+
+        // Helper function to get a valid dummy postcode and state for a country
+        const getDummyPostcode = (countryCode) => {
+          const dummyPostcodes = {
+            'US': '10001',      // New York, NY
+            'CA': 'M5H 2N2',    // Toronto, ON
+            'MX': '01000',      // Mexico City
+            'GU': '96910',      // Guam
+            'PR': '00901',      // Puerto Rico
+            'GB': 'SW1A 1AA',   // London, UK
+            'AU': '2000',       // Sydney, Australia
+            'DE': '10115',      // Berlin, Germany
+            'FR': '75001',      // Paris, France
+            'IT': '00100',      // Rome, Italy
+            'ES': '28001',      // Madrid, Spain
+            'NL': '1011',       // Amsterdam, Netherlands
+            'BE': '1000',       // Brussels, Belgium
+            'CH': '8001',       // Zurich, Switzerland
+            'AT': '1010',       // Vienna, Austria
+            'SE': '111 20',     // Stockholm, Sweden
+            'NO': '0010',       // Oslo, Norway
+            'DK': '1050',       // Copenhagen, Denmark
+            'FI': '00100',      // Helsinki, Finland
+          };
+          return dummyPostcodes[countryCode] || '00000';
+        };
+
+        // Helper function to get a valid dummy state for countries that have states
+        const getDummyState = (countryCode) => {
+          const dummyStates = {
+            'US': 'NY',    // New York
+            'CA': 'ON',    // Ontario
+            'AU': 'NSW',   // New South Wales
+            'MX': 'DF',    // Mexico City (Distrito Federal)
+          };
+          return dummyStates[countryCode] || '';
+        };
+
+        // Add billing address if country is set
+        if (billingCountry) {
+          const billingPostcode = formData.billing_address.postcode || getDummyPostcode(billingCountry);
+          const billingState = formData.billing_address.state || getDummyState(billingCountry);
+          updatePayload.billing_address = {
+            country: billingCountry,
+            ...(billingState && { state: billingState }),
+            ...(formData.billing_address.city && { city: formData.billing_address.city }),
+            postcode: billingPostcode
+          };
+        }
+
+        // Add shipping address if country is set
+        if (shipToDifferentAddress && shippingCountry) {
+          const shippingPostcode = formData.shipping_address.postcode || getDummyPostcode(shippingCountry);
+          const shippingState = formData.shipping_address.state || getDummyState(shippingCountry);
+          updatePayload.shipping_address = {
+            country: shippingCountry,
+            ...(shippingState && { state: shippingState }),
+            ...(formData.shipping_address.city && { city: formData.shipping_address.city }),
+            postcode: shippingPostcode
+          };
+        } else if (!shipToDifferentAddress && billingCountry) {
+          // Use billing address as shipping address if not shipping to different address
+          updatePayload.shipping_address = updatePayload.billing_address;
+        }
+
+        // Only call API if we have something to update
+        if (Object.keys(updatePayload).length > 0) {
+          await callCartApi('/wp-json/wc/store/v1/cart/update-customer', 'POST', updatePayload);
+        }
+      } catch (error) {
+        console.error('Error updating customer for shipping calculation:', error);
+
+        // Parse and display validation errors to the user
+        if (error.message && (error.message.includes('invalid_postcode') ||
+            error.message.includes('invalid_state') ||
+            error.message.includes('postcode') ||
+            error.message.includes('ZIP'))) {
+          setAddressValidationError('Please check that your address details (state/province and postal code) match the selected country.');
+        }
+      }
+    }, 500); // 500ms debounce
+
+    return () => clearTimeout(timeoutId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    formData?.billing_address?.country,
+    formData?.billing_address?.state,
+    formData?.billing_address?.city,
+    formData?.billing_address?.postcode,
+    formData?.shipping_address?.country,
+    formData?.shipping_address?.state,
+    formData?.shipping_address?.city,
+    formData?.shipping_address?.postcode,
+    shipToDifferentAddress,
+    isLoadingCountries,
+    isCartLoading
+    // callCartApi is intentionally excluded to avoid infinite loops
+  ]);
 
   useEffect(() => {
     // console.log("[CheckoutPage] Cart data received:", cart);
@@ -173,13 +363,30 @@ export default function CheckoutPage() {
 
     if (name.includes('.')) {
       const [addressType, fieldName] = name.split('.'); // e.g., "billing_address", "first_name"
-      setFormData(prev => ({
-        ...prev,
-        [addressType]: {
-          ...prev[addressType],
-          [fieldName]: value
+
+      // Update form data
+      setFormData(prev => {
+        const newFormData = {
+          ...prev,
+          [addressType]: {
+            ...prev[addressType],
+            [fieldName]: value
+          }
+        };
+
+        // If country changes, reset state and postcode to avoid invalid combinations
+        if (fieldName === 'country') {
+          const selectedCountry = countries.find(c => c.code === value);
+          // Clear state and postcode when country changes
+          newFormData[addressType].state = '';
+          newFormData[addressType].postcode = '';
+
+          // If the new country has states, the user will need to select one
+          // (We don't auto-select to avoid confusion with the cleared postcode)
         }
-      }));
+
+        return newFormData;
+      });
     } else if (type === 'checkbox') {
         // Handle top-level checkboxes if any
         // Example: setFormData(prev => ({ ...prev, [name]: checked }));
@@ -524,19 +731,22 @@ export default function CheckoutPage() {
     payPalClientId ? (
       <PayPalScriptProvider options={{ "client-id": payPalClientId, currency: formData?.billing_address?.currency || cart?.totals?.currency_code || "USD" }}>
         <Elements stripe={stripePromise}>
-          <CheckoutFormContent 
-            shipToDifferentAddress={shipToDifferentAddress} 
+          <CheckoutFormContent
+            shipToDifferentAddress={shipToDifferentAddress}
             setShipToDifferentAddress={setShipToDifferentAddress}
             formData={formData}
             handleChange={handleChange}
-            handleSubmit={handleSubmit} 
+            handleSubmit={handleSubmit}
             isProcessing={isProcessing}
             submissionError={submissionError}
             isPaymentDeclineError={isPaymentDeclineError}
             handleModalClose={handleModalClose}
-            isCartLoading={isCartLoading} 
+            isCartLoading={isCartLoading}
             availablePaymentMethods={availablePaymentMethods}
             handlePaymentMethodChange={handlePaymentMethodChange}
+            countries={countries}
+            isLoadingCountries={isLoadingCountries}
+            addressValidationError={addressValidationError}
             // START PAYPAL PROPS
             onPayPalCreateOrder={onPayPalCreateOrder}
             onPayPalApprove={onPayPalApprove}
@@ -549,19 +759,22 @@ export default function CheckoutPage() {
     ) : (
       // Fallback if PayPal Client ID is not loaded, Stripe still works
       <Elements stripe={stripePromise}>
-        <CheckoutFormContent 
-          shipToDifferentAddress={shipToDifferentAddress} 
+        <CheckoutFormContent
+          shipToDifferentAddress={shipToDifferentAddress}
           setShipToDifferentAddress={setShipToDifferentAddress}
           formData={formData}
           handleChange={handleChange}
-          handleSubmit={handleSubmit} 
+          handleSubmit={handleSubmit}
           isProcessing={isProcessing}
           submissionError={submissionError}
           isPaymentDeclineError={isPaymentDeclineError}
           handleModalClose={handleModalClose}
-          isCartLoading={isCartLoading} 
+          isCartLoading={isCartLoading}
           availablePaymentMethods={availablePaymentMethods}
           handlePaymentMethodChange={handlePaymentMethodChange}
+          countries={countries}
+          isLoadingCountries={isLoadingCountries}
+          addressValidationError={addressValidationError}
           // PayPal props won't be used here, or pass null/undefined
         />
       </Elements>
@@ -570,9 +783,10 @@ export default function CheckoutPage() {
 }
 
 // New component to use Stripe hooks
-function CheckoutFormContent({ 
-  shipToDifferentAddress, setShipToDifferentAddress, formData, handleChange, handleSubmit, 
+function CheckoutFormContent({
+  shipToDifferentAddress, setShipToDifferentAddress, formData, handleChange, handleSubmit,
   isProcessing, submissionError, isPaymentDeclineError, handleModalClose, isCartLoading, availablePaymentMethods, handlePaymentMethodChange,
+  countries, isLoadingCountries, addressValidationError,
   // START PAYPAL PROPS
   onPayPalCreateOrder, onPayPalApprove, onPayPalError, onPayPalCancel
   // END PAYPAL PROPS
@@ -613,8 +827,19 @@ function CheckoutFormContent({
             {/* Billing Details Form */}
             <div className="border-t border-gray-200 pt-10">
               <h2 className="text-lg font-medium text-gray-900 mb-6">Billing details</h2>
-              <AddressForm type="billing" formData={formData} handleChange={handleChange} />
-              
+              {isLoadingCountries ? (
+                <p className="text-gray-500">Loading countries...</p>
+              ) : (
+                <AddressForm type="billing" formData={formData} handleChange={handleChange} countries={countries} />
+              )}
+
+              {/* Address Validation Error */}
+              {addressValidationError && (
+                <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-md">
+                  <p className="text-sm text-red-800">{addressValidationError}</p>
+                </div>
+              )}
+
               <div className="mt-10 relative flex items-start">
                 <div className="flex h-6 items-center">
                   <input
@@ -638,7 +863,11 @@ function CheckoutFormContent({
             {shipToDifferentAddress && (
               <div className="border-t border-gray-200 pt-10">
                 <h2 className="text-lg font-medium text-gray-900 mb-6">Shipping details</h2>
-                <AddressForm type="shipping" formData={formData} handleChange={handleChange} />
+                {isLoadingCountries ? (
+                  <p className="text-gray-500">Loading countries...</p>
+                ) : (
+                  <AddressForm type="shipping" formData={formData} handleChange={handleChange} countries={countries} />
+                )}
               </div>
             )}
 

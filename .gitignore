@@ -48,3 +48,9 @@ scripts/fetchProductJson.js
 
 # Unused Images
 originalImages/
+
+
+# Claude
+prompt*
+.claude/
+*.claude

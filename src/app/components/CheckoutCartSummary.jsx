@@ -4,6 +4,13 @@ import { useCart } from '@/context/CartContext';
 import { formatPrice } from '@/app/services/woocommerce';
 import Image from 'next/image';
 
+function decodeHtmlEntities(text) {
+  if (typeof window === 'undefined') return text;
+  const textarea = document.createElement('textarea');
+  textarea.innerHTML = text;
+  return textarea.value;
+}
+
 export default function CheckoutCartSummary() {
   const { cart, isLoading, error } = useCart();
 
@@ -48,8 +55,8 @@ export default function CheckoutCartSummary() {
               <div className="ml-4 flex flex-1 flex-col">
                 <div>
                   <div className="flex justify-between text-base font-medium text-gray-900">
-                    <h3>{item.name}</h3>
-                    <p className="ml-4">{formatPrice(item.totals.line_total, currency)}</p>
+                    <h3>{decodeHtmlEntities(item.name)}</h3>
+                    <p className="ml-4">{currencySymbol}{(parseFloat(item.totals.line_total) / (10**totals.currency_minor_unit)).toFixed(2)}</p>
                   </div>
                   {item.variation.map(v => (
                      <p key={`${v.attribute}-${v.value}`} className="mt-1 text-sm text-gray-500">{v.attribute}: {v.value}</p>
