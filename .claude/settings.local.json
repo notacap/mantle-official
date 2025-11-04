@@ -1,8 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(node test-countries-api.js)",
-      "Bash(del test-countries-api.js)"
+      "Bash(curl:*)"
     ],
     "deny": [],
     "ask": []

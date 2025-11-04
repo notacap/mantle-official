@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { formatPrice } from '@/app/services/woocommerce';
 import { useCart } from '@/context/CartContext'; // Import useCart hook
 
@@ -17,8 +17,8 @@ export default function ProductActions({ productId, price, sizes, colors, amount
   const sizeDropdownRef = useRef(null);
   const { callCartApi, setIsLoading: setCartLoading, isLoading: isCartLoading, nonce, openSideCart } = useCart(); // Get context functions
   
-  // Helper function to update variation image
-  const updateVariationImage = (color, size) => {
+  // Helper function to update variation image - memoized to prevent re-renders
+  const updateVariationImage = useCallback((color, size) => {
     if (!variations || variations.length === 0 || !onVariationImageChange) return;
     
     const matchingVariation = variations.find(variation => {
@@ -51,13 +51,26 @@ export default function ProductActions({ productId, price, sizes, colors, amount
         alt: matchingVariation.image.alt || `Product - ${color} ${size}`.trim()
       });
     }
-  };
+  }, [variations, onVariationImageChange, colors, sizes]);
+  
+  // Track if we've initialized the default selections
+  const [hasInitialized, setHasInitialized] = useState(false);
   
   // This effect replaces the original "set initial selections" effect.
   // It intelligently sets the default options based on stock availability.
   useEffect(() => {
+    // Only run initialization once
+    if (hasInitialized) {
+      return;
+    }
+    
+    // Make sure we have the data we need before initializing
+    if (!sizes || sizes.length === 0) {
+      return;
+    }
+    
     // Default to the first option in the list.
-    let defaultSize = sizes?.[0] || '';
+    let defaultSize = sizes[0] || '';
     let defaultColor = colors?.[0] || '';
 
     // If we have variations, try to find a better default.
@@ -69,24 +82,26 @@ export default function ProductActions({ productId, price, sizes, colors, amount
             const colorAttr = firstInStockVariation.attributes.find(a => a.name.toLowerCase() === 'color' || a.name.toLowerCase() === 'colours');
             const sizeAttr = firstInStockVariation.attributes.find(a => a.name.toLowerCase() === 'size' || a.name.toLowerCase() === 'sizes');
 
-            if (colorAttr && colors.includes(colorAttr.option)) {
+            if (colorAttr && colors && colors.includes(colorAttr.option)) {
                 defaultColor = colorAttr.option;
             }
-            if (sizeAttr && sizes.includes(sizeAttr.option)) {
+            if (sizeAttr && sizes && sizes.includes(sizeAttr.option)) {
                 defaultSize = sizeAttr.option;
             }
         }
     }
 
+    // Set the defaults
     setSelectedColor(defaultColor);
     setSelectedSize(defaultSize);
+    setHasInitialized(true);
     
     // Update variation image for initial selection
     if (defaultColor || defaultSize) {
       updateVariationImage(defaultColor, defaultSize);
     }
 
-  }, [variations, sizes, colors]);
+  }, [variations, sizes, colors, updateVariationImage, hasInitialized]);
 
   useEffect(() => {
     if (selectedAmount && amounts && amounts.length > 0) {

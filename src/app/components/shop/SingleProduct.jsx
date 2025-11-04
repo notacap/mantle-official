@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -125,11 +125,11 @@ export default function SingleProduct({ productIdentifier }) {
   const [sizeChartFootnote, setSizeChartFootnote] = useState('');
   const [imageSetByVariation, setImageSetByVariation] = useState(false);
   
-  // Callback to handle variation image changes
-  const handleVariationImageChange = (newImage) => {
+  // Callback to handle variation image changes - memoized to prevent re-renders
+  const handleVariationImageChange = useCallback((newImage) => {
     setCurrentImage(newImage);
     setImageSetByVariation(true);
-  };
+  }, []);
   
   // Fetch product data
   const { 
