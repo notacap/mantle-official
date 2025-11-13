@@ -441,10 +441,28 @@ function getBaseUrl(context) {
     const hasRegularPrice = product.regular_price && product.regular_price !== '';
     const hasSalePrice = product.sale_price && product.sale_price !== '';
   
-    // For variable products with price ranges
+    // For variable products that are on sale, extract prices from price_html
+    if (product.type === 'variable' && isOnSale && product.price_html) {
+      // Look for the pattern: <del>$250.00</del> ... <ins>$137.50</ins>
+      const delMatch = product.price_html.match(/<del[^>]*>.*?\$?([\d,]+\.?\d*).*?<\/del>/i);
+      const insMatch = product.price_html.match(/<ins[^>]*>.*?\$?([\d,]+\.?\d*).*?<\/ins>/i);
+      
+      if (delMatch && insMatch) {
+        const regularPrice = delMatch[1].replace(/,/g, '');
+        const salePrice = insMatch[1].replace(/,/g, '');
+        return {
+          display: formatPrice(salePrice),
+          hasDiscount: true,
+          regularPrice: formatPrice(regularPrice),
+          salePrice: formatPrice(salePrice)
+        };
+      }
+    }
+  
+    // For variable products with price ranges (not on sale)
     if (product.type === 'variable' && product.price_html) {
-      // Check if it's a price range (contains dash or hyphen)
-      if (product.price_html.includes('–') || product.price_html.includes('-')) {
+      // Check if it's a price range (contains dash or hyphen but no del/ins tags)
+      if (!product.price_html.includes('<del') && (product.price_html.includes('–') || product.price_html.includes('-'))) {
         // Extract just the numeric prices from price_html
         const priceMatch = product.price_html.match(/\$?([\d,]+\.?\d*)\s*[–-]\s*\$?([\d,]+\.?\d*)/i);
         if (priceMatch) {
@@ -460,7 +478,7 @@ function getBaseUrl(context) {
       }
     }
   
-    // Handle sale pricing
+    // Handle sale pricing for simple products
     if (isOnSale && hasRegularPrice && hasSalePrice) {
       return {
         display: formatPrice(product.sale_price),
