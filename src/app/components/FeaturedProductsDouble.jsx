@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
-import { formatPrice, getProductImageUrl, getProductSecondaryImageUrl } from '../services/woocommerce';
+import { formatPrice, getProductImageUrl, getProductSecondaryImageUrl, getProductPriceDisplay } from '../services/woocommerce';
 import StarRating from './shop/StarRating';
 import { useCombinedRating } from '../utils/productRatings';
 
@@ -141,13 +141,29 @@ export default function FeaturedProductsDouble({ products }) {
               <StarRating rating={rating} count={count} />
             </div>
             
-            <p style={{ 
+            <div style={{ 
               fontSize: '1.5rem',
               fontWeight: 'bold', 
               color: '#9CB24D' 
             }}>
-              {formatPrice(product.price)}
-            </p>
+              {(() => {
+                const priceInfo = getProductPriceDisplay(product);
+                if (priceInfo.hasDiscount) {
+                  return (
+                    <>
+                      <span style={{ textDecoration: 'line-through', color: '#6b7280', fontSize: '1.125rem', marginRight: '0.5rem' }}>
+                        {priceInfo.regularPrice}
+                      </span>
+                      <span style={{ color: '#dc2626' }}>
+                        {priceInfo.salePrice}
+                      </span>
+                    </>
+                  );
+                } else {
+                  return priceInfo.display;
+                }
+              })()}
+            </div>
           </div>
         </div>
       </Link>

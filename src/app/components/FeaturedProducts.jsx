@@ -4,7 +4,7 @@ import { useRef, useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
-import { formatPrice, getProductImageUrl, getProductSecondaryImageUrl } from '../services/woocommerce';
+import { formatPrice, getProductImageUrl, getProductSecondaryImageUrl, getProductPriceDisplay } from '../services/woocommerce';
 import StarRating from './shop/StarRating';
 import FeaturedProductsSingle from './FeaturedProductsSingle';
 import FeaturedProductsDouble from './FeaturedProductsDouble';
@@ -298,9 +298,25 @@ export default function FeaturedProducts() {
             <div style={{ marginBottom: '0.75rem' }}>
               <StarRating rating={rating} count={count} />
             </div>
-            <p style={{ fontWeight: 'bold', color: '#9CB24D' }}>
-              {formatPrice(product.price)}
-            </p>
+            <div style={{ fontWeight: 'bold', color: '#9CB24D' }}>
+              {(() => {
+                const priceInfo = getProductPriceDisplay(product);
+                if (priceInfo.hasDiscount) {
+                  return (
+                    <>
+                      <span style={{ textDecoration: 'line-through', color: '#6b7280', fontSize: '0.875rem', marginRight: '0.5rem' }}>
+                        {priceInfo.regularPrice}
+                      </span>
+                      <span style={{ color: '#dc2626' }}>
+                        {priceInfo.salePrice}
+                      </span>
+                    </>
+                  );
+                } else {
+                  return priceInfo.display;
+                }
+              })()}
+            </div>
           </div>
         </div>
       </Link>

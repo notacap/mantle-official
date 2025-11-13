@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getProductImageUrl, formatPrice } from '@/app/services/woocommerce';
+import { getProductImageUrl, formatPrice, getProductPriceDisplay } from '@/app/services/woocommerce';
 import ProductActions from './ProductActions';
 import {
   Dialog,
@@ -601,18 +601,25 @@ export default function SingleProduct({ productIdentifier }) {
             <StarRating rating={rating} count={reviewCount} />
           </div>
           
-          <p style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#9CB24D' }}>
+          <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#9CB24D' }}>
             {(() => {
-              if (product.price_html && (product.price_html.includes('–') || product.price_html.includes('-'))) {
-                const strippedHtml = stripHtml(product.price_html);
-                // Remove the duplicate "Price range: $X through $Y" text if it exists
-                const cleanedPrice = strippedHtml.replace(/Price range: \$[\d,]+\.?\d* through \$[\d,]+\.?\d*/gi, '').trim();
-                return cleanedPrice;
+              const priceInfo = getProductPriceDisplay(product);
+              if (priceInfo.hasDiscount) {
+                return (
+                  <>
+                    <span style={{ textDecoration: 'line-through', color: '#6b7280', fontSize: '1.25rem', marginRight: '0.5rem' }}>
+                      {priceInfo.regularPrice}
+                    </span>
+                    <span style={{ color: '#dc2626' }}>
+                      {priceInfo.salePrice}
+                    </span>
+                  </>
+                );
               } else {
-                return formatPrice(product.price);
+                return priceInfo.display;
               }
             })()}
-          </p>
+          </div>
           
           <div dangerouslySetInnerHTML={{ __html: ogDescriptionValue.replace(/Price range: \$[\d,]+\.?\d* through \$[\d,]+\.?\d*/gi, '') }} 
             style={{ color: '#4b5563', lineHeight: '1.5' }} />

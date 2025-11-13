@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import Image from 'next/image';
-import { getProductImageUrl, getProductSecondaryImageUrl, formatPrice } from '@/app/services/woocommerce';
+import { getProductImageUrl, getProductSecondaryImageUrl, formatPrice, getProductPriceDisplay } from '@/app/services/woocommerce';
 import '@/app/shop/products.css'; // Import the CSS file for animations
 import ProductSkeleton from './ProductSkeleton';
 import StarRating from './StarRating'; // Import StarRating
@@ -164,18 +164,25 @@ export default function ProductGrid({ products }) {
                 <div style={{ marginBottom: '0.75rem' }}>
                   <StarRating rating={rating} count={reviewCount} />
                 </div>
-                <p style={{ fontWeight: 'bold', color: '#9CB24D' }}>
+                <div style={{ fontWeight: 'bold', color: '#9CB24D' }}>
                   {(() => {
-                    if (product.price_html && (product.price_html.includes('–') || product.price_html.includes('-'))) {
-                      const strippedHtml = stripHtml(product.price_html);
-                      // Remove the duplicate "Price range: $X through $Y" text if it exists
-                      const cleanedPrice = strippedHtml.replace(/Price range: \$[\d,]+\.?\d* through \$[\d,]+\.?\d*/gi, '').trim();
-                      return cleanedPrice;
+                    const priceInfo = getProductPriceDisplay(product);
+                    if (priceInfo.hasDiscount) {
+                      return (
+                        <>
+                          <span style={{ textDecoration: 'line-through', color: '#6b7280', fontSize: '0.875rem', marginRight: '0.5rem' }}>
+                            {priceInfo.regularPrice}
+                          </span>
+                          <span style={{ color: '#dc2626' }}>
+                            {priceInfo.salePrice}
+                          </span>
+                        </>
+                      );
                     } else {
-                      return formatPrice(product.price);
+                      return priceInfo.display;
                     }
                   })()}
-                </p>
+                </div>
               </div>
             </div>
           </Link>

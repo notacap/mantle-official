@@ -424,4 +424,62 @@ function getBaseUrl(context) {
       console.error('Error fetching category tree:', error);
       return [];
     }
+  }
+
+  /**
+   * Get formatted price display for a product, handling sale prices properly
+   * @param {Object} product - Product object from WooCommerce
+   * @returns {Object} - Object with { display: string, hasDiscount: boolean, regularPrice: string|null, salePrice: string|null }
+   */
+  export function getProductPriceDisplay(product) {
+    if (!product) {
+      return { display: '$0.00', hasDiscount: false, regularPrice: null, salePrice: null };
+    }
+  
+    // Check if product is on sale
+    const isOnSale = product.on_sale === true;
+    const hasRegularPrice = product.regular_price && product.regular_price !== '';
+    const hasSalePrice = product.sale_price && product.sale_price !== '';
+  
+    // For variable products with price ranges
+    if (product.type === 'variable' && product.price_html) {
+      // Check if it's a price range (contains dash or hyphen)
+      if (product.price_html.includes('–') || product.price_html.includes('-')) {
+        // Extract just the numeric prices from price_html
+        const priceMatch = product.price_html.match(/\$?([\d,]+\.?\d*)\s*[–-]\s*\$?([\d,]+\.?\d*)/i);
+        if (priceMatch) {
+          const minPrice = priceMatch[1].replace(/,/g, '');
+          const maxPrice = priceMatch[2].replace(/,/g, '');
+          return {
+            display: `$${parseFloat(minPrice).toFixed(2)} - $${parseFloat(maxPrice).toFixed(2)}`,
+            hasDiscount: false,
+            regularPrice: null,
+            salePrice: null
+          };
+        }
+      }
+    }
+  
+    // Handle sale pricing
+    if (isOnSale && hasRegularPrice && hasSalePrice) {
+      return {
+        display: formatPrice(product.sale_price),
+        hasDiscount: true,
+        regularPrice: formatPrice(product.regular_price),
+        salePrice: formatPrice(product.sale_price)
+      };
+    }
+  
+    // Handle regular pricing
+    if (product.price) {
+      return {
+        display: formatPrice(product.price),
+        hasDiscount: false,
+        regularPrice: null,
+        salePrice: null
+      };
+    }
+  
+    // Fallback
+    return { display: '$0.00', hasDiscount: false, regularPrice: null, salePrice: null };
   } 
