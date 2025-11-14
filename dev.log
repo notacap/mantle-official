@@ -1,0 +1,632 @@
+
+> mantle-official@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.2.3
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.1.184:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 892ms
+ ✓ Compiled /middleware in 121ms (101 modules)
+ ○ Compiling /product/[slug] ...
+ ✓ Compiled /product/[slug] in 1468ms (1126 modules)
+ ✓ Compiled in 264ms (509 modules)
+ GET /product/mantle-soft-shell 200 in 2097ms
+ ✓ Compiled /api/products in 349ms (1138 modules)
+ GET /api/categories 200 in 841ms
+ GET /api/products?slug=mantle-soft-shell 200 in 894ms
+ GET /api/collections 200 in 1029ms
+ ✓ Compiled /api/products/[id]/variations in 230ms (1142 modules)
+ GET /api/product-attributes?attribute_id=3 200 in 265ms
+ GET /api/product-attributes?attribute_id=1 200 in 265ms
+ GET /api/products/563/variations 200 in 589ms
+ ⚠ The "images.domains" configuration is deprecated. Please use "images.remotePatterns" configuration instead.
+ ✓ Compiled /api/product-reviews in 151ms (1144 modules)
+ GET /api/product-reviews?product_id=563 200 in 517ms
+ GET /product/mantle-soft-shell 200 in 683ms
+ GET /api/categories 200 in 470ms
+ GET /api/products?slug=mantle-soft-shell 200 in 530ms
+ GET /api/product-attributes?attribute_id=3 200 in 10ms
+ GET /api/products/563/variations 200 in 20ms
+ GET /api/product-attributes?attribute_id=1 200 in 23ms
+ GET /api/collections 200 in 570ms
+ GET /api/product-reviews?product_id=563 200 in 286ms
+ GET /product/mantle-soft-shell 200 in 397ms
+ GET /api/collections 200 in 334ms
+ GET /api/categories 200 in 363ms
+ GET /api/products?slug=mantle-soft-shell 200 in 385ms
+ GET /api/product-attributes?attribute_id=3 200 in 6ms
+ GET /api/product-attributes?attribute_id=1 200 in 10ms
+ GET /api/products/563/variations 200 in 15ms
+ GET /api/product-reviews?product_id=563 200 in 290ms
+ GET /product/mantle-soft-shell 200 in 43ms
+ GET /api/categories 200 in 8ms
+ GET /api/collections 200 in 10ms
+ GET /api/products?slug=mantle-soft-shell 200 in 401ms
+ GET /api/product-attributes?attribute_id=3 200 in 6ms
+ GET /api/product-attributes?attribute_id=1 200 in 11ms
+ GET /api/products/563/variations 200 in 15ms
+ GET /api/product-reviews?product_id=563 200 in 623ms
+ GET /product/mantle-soft-shell 200 in 449ms
+ GET /api/categories 200 in 424ms
+ GET /api/collections 200 in 440ms
+ GET /api/products?slug=mantle-soft-shell 200 in 451ms
+ GET /api/product-attributes?attribute_id=3 200 in 8ms
+ GET /api/product-attributes?attribute_id=1 200 in 13ms
+ GET /api/products/563/variations 200 in 18ms
+ GET /api/product-reviews?product_id=563 200 in 359ms
+ ✓ Compiled / in 469ms (1191 modules)
+ GET / 200 in 546ms
+ ✓ Compiled /api/products/featured in 175ms (1194 modules)
+ GET /api/products/featured?limit=8 200 in 604ms
+ ✓ Compiled /shop in 286ms (1225 modules)
+ GET /shop 200 in 347ms
+ ✓ Compiled /api/products/all in 156ms (1227 modules)
+ GET /api/products/all?limit=24 200 in 1402ms
+ GET /api/product-reviews?product_id=5403 200 in 372ms
+ GET /product/mantle-soft-shell 200 in 43ms
+ GET /product/mantle-soft-shell 200 in 146ms
+ GET /api/categories 200 in 9ms
+ GET /api/collections 200 in 15ms
+ GET /api/products?slug=mantle-soft-shell 200 in 474ms
+ GET /api/product-attributes?attribute_id=3 200 in 12ms
+ GET /api/product-attributes?attribute_id=1 200 in 14ms
+ GET /api/products/563/variations 200 in 19ms
+ GET /api/product-reviews?product_id=563 200 in 531ms
+ ✓ Compiled in 181ms (536 modules)
+ ✓ Compiled /_not-found in 360ms (1211 modules)
+ GET /product/mantle-soft-shell 404 in 429ms
+ GET /product/mantle-soft-shell 200 in 27ms
+ GET /product/mantle-soft-shell 200 in 102ms
+ ⨯ Failed to generate static paths for /product/[slug]:
+[Error: Cannot find module './vendor-chunks/@tanstack.js'
+Require stack:
+- C:\Users\nocap\Desktop\code\mantle-official\.next\server\webpack-runtime.js
+- C:\Users\nocap\Desktop\code\mantle-official\.next\server\app\product\[slug]\page.js
+- C:\Users\nocap\Desktop\code\mantle-official\node_modules\next\dist\server\require.js
+- C:\Users\nocap\Desktop\code\mantle-official\node_modules\next\dist\server\load-components.js
+- C:\Users\nocap\Desktop\code\mantle-official\node_modules\next\dist\build\utils.js
+- C:\Users\nocap\Desktop\code\mantle-official\node_modules\next\dist\server\dev\static-paths-worker.js
+- C:\Users\nocap\Desktop\code\mantle-official\node_modules\next\dist\compiled\jest-worker\processChild.js] {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}
+ ⨯ Failed to generate static paths for /product/[slug]:
+[Error: Cannot find module './vendor-chunks/@tanstack.js'
+Require stack:
+- C:\Users\nocap\Desktop\code\mantle-official\.next\server\webpack-runtime.js
+- C:\Users\nocap\Desktop\code\mantle-official\.next\server\app\product\[slug]\page.js
+- C:\Users\nocap\Desktop\code\mantle-official\node_modules\next\dist\server\require.js
+- C:\Users\nocap\Desktop\code\mantle-official\node_modules\next\dist\server\load-components.js
+- C:\Users\nocap\Desktop\code\mantle-official\node_modules\next\dist\build\utils.js
+- C:\Users\nocap\Desktop\code\mantle-official\node_modules\next\dist\server\dev\static-paths-worker.js
+- C:\Users\nocap\Desktop\code\mantle-official\node_modules\next\dist\compiled\jest-worker\processChild.js] {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}
+ GET /_next/static/css/app/layout.css?v=1763081873622 404 in 47ms
+ GET /_next/static/css/app/product/%5Bslug%5D/page.css?v=1763081873622 404 in 48ms
+ GET /_next/static/chunks/main-app.js?v=1763081873622 404 in 70ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 69ms
+ GET /_next/static/chunks/app/product/%5Bslug%5D/page.js 404 in 70ms
+ ✓ Compiled in 236ms (1211 modules)
+ ✓ Compiled in 108ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 69ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 56ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 59ms (539 modules)
+ ✓ Compiled in 91ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 64ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 58ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 64ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 60ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 64ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 58ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 59ms (539 modules)
+ ✓ Compiled in 64ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 64ms (539 modules)
+ ✓ Compiled in 57ms (539 modules)
+ ✓ Compiled in 47ms (539 modules)
+ ✓ Compiled in 66ms (539 modules)
+ ✓ Compiled in 59ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 60ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 59ms (539 modules)
+ ✓ Compiled in 45ms (539 modules)
+ ✓ Compiled in 49ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 64ms (539 modules)
+ ✓ Compiled in 59ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 57ms (539 modules)
+ ✓ Compiled in 46ms (539 modules)
+ ✓ Compiled in 49ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 64ms (539 modules)
+ ✓ Compiled in 60ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 49ms (539 modules)
+ ✓ Compiled in 75ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 58ms (539 modules)
+ ✓ Compiled in 46ms (539 modules)
+ ✓ Compiled in 49ms (539 modules)
+ ✓ Compiled in 60ms (539 modules)
+ ✓ Compiled in 48ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 60ms (539 modules)
+ ✓ Compiled in 49ms (539 modules)
+ ✓ Compiled in 64ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 60ms (539 modules)
+ ✓ Compiled in 59ms (539 modules)
+ ✓ Compiled in 46ms (539 modules)
+ ✓ Compiled in 49ms (539 modules)
+ ✓ Compiled in 60ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 50ms (539 modules)
+ ✓ Compiled in 70ms (539 modules)
+ ✓ Compiled in 52ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 59ms (539 modules)
+ ✓ Compiled in 60ms (539 modules)
+ ✓ Compiled in 50ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 60ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 64ms (539 modules)
+ ✓ Compiled in 59ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 48ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 44ms (539 modules)
+ ✓ Compiled in 47ms (539 modules)
+ ✓ Compiled in 48ms (539 modules)
+ ✓ Compiled in 46ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 64ms (539 modules)
+ ✓ Compiled in 73ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 60ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 58ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 59ms (539 modules)
+ ✓ Compiled in 59ms (539 modules)
+ ✓ Compiled in 45ms (539 modules)
+ ✓ Compiled in 50ms (539 modules)
+ ✓ Compiled in 64ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 59ms (539 modules)
+ ✓ Compiled in 48ms (539 modules)
+ ✓ Compiled in 49ms (539 modules)
+ ✓ Compiled in 64ms (539 modules)
+ ✓ Compiled in 60ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 76ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 60ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 65ms (539 modules)
+ ✓ Compiled in 60ms (539 modules)
+ ✓ Compiled in 58ms (539 modules)
+ ✓ Compiled in 46ms (539 modules)
+ ✓ Compiled in 49ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 47ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 59ms (539 modules)
+ ✓ Compiled in 46ms (539 modules)
+ ✓ Compiled in 50ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 60ms (539 modules)
+ ✓ Compiled in 47ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 68ms (539 modules)
+ ✓ Compiled in 60ms (539 modules)
+ ✓ Compiled in 57ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 59ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 60ms (539 modules)
+ ✓ Compiled in 60ms (539 modules)
+ ✓ Compiled in 46ms (539 modules)
+ ✓ Compiled in 48ms (539 modules)
+ ✓ Compiled in 47ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 60ms (539 modules)
+ ✓ Compiled in 60ms (539 modules)
+ ✓ Compiled in 64ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 58ms (539 modules)
+ ✓ Compiled in 45ms (539 modules)
+ ✓ Compiled in 50ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 66ms (539 modules)
+ ✓ Compiled in 59ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 60ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 81ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 60ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 66ms (539 modules)
+ ✓ Compiled in 59ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 59ms (539 modules)
+ ✓ Compiled in 48ms (539 modules)
+ ✓ Compiled in 47ms (539 modules)
+ ✓ Compiled in 47ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 46ms (539 modules)
+ ✓ Compiled in 46ms (539 modules)
+ ✓ Compiled in 47ms (539 modules)
+ ✓ Compiled in 48ms (539 modules)
+ ✓ Compiled in 46ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 47ms (539 modules)
+ ✓ Compiled in 49ms (539 modules)
+ ✓ Compiled in 46ms (539 modules)
+ ✓ Compiled in 48ms (539 modules)
+ ✓ Compiled in 47ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 65ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 60ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 57ms (539 modules)
+ ✓ Compiled in 46ms (539 modules)
+ ✓ Compiled in 51ms (539 modules)
+ ✓ Compiled in 59ms (539 modules)
+ ✓ Compiled in 46ms (539 modules)
+ ✓ Compiled in 47ms (539 modules)
+ ✓ Compiled in 46ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 59ms (539 modules)
+ ✓ Compiled in 46ms (539 modules)
+ ✓ Compiled in 48ms (539 modules)
+ ✓ Compiled in 47ms (539 modules)
+ ✓ Compiled in 60ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 60ms (539 modules)
+ ✓ Compiled in 47ms (539 modules)
+ ✓ Compiled in 45ms (539 modules)
+ ✓ Compiled in 46ms (539 modules)
+ ✓ Compiled in 50ms (539 modules)
+ ✓ Compiled in 70ms (539 modules)
+ ✓ Compiled in 54ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 58ms (539 modules)
+ ✓ Compiled in 65ms (539 modules)
+ ✓ Compiled in 60ms (539 modules)
+ ✓ Compiled in 65ms (539 modules)
+ ✓ Compiled in 58ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 59ms (539 modules)
+ ✓ Compiled in 49ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 58ms (539 modules)
+ ✓ Compiled in 48ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 60ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 45ms (539 modules)
+ ✓ Compiled in 48ms (539 modules)
+ ✓ Compiled in 47ms (539 modules)
+ ✓ Compiled in 45ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 48ms (539 modules)
+ ✓ Compiled in 60ms (539 modules)
+ ✓ Compiled in 47ms (539 modules)
+ ✓ Compiled in 45ms (539 modules)
+ ✓ Compiled in 45ms (539 modules)
+ ✓ Compiled in 48ms (539 modules)
+ ✓ Compiled in 47ms (539 modules)
+ ✓ Compiled in 45ms (539 modules)
+ ✓ Compiled in 46ms (539 modules)
+ ✓ Compiled in 47ms (539 modules)
+ ✓ Compiled in 48ms (539 modules)
+ ✓ Compiled in 68ms (539 modules)
+ ✓ Compiled in 57ms (539 modules)
+ ✓ Compiled in 58ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 65ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 60ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 65ms (539 modules)
+ ✓ Compiled in 60ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 47ms (539 modules)
+ ✓ Compiled in 66ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 64ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 59ms (539 modules)
+ ✓ Compiled in 60ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 65ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 59ms (539 modules)
+ ✓ Compiled in 60ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 64ms (539 modules)
+ ✓ Compiled in 59ms (539 modules)
+ ✓ Compiled in 60ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 59ms (539 modules)
+ ✓ Compiled in 59ms (539 modules)
+ ✓ Compiled in 49ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 67ms (539 modules)
+ ✓ Compiled in 58ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 64ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 60ms (539 modules)
+ ✓ Compiled in 62ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 47ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 63ms (539 modules)
+ ✓ Compiled in 58ms (539 modules)
+ ✓ Compiled in 49ms (539 modules)
+ ✓ Compiled in 46ms (539 modules)
+ ✓ Compiled in 50ms (539 modules)
+ ✓ Compiled in 60ms (539 modules)
+ ✓ Compiled in 47ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 61ms (539 modules)
+ ✓ Compiled in 46ms (539 modules)
+ ✓ Compiled in 47ms (539 modules)
+ ✓ Compiled in 44ms (539 modules)
+ ✓ Compiled in 46ms (539 modules)
+ ✓ Compiled in 48ms (536 modules)
+ ✓ Compiled in 45ms (536 modules)
+ ✓ Compiled in 47ms (536 modules)
+ ✓ Compiled in 46ms (536 modules)
+ ✓ Compiled in 49ms (536 modules)
+ ✓ Compiled in 89ms (536 modules)
+ ✓ Compiled in 71ms (536 modules)
+ ✓ Compiled in 71ms (536 modules)
+ ✓ Compiled in 60ms (536 modules)
+ ✓ Compiled in 68ms (536 modules)
+ ✓ Compiled in 69ms (536 modules)
+ ✓ Compiled in 67ms (536 modules)
+ ✓ Compiled in 59ms (536 modules)
+ ✓ Compiled in 56ms (536 modules)
+ ✓ Compiled in 61ms (536 modules)
+ ✓ Compiled in 64ms (536 modules)
+ ✓ Compiled in 62ms (536 modules)
+ ✓ Compiled in 66ms (536 modules)
+ ✓ Compiled in 59ms (536 modules)
+ ✓ Compiled in 113ms (536 modules)
+ ✓ Compiled in 86ms (536 modules)
+ ✓ Compiled in 71ms (536 modules)
+ ✓ Compiled in 72ms (536 modules)
+ ⨯ [Error: Cannot find module './vendor-chunks/@tanstack.js'
+Require stack:
+- C:\Users\nocap\Desktop\code\mantle-official\.next\server\webpack-runtime.js
+- C:\Users\nocap\Desktop\code\mantle-official\.next\server\app\product\[slug]\page.js
+- C:\Users\nocap\Desktop\code\mantle-official\node_modules\next\dist\server\require.js
+- C:\Users\nocap\Desktop\code\mantle-official\node_modules\next\dist\server\load-components.js
+- C:\Users\nocap\Desktop\code\mantle-official\node_modules\next\dist\build\utils.js
+- C:\Users\nocap\Desktop\code\mantle-official\node_modules\next\dist\server\dev\static-paths-worker.js
+- C:\Users\nocap\Desktop\code\mantle-official\node_modules\next\dist\compiled\jest-worker\processChild.js] {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array],
+  page: '/product/mantle-soft-shell'
+}
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 923ms (1536 modules)
+ GET /product/mantle-soft-shell 500 in 1614ms
+ ✓ Compiled /favicon.ico in 138ms (774 modules)
+ GET /favicon.ico 200 in 413ms
+ ⨯ [Error: Cannot find module './vendor-chunks/@tanstack.js'
+Require stack:
+- C:\Users\nocap\Desktop\code\mantle-official\.next\server\webpack-runtime.js
+- C:\Users\nocap\Desktop\code\mantle-official\.next\server\app\product\[slug]\page.js
+- C:\Users\nocap\Desktop\code\mantle-official\node_modules\next\dist\server\require.js
+- C:\Users\nocap\Desktop\code\mantle-official\node_modules\next\dist\server\load-components.js
+- C:\Users\nocap\Desktop\code\mantle-official\node_modules\next\dist\build\utils.js
+- C:\Users\nocap\Desktop\code\mantle-official\node_modules\next\dist\server\dev\static-paths-worker.js
+- C:\Users\nocap\Desktop\code\mantle-official\node_modules\next\dist\compiled\jest-worker\processChild.js] {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array],
+  page: '/product/mantle-soft-shell'
+}
+ GET /product/mantle-soft-shell 500 in 512ms
+ GET /favicon.ico 200 in 225ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled /_not-found in 392ms (1542 modules)
+ GET /product/mantle-soft-shell 404 in 550ms
+ GET /_next/static/css/app/layout.css?v=1763081985079 404 in 34ms
+ GET /_next/static/chunks/main-app.js?v=1763081985079 404 in 78ms
+ GET /_next/static/chunks/app/layout.js 404 in 76ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 77ms
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\nocap\Desktop\code\mantle-official\.next\server\app\product\[slug]\page.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\nocap\\Desktop\\code\\mantle-official\\.next\\server\\app\\product\\[slug]\\page.js',
+  page: '/product/mantle-soft-shell'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\nocap\Desktop\code\mantle-official\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\nocap\\Desktop\\code\\mantle-official\\.next\\server\\pages\\_document.js'
+}
+ GET /product/mantle-soft-shell 500 in 1216ms
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\nocap\Desktop\code\mantle-official\.next\server\app\favicon.ico\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\nocap\\Desktop\\code\\mantle-official\\.next\\server\\app\\favicon.ico\\route.js',
+  page: '/favicon.ico'
+}
+ GET /favicon.ico 500 in 235ms
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\nocap\Desktop\code\mantle-official\.next\server\app\shop\page.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\nocap\\Desktop\\code\\mantle-official\\.next\\server\\app\\shop\\page.js',
+  page: '/shop'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\nocap\Desktop\code\mantle-official\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\nocap\\Desktop\\code\\mantle-official\\.next\\server\\pages\\_document.js'
+}
+ GET /shop 500 in 40ms
+ GET /favicon.ico 200 in 45ms
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\nocap\Desktop\code\mantle-official\.next\server\app\favicon.ico\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\nocap\\Desktop\\code\\mantle-official\\.next\\server\\app\\favicon.ico\\route.js',
+  page: '/favicon.ico'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\nocap\Desktop\code\mantle-official\.next\server\app\favicon.ico\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\nocap\\Desktop\\code\\mantle-official\\.next\\server\\app\\favicon.ico\\route.js',
+  page: '/favicon.ico'
+}
+ GET /favicon.ico 500 in 229ms
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\nocap\Desktop\code\mantle-official\.next\server\app\page.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\nocap\\Desktop\\code\\mantle-official\\.next\\server\\app\\page.js',
+  page: '/'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\nocap\Desktop\code\mantle-official\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\nocap\\Desktop\\code\\mantle-official\\.next\\server\\pages\\_document.js'
+}
+ GET / 500 in 31ms
+ GET /favicon.ico 200 in 35ms
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\nocap\Desktop\code\mantle-official\.next\server\app\favicon.ico\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\nocap\\Desktop\\code\\mantle-official\\.next\\server\\app\\favicon.ico\\route.js',
+  page: '/favicon.ico'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\nocap\Desktop\code\mantle-official\.next\server\app\favicon.ico\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\nocap\\Desktop\\code\\mantle-official\\.next\\server\\app\\favicon.ico\\route.js',
+  page: '/favicon.ico'
+}
+ GET /favicon.ico 500 in 234ms
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\nocap\Desktop\code\mantle-official\.next\server\app\page.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\nocap\\Desktop\\code\\mantle-official\\.next\\server\\app\\page.js',
+  page: '/'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\nocap\Desktop\code\mantle-official\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\nocap\\Desktop\\code\\mantle-official\\.next\\server\\pages\\_document.js'
+}
+ GET / 500 in 48ms
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\nocap\Desktop\code\mantle-official\.next\server\app\favicon.ico\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\nocap\\Desktop\\code\\mantle-official\\.next\\server\\app\\favicon.ico\\route.js',
+  page: '/favicon.ico'
+}
+ GET /favicon.ico 500 in 232ms
+ ✓ Compiled in 105ms (781 modules)
+ ✓ Compiled in 100ms (781 modules)

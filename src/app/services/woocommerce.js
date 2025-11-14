@@ -444,8 +444,9 @@ function getBaseUrl(context) {
     // For variable products that are on sale, extract prices from price_html
     if (product.type === 'variable' && isOnSale && product.price_html) {
       // Look for the pattern: <del>$250.00</del> ... <ins>$137.50</ins>
-      const delMatch = product.price_html.match(/<del[^>]*>.*?\$?([\d,]+\.?\d*).*?<\/del>/i);
-      const insMatch = product.price_html.match(/<ins[^>]*>.*?\$?([\d,]+\.?\d*).*?<\/ins>/i);
+      // Use [\s\S] to match any character including newlines, and match price format: digits.digits
+      const delMatch = product.price_html.match(/<del[^>]*>[\s\S]*?([\d]+\.[\d]+)[\s\S]*?<\/del>/i);
+      const insMatch = product.price_html.match(/<ins[^>]*>[\s\S]*?([\d]+\.[\d]+)[\s\S]*?<\/ins>/i);
       
       if (delMatch && insMatch) {
         const regularPrice = delMatch[1].replace(/,/g, '');
