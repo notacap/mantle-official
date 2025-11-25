@@ -7,6 +7,7 @@ const ALLOWED_COUNTRIES = [
 
   // Western Europe
   'AT', // Austria
+  'AR', // Argentina
   'BE', // Belgium
   'FR', // France
   'DE', // Germany
