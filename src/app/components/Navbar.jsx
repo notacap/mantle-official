@@ -220,7 +220,13 @@ const Navbar = () => {
           {/* Desktop Navigation - centered with more spacing */}
           <div className="hidden md:flex flex-1 justify-center items-center">
             <div className="flex space-x-12">
-              <div 
+              <Link
+                href="/black-friday"
+                className="text-red-600 hover:text-red-700 transition-colors font-bold text-lg flex items-center gap-1.5"
+              >
+                <span className="animate-pulse">Black Friday</span>
+              </Link>
+              <div
                 ref={shopMenuRef}
                 className="relative group"
                 onMouseEnter={handleShopMouseEnter}
@@ -378,8 +384,15 @@ const Navbar = () => {
       {isMenuOpen && (
         <div className="md:hidden bg-white border-b border-gray-200">
           <div className="px-2 pt-2 pb-3 space-y-2 sm:px-3">
-            <Link 
-              href="/shop" 
+            <Link
+              href="/black-friday"
+              className="block px-3 py-2 text-red-600 hover:text-red-700 hover:bg-red-50 font-bold text-lg"
+              onClick={toggleMenu}
+            >
+              Black Friday Sale
+            </Link>
+            <Link
+              href="/shop"
               className="block px-3 py-2 text-black hover:text-[#9CB24D] hover:bg-gray-50 font-medium text-lg"
               onClick={toggleMenu}
             >
