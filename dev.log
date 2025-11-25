@@ -630,3 +630,7 @@ Require stack:
  GET /favicon.ico 500 in 232ms
  ✓ Compiled in 105ms (781 modules)
  ✓ Compiled in 100ms (781 modules)
+ ✓ Compiled in 110ms (781 modules)
+ ✓ Compiled in 142ms (778 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: EPERM: operation not permitted, rename 'C:\Users\nocap\Desktop\code\mantle-official\.next\cache\webpack\client-development\9.pack.gz_' -> 'C:\Users\nocap\Desktop\code\mantle-official\.next\cache\webpack\client-development\9.pack.gz'
+[?25h

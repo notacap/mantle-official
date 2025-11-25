@@ -3,6 +3,7 @@
 import { useCart } from '@/context/CartContext';
 import { formatPrice } from '@/app/services/woocommerce';
 import Image from 'next/image';
+import { useBOGOValidation } from '@/app/hooks/useBOGOValidation';
 
 function decodeHtmlEntities(text) {
   if (typeof window === 'undefined') return text;
@@ -13,6 +14,7 @@ function decodeHtmlEntities(text) {
 
 export default function CheckoutCartSummary() {
   const { cart, isLoading, error } = useCart();
+  const { bogoDiscount, bogoMessages, isValidating } = useBOGOValidation();
 
   if (isLoading) {
     return <div>Loading cart summary...</div>;
@@ -30,6 +32,7 @@ export default function CheckoutCartSummary() {
 
   const subtotal = totals.total_items ? parseFloat(totals.total_items) / (10**totals.currency_minor_unit) : 0;
   const shipping = totals.total_shipping ? parseFloat(totals.total_shipping) / (10**totals.currency_minor_unit) : 0;
+  // Total already includes BOGO discount (applied server-side as a fee)
   const total = totals.total_price ? parseFloat(totals.total_price) / (10**totals.currency_minor_unit) : 0;
   const discount = totals.total_discount ? parseFloat(totals.total_discount) / (10**totals.currency_minor_unit) : 0;
   const currencySymbol = totals.currency_symbol || '$';
@@ -71,16 +74,35 @@ export default function CheckoutCartSummary() {
         </ul>
       </div>
 
+      {/* BOGO Messages */}
+      {bogoMessages.length > 0 && (
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+          <p className="text-sm font-medium text-green-800 mb-2">
+            Deals Applied!
+          </p>
+          {bogoMessages.map((msg, idx) => (
+            <p key={idx} className="text-sm text-green-700">{msg}</p>
+          ))}
+        </div>
+      )}
+
       <div className="mt-6 border-t border-gray-200 pt-6 space-y-3">
          <div className="flex items-center justify-between">
           <dt className="text-sm text-gray-600">Subtotal</dt>
           <dd className="text-sm font-medium text-gray-900">{currencySymbol}{subtotal.toFixed(2)}</dd>
         </div>
-        
+
         {discount > 0 && (
           <div className="flex items-center justify-between text-green-600">
             <dt className="text-sm">Discount</dt>
             <dd className="text-sm font-medium">-{currencySymbol}{discount.toFixed(2)}</dd>
+          </div>
+        )}
+
+        {bogoDiscount > 0 && (
+          <div className="flex items-center justify-between text-green-600">
+            <dt className="text-sm">Holiday Discount</dt>
+            <dd className="text-sm font-medium">-{currencySymbol}{bogoDiscount.toFixed(2)}</dd>
           </div>
         )}
 
@@ -93,6 +115,9 @@ export default function CheckoutCartSummary() {
           <dt className="text-base font-medium text-gray-900">Order total</dt>
           <dd className="text-base font-medium text-gray-900">{currencySymbol}{total.toFixed(2)}</dd>
         </div>
+        {isValidating && (
+          <p className="text-xs text-gray-500 text-center">Checking deals...</p>
+        )}
       </div>
     </div>
   );

@@ -8,6 +8,7 @@ import { FiX, FiTrash2, FiPlus, FiMinus } from 'react-icons/fi';
 import { useCart } from '@/context/CartContext';
 import { formatPrice } from '@/app/services/woocommerce';
 import ButtonWithHover from './ButtonWithHover';
+import { useBOGOValidation } from '@/app/hooks/useBOGOValidation';
 
 // Helper function to decode HTML entities (can be moved to a utility file later)
 function decodeHtmlEntities(text) {
@@ -29,6 +30,7 @@ function decodeHtmlEntities(text) {
 
 export default function SideCart() {
   const { cart, callCartApi, isSideCartOpen, closeSideCart, isLoading: isCartLoading, applyCoupon, removeCoupon } = useCart();
+  const { bogoDiscount, bogoMessages, isValidating } = useBOGOValidation();
   const [isUpdatingItem, setIsUpdatingItem] = useState(false);
   const [couponCode, setCouponCode] = useState('');
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
@@ -103,6 +105,7 @@ export default function SideCart() {
   const minorUnit = cart?.totals?.currency_minor_unit || 2;
   const subtotal = cart?.totals?.total_items ? parseFloat(cart.totals.total_items) / (10**minorUnit) : 0;
   const discount = cart?.totals?.total_discount ? parseFloat(cart.totals.total_discount) / (10**minorUnit) : 0;
+  // Total already includes BOGO discount (applied server-side as a fee)
   const total = cart?.totals?.total_price ? parseFloat(cart.totals.total_price) / (10**minorUnit) : 0;
   const currencySymbol = cart?.totals?.currency_symbol || '$';
   const appliedCoupons = cart?.coupons || [];
@@ -273,6 +276,18 @@ export default function SideCart() {
               )}
             </div>
 
+            {/* BOGO Messages */}
+            {bogoMessages.length > 0 && (
+              <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
+                <p className="text-xs font-medium text-green-800 mb-1">
+                  Deals Applied!
+                </p>
+                {bogoMessages.map((msg, idx) => (
+                  <p key={idx} className="text-xs text-green-700">{msg}</p>
+                ))}
+              </div>
+            )}
+
             {/* Totals Section */}
             <div className="space-y-1 mb-4 text-sm">
               <div className="flex justify-between items-center">
@@ -285,10 +300,19 @@ export default function SideCart() {
                     <span className="font-medium">-{currencySymbol}{discount.toFixed(2)}</span>
                  </div>
               )}
+              {bogoDiscount > 0 && (
+                <div className="flex justify-between items-center text-green-600">
+                  <span className="text-gray-600">Holiday Discount:</span>
+                  <span className="font-medium">-{currencySymbol}{bogoDiscount.toFixed(2)}</span>
+                </div>
+              )}
               <div className="flex justify-between items-center text-base pt-1 border-t mt-1">
                 <span className="font-semibold text-gray-800">Total:</span>
                 <span className="font-bold text-gray-900">{currencySymbol}{total.toFixed(2)}</span>
               </div>
+              {isValidating && (
+                <p className="text-xs text-gray-500 text-center">Checking deals...</p>
+              )}
             </div>
 
             <p className="text-xs text-gray-500 mb-4 text-center">Shipping & taxes calculated at checkout.</p>

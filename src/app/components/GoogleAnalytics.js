@@ -18,6 +18,7 @@ export default function GoogleAnalytics() {
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', 'G-9LBDR3EW1M');
+            gtag('config', 'AW-16734265960');
           `,
         }}
       />

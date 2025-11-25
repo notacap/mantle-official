@@ -8,6 +8,7 @@ import { useCart } from '../../context/CartContext';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import CheckoutCartSummary from '../components/CheckoutCartSummary';
+import { useBOGOValidation } from '@/app/hooks/useBOGOValidation';
 import {
   Dialog,
   DialogContent,
@@ -136,6 +137,7 @@ export default function CheckoutPage() {
   const router = useRouter();
   const [shipToDifferentAddress, setShipToDifferentAddress] = useState(false);
   const { cart, callCartApi, isLoading: isCartLoading, error: cartError, fetchCartAndNonce } = useCart();
+  const { bogoDiscount, appliedDeals } = useBOGOValidation();
   const [formData, setFormData] = useState({
     billing_address: { country: '' },
     shipping_address: { country: '' },
@@ -443,6 +445,13 @@ export default function CheckoutPage() {
       shipping_address: shipToDifferentAddress ? formData.shipping_address : formData.billing_address,
       payment_method: formData.payment_method, // Include selected payment method
       ...(formData.order_notes && { customer_note: formData.order_notes }),
+      // Include BOGO discount information for order processing
+      extensions: {
+        'mantle-bogo': {
+          discount_amount: bogoDiscount,
+          deals_applied: appliedDeals.map(d => d.deal_name || d.deal_id)
+        }
+      }
     };
 
     console.log("Submitting customer and payment method data:", dataToSend);
@@ -584,8 +593,13 @@ export default function CheckoutPage() {
       const wooOrderPayload = {
         ...customerData, // Includes billing, shipping, and notes
         payment_method: 'paypal', // Specify PayPal as the payment method
-        // Ensure other necessary fields for order creation are included if any
-        // The store API /checkout endpoint should handle creating the order from the current cart
+        // Include BOGO discount information for order processing
+        extensions: {
+          'mantle-bogo': {
+            discount_amount: bogoDiscount,
+            deals_applied: appliedDeals.map(d => d.deal_name || d.deal_id)
+          }
+        }
       };
       // console.log("[PayPal] Creating WooCommerce order with payload:", wooOrderPayload);
       const wooOrderResult = await callCartApi('/wp-json/wc/store/v1/checkout', 'POST', wooOrderPayload);
@@ -597,16 +611,17 @@ export default function CheckoutPage() {
       
       const orderId = wooOrderResult.order_id || wooOrderResult.order_number;
       const orderKey = wooOrderResult.order_key || '';
-      
+
       const minorUnit = cart.totals.currency_minor_unit;
       const rawTotalPrice = parseInt(cart.totals.total_price, 10);
+      // Total already includes BOGO discount (applied server-side as a fee)
       const formattedTotalPrice = (rawTotalPrice / Math.pow(10, minorUnit)).toFixed(minorUnit);
 
-      const orderDetails = { 
-        id: orderId, 
-        key: orderKey, 
-        total: formattedTotalPrice, 
-        currency: cart.totals.currency_code || 'USD' 
+      const orderDetails = {
+        id: orderId,
+        key: orderKey,
+        total: formattedTotalPrice,
+        currency: cart.totals.currency_code || 'USD'
       };
 
       setCreatedWooOrder(orderDetails); // Still set state for onApprove if needed

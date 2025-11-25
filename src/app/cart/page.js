@@ -9,6 +9,7 @@ import ButtonWithHover from '../components/ButtonWithHover';
 import NewsletterSignup from '../components/NewsletterSignup';
 import { useCart } from '@/context/CartContext';
 import { formatPrice } from '@/app/services/woocommerce';
+import { useBOGOValidation } from '@/app/hooks/useBOGOValidation';
 
 // Helper function to decode HTML entities
 function decodeHtmlEntities(text) {
@@ -35,6 +36,7 @@ function decodeHtmlEntities(text) {
 
 export default function Cart() {
   const { cart, isLoading, error, callCartApi, applyCoupon, removeCoupon } = useCart();
+  const { bogoDiscount, bogoMessages, isValidating } = useBOGOValidation();
   const [isUpdatingCartItems, setIsUpdatingCartItems] = useState(false);
   const [editableQuantities, setEditableQuantities] = useState({});
   const [couponCode, setCouponCode] = useState('');
@@ -237,6 +239,7 @@ export default function Cart() {
 
   const subtotal = cart.totals?.total_items ? parseFloat(cart.totals.total_items) / (10**cart.totals.currency_minor_unit) : 0;
   const shipping = cart.totals?.total_shipping ? parseFloat(cart.totals.total_shipping) / (10**cart.totals.currency_minor_unit) : 0;
+  // Total already includes BOGO discount (applied server-side as a fee)
   const total = cart.totals?.total_price ? parseFloat(cart.totals.total_price) / (10**cart.totals.currency_minor_unit) : 0;
   const discount = cart.totals?.total_discount ? parseFloat(cart.totals.total_discount) / (10**cart.totals.currency_minor_unit) : 0;
   const currencySymbol = cart.totals?.currency_symbol || '';
@@ -361,7 +364,19 @@ export default function Cart() {
         <div className="lg:col-span-1">
           <div className="bg-white rounded-lg shadow-sm p-6">
             <h2 className="text-lg font-medium text-gray-900 mb-4">Order Summary</h2>
-            
+
+            {/* BOGO Messages */}
+            {bogoMessages.length > 0 && (
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                <p className="text-sm font-medium text-green-800 mb-2">
+                  Deals Applied!
+                </p>
+                {bogoMessages.map((msg, idx) => (
+                  <p key={idx} className="text-sm text-green-700">{msg}</p>
+                ))}
+              </div>
+            )}
+
             <div className="space-y-3 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-500">Subtotal</span>
@@ -374,16 +389,26 @@ export default function Cart() {
                   <span>-{currencySymbol}{discount.toFixed(2)}</span>
                 </div>
               )}
-              
+
+              {bogoDiscount > 0 && (
+                <div className="flex justify-between text-green-600">
+                  <span className="text-gray-500">Holiday Discount</span>
+                  <span>-{currencySymbol}{bogoDiscount.toFixed(2)}</span>
+                </div>
+              )}
+
               <div className="flex justify-between">
                 <span className="text-gray-500">Shipping</span>
                 <span className="text-gray-900">{currencySymbol}{shipping.toFixed(2)}</span>
               </div>
-              
+
               <div className="border-t border-gray-200 pt-3 flex justify-between font-medium">
                 <span className="text-gray-900">Total</span>
                 <span className="text-[#9CB24D] text-lg">{currencySymbol}{total.toFixed(2)}</span>
               </div>
+              {isValidating && (
+                <p className="text-xs text-gray-500 text-center">Checking deals...</p>
+              )}
             </div>
             
             <div className="mt-6 space-y-4">

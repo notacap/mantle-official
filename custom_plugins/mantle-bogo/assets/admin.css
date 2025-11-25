@@ -1,0 +1,17 @@
+/* Mantle BOGO Admin Styles */
+
+.mantle-bogo-admin .notice {
+    margin: 20px 0;
+}
+
+.mantle-bogo-admin .form-table th {
+    width: 200px;
+}
+
+.mantle-bogo-admin .wp-list-table td {
+    vertical-align: middle;
+}
+
+.mantle-bogo-admin .page-title-action {
+    margin-left: 10px;
+}
