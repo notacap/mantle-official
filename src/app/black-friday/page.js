@@ -23,7 +23,8 @@ export default function BlackFridayPage() {
 
   // Countdown timer
   useEffect(() => {
-    const endDate = new Date("2025-12-02T23:59:59").getTime();
+    // December 1, 2025 at 1:00 AM Central Time (CST = UTC-6)
+    const endDate = new Date("2025-12-01T07:00:00Z").getTime();
 
     const timer = setInterval(() => {
       const now = new Date().getTime();

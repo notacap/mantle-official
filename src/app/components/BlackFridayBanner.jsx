@@ -13,8 +13,8 @@ export default function BlackFridayBanner() {
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
-    // Set end date to end of Cyber Monday (December 2, 2025 at 11:59:59 PM)
-    const endDate = new Date("2025-12-02T23:59:59").getTime();
+    // Set end date to December 1, 2025 at 1:00 AM Central Time (CST = UTC-6)
+    const endDate = new Date("2025-12-01T07:00:00Z").getTime();
 
     const timer = setInterval(() => {
       const now = new Date().getTime();
