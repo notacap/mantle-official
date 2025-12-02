@@ -221,10 +221,10 @@ const Navbar = () => {
           <div className="hidden md:flex flex-1 justify-center items-center">
             <div className="flex space-x-12">
               <Link
-                href="/black-friday"
+                href="/specials"
                 className="text-red-600 hover:text-red-700 transition-colors font-bold text-lg flex items-center gap-1.5"
               >
-                <span className="animate-pulse">Black Friday</span>
+                <span className="animate-pulse">Cyber Monday</span>
               </Link>
               <div
                 ref={shopMenuRef}
@@ -385,11 +385,11 @@ const Navbar = () => {
         <div className="md:hidden bg-white border-b border-gray-200">
           <div className="px-2 pt-2 pb-3 space-y-2 sm:px-3">
             <Link
-              href="/black-friday"
+              href="/specials"
               className="block px-3 py-2 text-red-600 hover:text-red-700 hover:bg-red-50 font-bold text-lg"
               onClick={toggleMenu}
             >
-              Black Friday Sale
+              Cyber Monday Sale
             </Link>
             <Link
               href="/shop"

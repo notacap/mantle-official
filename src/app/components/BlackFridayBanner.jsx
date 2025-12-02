@@ -13,8 +13,8 @@ export default function BlackFridayBanner() {
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
-    // Set end date to December 1, 2025 at 1:00 AM Central Time (CST = UTC-6)
-    const endDate = new Date("2025-12-01T07:00:00Z").getTime();
+    // Set end date to December 8, 2025 at 12:00 AM Central Time (CST = UTC-6)
+    const endDate = new Date("2025-12-08T06:00:00Z").getTime();
 
     const timer = setInterval(() => {
       const now = new Date().getTime();
@@ -116,7 +116,7 @@ export default function BlackFridayBanner() {
                 boxShadow: "0 2px 10px rgba(255, 68, 68, 0.4)",
               }}
             >
-              BLACK FRIDAY
+              CYBER MONDAY
             </span>
           </div>
 
@@ -132,6 +132,16 @@ export default function BlackFridayBanner() {
           >
             <span
               style={{
+                color: "#ffffff",
+                fontSize: "1.1rem",
+                fontWeight: "600",
+                letterSpacing: "0.02em",
+              }}
+            >
+              Buy Pants, Get
+            </span>
+            <span
+              style={{
                 background: "linear-gradient(135deg, #9CB24D 0%, #b8d45a 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
@@ -142,7 +152,7 @@ export default function BlackFridayBanner() {
                 textShadow: "0 0 30px rgba(156, 178, 77, 0.5)",
               }}
             >
-              35% OFF
+              30% OFF
             </span>
             <span
               style={{
@@ -152,13 +162,13 @@ export default function BlackFridayBanner() {
                 letterSpacing: "0.02em",
               }}
             >
-              Rain Gear
+              a Top
             </span>
           </div>
 
           {/* CTA Button */}
           <Link
-            href="/black-friday"
+            href="/specials"
             style={{
               background: "linear-gradient(135deg, #9CB24D 0%, #8aa542 100%)",
               color: "#1a1a1a",
