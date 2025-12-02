@@ -479,11 +479,20 @@ export default function SingleProduct({ productIdentifier }) {
 
 
   
+  // Check if product is eligible for Cyber Monday promo
+  const productCategorySlugs = product?.categories?.map(cat => cat.slug?.toLowerCase()) || [];
+  const isPantsProduct = productCategorySlugs.includes('pants');
+  const isTopsProduct = productCategorySlugs.includes('tops');
+  const isPromoEligible = isPantsProduct || isTopsProduct;
+
   return (
     <>
       {/* Breadcrumb navigation */}
       <Breadcrumbs product={product} categories={categories} />
-      
+
+      {/* Cyber Monday Top Banner - only for Pants/Tops products */}
+      <CyberMondayTopBanner isEligible={isPromoEligible} isPants={isPantsProduct} />
+
       <div className="product-layout">
         {/* Product Image Section */}
         <div className="product-image-section">
@@ -639,6 +648,9 @@ export default function SingleProduct({ productIdentifier }) {
           />
         </div>
       </div>
+
+      {/* Cyber Monday Cross-Promotion Banner */}
+      <CyberMondayPromo product={product} categories={categories} />
 
       {/* Product Details: Features, Care Info, Fabric Technology */}
       {detailSections.length > 0 && (
@@ -804,4 +816,229 @@ function ProductLoadingSkeleton() {
       </div>
     </>
   );
-} 
+}
+
+// Cyber Monday Top Banner Component - appears at top of product page
+function CyberMondayTopBanner({ isEligible, isPants }) {
+  // Check if the sale is still active (ends December 8, 2025 at 12:00 AM CST)
+  const saleEndDate = new Date("2025-12-08T06:00:00Z").getTime();
+  const now = new Date().getTime();
+  const isSaleActive = now < saleEndDate;
+
+  if (!isSaleActive || !isEligible) return null;
+
+  return (
+    <div style={{ marginBottom: '1.5rem', textAlign: 'center' }}>
+      <Link
+        href="/specials"
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '12px',
+          padding: '10px 20px',
+          background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
+          borderRadius: '8px',
+          border: '1px solid #333',
+          textDecoration: 'none',
+          transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'translateY(-1px)';
+          e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.3)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.boxShadow = 'none';
+        }}
+      >
+        <span
+          style={{
+            background: 'linear-gradient(135deg, #ff4444 0%, #cc0000 100%)',
+            color: 'white',
+            padding: '4px 10px',
+            borderRadius: '4px',
+            fontWeight: '700',
+            fontSize: '0.7rem',
+            letterSpacing: '0.1em',
+            textTransform: 'uppercase',
+          }}
+        >
+          Cyber Monday
+        </span>
+        <span style={{ color: '#ffffff', fontSize: '0.95rem', fontWeight: '500' }}>
+          {isPants ? (
+            <>
+              Buy these pants, get any top{' '}
+              <span
+                style={{
+                  background: 'linear-gradient(135deg, #9CB24D 0%, #b8d45a 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  fontWeight: '700',
+                }}
+              >
+                30% OFF
+              </span>
+            </>
+          ) : (
+            <>
+              Buy any pants, get this top{' '}
+              <span
+                style={{
+                  background: 'linear-gradient(135deg, #9CB24D 0%, #b8d45a 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  fontWeight: '700',
+                }}
+              >
+                30% OFF
+              </span>
+            </>
+          )}
+        </span>
+        <span style={{ color: '#9CB24D', fontSize: '0.8rem', fontWeight: '600' }}>
+          Shop Deal →
+        </span>
+      </Link>
+    </div>
+  );
+}
+
+// Cyber Monday Cross-Promotion Component
+function CyberMondayPromo({ product, categories }) {
+  // Check if the sale is still active (ends December 8, 2025 at 12:00 AM CST)
+  const saleEndDate = new Date("2025-12-08T06:00:00Z").getTime();
+  const now = new Date().getTime();
+  const isSaleActive = now < saleEndDate;
+
+  if (!isSaleActive || !product?.categories) return null;
+
+  // Check if product is in Pants or Tops category
+  const productCategorySlugs = product.categories.map(cat => cat.slug?.toLowerCase());
+  const isPants = productCategorySlugs.includes('pants');
+  const isTops = productCategorySlugs.includes('tops');
+
+  if (!isPants && !isTops) return null;
+
+  // Determine the cross-sell category
+  const targetCategory = isPants ? 'tops' : 'pants';
+  const targetCategoryName = isPants ? 'Top' : 'Pants';
+  const currentCategoryName = isPants ? 'Pants' : 'Top';
+
+  return (
+    <div
+      style={{
+        marginTop: '2rem',
+        padding: '24px',
+        background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%)',
+        borderRadius: '12px',
+        border: '1px solid #333',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Background pattern */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
+          opacity: 0.5,
+          pointerEvents: 'none',
+        }}
+      />
+
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+          <div style={{ flex: '1 1 300px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+              <span
+                style={{
+                  background: 'linear-gradient(135deg, #ff4444 0%, #cc0000 100%)',
+                  color: 'white',
+                  padding: '4px 10px',
+                  borderRadius: '4px',
+                  fontWeight: '700',
+                  fontSize: '0.7rem',
+                  letterSpacing: '0.1em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                Cyber Monday
+              </span>
+            </div>
+            <h3 style={{ color: '#ffffff', fontSize: '1.25rem', fontWeight: '700', margin: '0 0 6px 0' }}>
+              {isPants ? (
+                <>
+                  Complete the Deal - Get a {targetCategoryName} for{' '}
+                  <span
+                    style={{
+                      background: 'linear-gradient(135deg, #9CB24D 0%, #b8d45a 100%)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                    }}
+                  >
+                    30% OFF
+                  </span>
+                </>
+              ) : (
+                <>
+                  Buy {targetCategoryName} & Get This {currentCategoryName} for{' '}
+                  <span
+                    style={{
+                      background: 'linear-gradient(135deg, #9CB24D 0%, #b8d45a 100%)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                    }}
+                  >
+                    30% OFF
+                  </span>
+                </>
+              )}
+            </h3>
+            <p style={{ color: '#999', fontSize: '0.875rem', margin: 0 }}>
+              {isPants
+                ? 'Add these pants to your cart, then pick any top to save 30%!'
+                : 'Add any pants to your cart and this top will be 30% off!'}
+            </p>
+          </div>
+
+          <Link
+            href={`/categories/${targetCategory}`}
+            style={{
+              display: 'inline-block',
+              padding: '12px 24px',
+              background: 'linear-gradient(135deg, #9CB24D 0%, #8aa542 100%)',
+              color: '#1a1a1a',
+              borderRadius: '6px',
+              fontWeight: '600',
+              fontSize: '0.875rem',
+              textDecoration: 'none',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+              boxShadow: '0 4px 15px rgba(156, 178, 77, 0.3)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 6px 20px rgba(156, 178, 77, 0.4)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 4px 15px rgba(156, 178, 77, 0.3)';
+            }}
+          >
+            Shop {targetCategoryName === 'Pants' ? 'Pants' : 'Tops'}
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
