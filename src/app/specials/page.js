@@ -5,36 +5,20 @@ import { useState, useEffect } from 'react';
 import ProductGrid from '@/app/components/shop/ProductGrid';
 import ProductSkeleton from '@/app/components/shop/ProductSkeleton';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { saleConfig, isSaleActive, getTimeRemaining } from '@/config/saleConfig';
 
-export default function BlackFridayPage() {
+export default function SpecialsPage() {
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
     minutes: 0,
     seconds: 0,
   });
+  const [saleActive, setSaleActive] = useState(null); // null = checking, true/false = determined
+  const [isClient, setIsClient] = useState(false);
 
-  // Countdown timer
-  useEffect(() => {
-    // December 8, 2025 at 12:00 AM Central Time (CST = UTC-6)
-    const endDate = new Date("2025-12-08T06:00:00Z").getTime();
-
-    const timer = setInterval(() => {
-      const now = new Date().getTime();
-      const difference = endDate - now;
-
-      if (difference > 0) {
-        setTimeLeft({
-          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-          minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
-          seconds: Math.floor((difference % (1000 * 60)) / 1000),
-        });
-      }
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
+  const { name, badgeText, discount, messaging, sections, triggerCategory, discountCategory, triggerCategoryName, discountCategoryName } = saleConfig;
 
   // Fetch categories to get IDs for Pants and Tops
   const {
@@ -52,60 +36,101 @@ export default function BlackFridayPage() {
     staleTime: 5 * 60 * 1000,
   });
 
-  // Find Pants and Tops category IDs
-  const pantsCategory = categoriesData?.categories?.find(
-    (cat) => cat.slug === 'pants' || cat.name.toLowerCase() === 'pants'
+  // Find trigger and discount category IDs based on config
+  const triggerCategoryData = categoriesData?.categories?.find(
+    (cat) => cat.slug === triggerCategory || cat.name.toLowerCase() === triggerCategory
   );
-  const topsCategory = categoriesData?.categories?.find(
-    (cat) => cat.slug === 'tops' || cat.name.toLowerCase() === 'tops'
+  const discountCategoryData = categoriesData?.categories?.find(
+    (cat) => cat.slug === discountCategory || cat.name.toLowerCase() === discountCategory
   );
 
-  // Fetch Pants products
+  // Fetch trigger category products (e.g., Pants)
   const {
-    data: pantsProducts,
-    isLoading: isLoadingPants,
-    error: pantsError,
+    data: triggerProducts,
+    isLoading: isLoadingTrigger,
+    error: triggerError,
   } = useQuery({
-    queryKey: ['products', 'category', pantsCategory?.id],
+    queryKey: ['products', 'category', triggerCategoryData?.id],
     queryFn: async () => {
       const url = new URL('/api/products/category', window.location.origin);
-      url.searchParams.append('category', pantsCategory.id);
+      url.searchParams.append('category', triggerCategoryData.id);
       url.searchParams.append('limit', '12');
 
       const response = await fetch(url.toString());
       if (!response.ok) {
-        throw new Error('Failed to fetch pants');
+        throw new Error(`Failed to fetch ${triggerCategoryName}`);
       }
       return response.json();
     },
-    enabled: !!pantsCategory?.id,
+    enabled: !!triggerCategoryData?.id,
     staleTime: 5 * 60 * 1000,
   });
 
-  // Fetch Tops products
+  // Fetch discount category products (e.g., Tops)
   const {
-    data: topsProducts,
-    isLoading: isLoadingTops,
-    error: topsError,
+    data: discountProducts,
+    isLoading: isLoadingDiscount,
+    error: discountError,
   } = useQuery({
-    queryKey: ['products', 'category', topsCategory?.id],
+    queryKey: ['products', 'category', discountCategoryData?.id],
     queryFn: async () => {
       const url = new URL('/api/products/category', window.location.origin);
-      url.searchParams.append('category', topsCategory.id);
+      url.searchParams.append('category', discountCategoryData.id);
       url.searchParams.append('limit', '12');
 
       const response = await fetch(url.toString());
       if (!response.ok) {
-        throw new Error('Failed to fetch tops');
+        throw new Error(`Failed to fetch ${discountCategoryName}`);
       }
       return response.json();
     },
-    enabled: !!topsCategory?.id,
+    enabled: !!discountCategoryData?.id,
     staleTime: 5 * 60 * 1000,
   });
 
-  const isLoading = isLoadingCategories || isLoadingPants || isLoadingTops;
-  const hasError = pantsError || topsError;
+  const isLoading = isLoadingCategories || isLoadingTrigger || isLoadingDiscount;
+  const hasError = triggerError || discountError;
+
+  // Check if sale is active and setup countdown timer
+  useEffect(() => {
+    setIsClient(true);
+    const active = isSaleActive();
+    setSaleActive(active);
+
+    if (!active) {
+      return;
+    }
+
+    const remaining = getTimeRemaining();
+    if (remaining) {
+      setTimeLeft(remaining);
+    }
+
+    const timer = setInterval(() => {
+      const remaining = getTimeRemaining();
+      if (remaining) {
+        setTimeLeft(remaining);
+      } else {
+        setSaleActive(false);
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  // Show 404 if sale is not active (only after client-side check)
+  if (isClient && saleActive === false) {
+    notFound();
+  }
+
+  // Show loading while checking sale status
+  if (!isClient || saleActive === null) {
+    return (
+      <div style={{ backgroundColor: '#0a0a0a', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ color: '#666' }}>Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ backgroundColor: '#0a0a0a', minHeight: '100vh' }}>
@@ -132,7 +157,7 @@ export default function BlackFridayPage() {
         />
 
         <div style={{ position: 'relative', zIndex: 1, maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
-          {/* Cyber Monday Badge */}
+          {/* Sale Badge */}
           <div style={{ marginBottom: '20px' }}>
             <span
               style={{
@@ -148,7 +173,7 @@ export default function BlackFridayPage() {
                 display: 'inline-block',
               }}
             >
-              CYBER MONDAY SALE
+              {badgeText} SALE
             </span>
           </div>
 
@@ -161,7 +186,7 @@ export default function BlackFridayPage() {
               lineHeight: 1.1,
             }}
           >
-            <span style={{ color: '#ffffff' }}>Buy Pants, Get a Top</span>
+            <span style={{ color: '#ffffff' }}>{messaging.heroHeadline}</span>
             <br />
             <span
               style={{
@@ -171,7 +196,7 @@ export default function BlackFridayPage() {
                 backgroundClip: 'text',
               }}
             >
-              30% OFF
+              {discount}% OFF
             </span>
           </h1>
 
@@ -185,8 +210,7 @@ export default function BlackFridayPage() {
               lineHeight: 1.6,
             }}
           >
-            Purchase any pair of pants and get 30% off any top.
-            Premium tactical gear for professionals. Limited time only.
+            {messaging.heroSubheadline}
           </p>
 
           {/* Countdown Timer */}
@@ -270,11 +294,11 @@ export default function BlackFridayPage() {
             <h2 style={{ color: '#ffffff', fontSize: '1.25rem', marginBottom: '8px' }}>
               Failed to load products
             </h2>
-            <p style={{ color: '#666' }}>{pantsError?.message || topsError?.message}</p>
+            <p style={{ color: '#666' }}>{triggerError?.message || discountError?.message}</p>
           </div>
         )}
 
-        {/* SECTION 1: BUY ONE - PANTS */}
+        {/* SECTION 1: BUY ONE - Trigger Category */}
         <div style={{ marginBottom: '60px' }}>
           {/* Section Header */}
           <div
@@ -297,7 +321,7 @@ export default function BlackFridayPage() {
                   textTransform: 'uppercase',
                 }}
               >
-                Step 1
+                {sections.step1.badge}
               </span>
               <h2
                 style={{
@@ -307,16 +331,16 @@ export default function BlackFridayPage() {
                   margin: 0,
                 }}
               >
-                Buy a Pair of Pants
+                {sections.step1.title}
               </h2>
             </div>
             <p style={{ color: '#999', fontSize: '0.95rem', margin: 0 }}>
-              Choose from our premium tactical pants collection
+              {sections.step1.description}
             </p>
           </div>
 
-          {/* Pants Loading State */}
-          {(isLoadingCategories || isLoadingPants) && (
+          {/* Trigger Category Loading State */}
+          {(isLoadingCategories || isLoadingTrigger) && (
             <div
               style={{
                 display: 'grid',
@@ -332,8 +356,8 @@ export default function BlackFridayPage() {
             </div>
           )}
 
-          {/* Pants Products Grid */}
-          {!isLoadingCategories && !isLoadingPants && !pantsError && pantsProducts && pantsProducts.length > 0 && (
+          {/* Trigger Category Products Grid */}
+          {!isLoadingCategories && !isLoadingTrigger && !triggerError && triggerProducts && triggerProducts.length > 0 && (
             <div
               style={{
                 background: '#1a1a1a',
@@ -342,19 +366,19 @@ export default function BlackFridayPage() {
                 border: '1px solid #333',
               }}
             >
-              <ProductGrid products={pantsProducts} />
+              <ProductGrid products={triggerProducts} />
             </div>
           )}
 
-          {/* No Pants State */}
-          {!isLoadingCategories && !isLoadingPants && !pantsError && (!pantsProducts || pantsProducts.length === 0) && (
+          {/* No Products State */}
+          {!isLoadingCategories && !isLoadingTrigger && !triggerError && (!triggerProducts || triggerProducts.length === 0) && (
             <div style={{ textAlign: 'center', padding: '40px 20px', background: '#1a1a1a', borderRadius: '12px' }}>
-              <p style={{ color: '#666' }}>No pants available at the moment.</p>
+              <p style={{ color: '#666' }}>No {triggerCategoryName.toLowerCase()} available at the moment.</p>
             </div>
           )}
         </div>
 
-        {/* SECTION 2: GET ONE 30% OFF - TOPS */}
+        {/* SECTION 2: GET ONE X% OFF - Discount Category */}
         <div style={{ marginBottom: '60px' }}>
           {/* Section Header */}
           <div
@@ -377,7 +401,7 @@ export default function BlackFridayPage() {
                   textTransform: 'uppercase',
                 }}
               >
-                Step 2
+                {sections.step2.badge}
               </span>
               <h2
                 style={{
@@ -387,7 +411,7 @@ export default function BlackFridayPage() {
                   margin: 0,
                 }}
               >
-                Get a Top for{' '}
+                {sections.step2.title}{' '}
                 <span
                   style={{
                     background: 'linear-gradient(135deg, #9CB24D 0%, #b8d45a 100%)',
@@ -396,17 +420,17 @@ export default function BlackFridayPage() {
                     backgroundClip: 'text',
                   }}
                 >
-                  30% OFF
+                  {discount}% OFF
                 </span>
               </h2>
             </div>
             <p style={{ color: '#999', fontSize: '0.95rem', margin: 0 }}>
-              Add any top to your cart and the discount will be applied automatically
+              {sections.step2.description}
             </p>
           </div>
 
-          {/* Tops Loading State */}
-          {(isLoadingCategories || isLoadingTops) && (
+          {/* Discount Category Loading State */}
+          {(isLoadingCategories || isLoadingDiscount) && (
             <div
               style={{
                 display: 'grid',
@@ -422,8 +446,8 @@ export default function BlackFridayPage() {
             </div>
           )}
 
-          {/* Tops Products Grid */}
-          {!isLoadingCategories && !isLoadingTops && !topsError && topsProducts && topsProducts.length > 0 && (
+          {/* Discount Category Products Grid */}
+          {!isLoadingCategories && !isLoadingDiscount && !discountError && discountProducts && discountProducts.length > 0 && (
             <div
               style={{
                 background: '#1a1a1a',
@@ -432,20 +456,20 @@ export default function BlackFridayPage() {
                 border: '1px solid #333',
               }}
             >
-              <ProductGrid products={topsProducts} />
+              <ProductGrid products={discountProducts} />
             </div>
           )}
 
-          {/* No Tops State */}
-          {!isLoadingCategories && !isLoadingTops && !topsError && (!topsProducts || topsProducts.length === 0) && (
+          {/* No Products State */}
+          {!isLoadingCategories && !isLoadingDiscount && !discountError && (!discountProducts || discountProducts.length === 0) && (
             <div style={{ textAlign: 'center', padding: '40px 20px', background: '#1a1a1a', borderRadius: '12px' }}>
-              <p style={{ color: '#666' }}>No tops available at the moment.</p>
+              <p style={{ color: '#666' }}>No {discountCategoryName.toLowerCase()}s available at the moment.</p>
             </div>
           )}
         </div>
 
         {/* Bottom CTA */}
-        {!isLoading && !hasError && (pantsProducts?.length > 0 || topsProducts?.length > 0) && (
+        {!isLoading && !hasError && (triggerProducts?.length > 0 || discountProducts?.length > 0) && (
           <div
             style={{
               textAlign: 'center',
@@ -457,10 +481,10 @@ export default function BlackFridayPage() {
             }}
           >
             <h3 style={{ color: '#ffffff', fontSize: '1.5rem', marginBottom: '12px' }}>
-              Don&apos;t Miss Out
+              {messaging.ctaTitle}
             </h3>
             <p style={{ color: '#999', marginBottom: '20px', maxWidth: '500px', margin: '0 auto 20px' }}>
-              Buy any pants and get 30% off any top. Discount applied automatically at checkout!
+              {messaging.ctaDescription}
             </p>
             <Link
               href="/shop"

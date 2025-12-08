@@ -2,31 +2,34 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { saleConfig, isSaleActive, getTimeRemaining } from "@/config/saleConfig";
 
-export default function BlackFridayBanner() {
+export default function SaleBanner() {
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
     minutes: 0,
     seconds: 0,
   });
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Set end date to December 8, 2025 at 12:00 AM Central Time (CST = UTC-6)
-    const endDate = new Date("2025-12-08T06:00:00Z").getTime();
+    // Check if sale is active on mount
+    if (!isSaleActive()) {
+      setIsVisible(false);
+      return;
+    }
+
+    setIsVisible(true);
+    const remaining = getTimeRemaining();
+    if (remaining) {
+      setTimeLeft(remaining);
+    }
 
     const timer = setInterval(() => {
-      const now = new Date().getTime();
-      const difference = endDate - now;
-
-      if (difference > 0) {
-        setTimeLeft({
-          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-          minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
-          seconds: Math.floor((difference % (1000 * 60)) / 1000),
-        });
+      const remaining = getTimeRemaining();
+      if (remaining) {
+        setTimeLeft(remaining);
       } else {
         clearInterval(timer);
         setIsVisible(false);
@@ -37,6 +40,8 @@ export default function BlackFridayBanner() {
   }, []);
 
   if (!isVisible) return null;
+
+  const { name, badgeText, discount, messaging, navLink } = saleConfig;
 
   return (
     <div
@@ -116,7 +121,7 @@ export default function BlackFridayBanner() {
                 boxShadow: "0 2px 10px rgba(255, 68, 68, 0.4)",
               }}
             >
-              CYBER MONDAY
+              {badgeText}
             </span>
           </div>
 
@@ -138,7 +143,7 @@ export default function BlackFridayBanner() {
                 letterSpacing: "0.02em",
               }}
             >
-              Buy Pants, Get
+              {messaging.tagline}, Get
             </span>
             <span
               style={{
@@ -152,23 +157,13 @@ export default function BlackFridayBanner() {
                 textShadow: "0 0 30px rgba(156, 178, 77, 0.5)",
               }}
             >
-              30% OFF
-            </span>
-            <span
-              style={{
-                color: "#ffffff",
-                fontSize: "1.1rem",
-                fontWeight: "600",
-                letterSpacing: "0.02em",
-              }}
-            >
-              a Top
+              {discount}% OFF
             </span>
           </div>
 
           {/* CTA Button */}
           <Link
-            href="/specials"
+            href={navLink.href}
             style={{
               background: "linear-gradient(135deg, #9CB24D 0%, #8aa542 100%)",
               color: "#1a1a1a",

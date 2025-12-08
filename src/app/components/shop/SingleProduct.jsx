@@ -23,6 +23,7 @@ import {
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import ProductReviewsSection from './ProductReviewsSection';
 import StarRating from './StarRating';
+import { saleConfig, isSaleActive, checkProductEligibility } from '@/config/saleConfig';
 
 // Function to strip HTML tags
 function stripHtml(html) {
@@ -479,19 +480,16 @@ export default function SingleProduct({ productIdentifier }) {
 
 
   
-  // Check if product is eligible for Cyber Monday promo
-  const productCategorySlugs = product?.categories?.map(cat => cat.slug?.toLowerCase()) || [];
-  const isPantsProduct = productCategorySlugs.includes('pants');
-  const isTopsProduct = productCategorySlugs.includes('tops');
-  const isPromoEligible = isPantsProduct || isTopsProduct;
+  // Check if product is eligible for sale promo
+  const { isEligible: isPromoEligible, isTrigger: isPantsProduct } = checkProductEligibility(product?.categories);
 
   return (
     <>
       {/* Breadcrumb navigation */}
       <Breadcrumbs product={product} categories={categories} />
 
-      {/* Cyber Monday Top Banner - only for Pants/Tops products */}
-      <CyberMondayTopBanner isEligible={isPromoEligible} isPants={isPantsProduct} />
+      {/* Sale Top Banner - only for eligible products */}
+      <SaleTopBanner isEligible={isPromoEligible} isTrigger={isPantsProduct} />
 
       <div className="product-layout">
         {/* Product Image Section */}
@@ -649,8 +647,8 @@ export default function SingleProduct({ productIdentifier }) {
         </div>
       </div>
 
-      {/* Cyber Monday Cross-Promotion Banner */}
-      <CyberMondayPromo product={product} categories={categories} />
+      {/* Sale Cross-Promotion Banner */}
+      <SaleCrossPromo product={product} />
 
       {/* Product Details: Features, Care Info, Fabric Technology */}
       {detailSections.length > 0 && (
@@ -818,19 +816,16 @@ function ProductLoadingSkeleton() {
   );
 }
 
-// Cyber Monday Top Banner Component - appears at top of product page
-function CyberMondayTopBanner({ isEligible, isPants }) {
-  // Check if the sale is still active (ends December 8, 2025 at 12:00 AM CST)
-  const saleEndDate = new Date("2025-12-08T06:00:00Z").getTime();
-  const now = new Date().getTime();
-  const isSaleActive = now < saleEndDate;
+// Sale Top Banner Component - appears at top of product page
+function SaleTopBanner({ isEligible, isTrigger }) {
+  if (!isSaleActive() || !isEligible) return null;
 
-  if (!isSaleActive || !isEligible) return null;
+  const { name, discount, navLink, messaging } = saleConfig;
 
   return (
     <div style={{ marginBottom: '1.5rem', textAlign: 'center' }}>
       <Link
-        href="/specials"
+        href={navLink.href}
         style={{
           display: 'inline-flex',
           alignItems: 'center',
@@ -863,40 +858,21 @@ function CyberMondayTopBanner({ isEligible, isPants }) {
             textTransform: 'uppercase',
           }}
         >
-          Cyber Monday
+          {name}
         </span>
         <span style={{ color: '#ffffff', fontSize: '0.95rem', fontWeight: '500' }}>
-          {isPants ? (
-            <>
-              Buy these pants, get any top{' '}
-              <span
-                style={{
-                  background: 'linear-gradient(135deg, #9CB24D 0%, #b8d45a 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                  fontWeight: '700',
-                }}
-              >
-                30% OFF
-              </span>
-            </>
-          ) : (
-            <>
-              Buy any pants, get this top{' '}
-              <span
-                style={{
-                  background: 'linear-gradient(135deg, #9CB24D 0%, #b8d45a 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                  fontWeight: '700',
-                }}
-              >
-                30% OFF
-              </span>
-            </>
-          )}
+          {isTrigger ? messaging.triggerProductBanner : messaging.discountProductBanner}{' '}
+          <span
+            style={{
+              background: 'linear-gradient(135deg, #9CB24D 0%, #b8d45a 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              fontWeight: '700',
+            }}
+          >
+            {discount}% OFF
+          </span>
         </span>
         <span style={{ color: '#9CB24D', fontSize: '0.8rem', fontWeight: '600' }}>
           Shop Deal →
@@ -906,26 +882,19 @@ function CyberMondayTopBanner({ isEligible, isPants }) {
   );
 }
 
-// Cyber Monday Cross-Promotion Component
-function CyberMondayPromo({ product, categories }) {
-  // Check if the sale is still active (ends December 8, 2025 at 12:00 AM CST)
-  const saleEndDate = new Date("2025-12-08T06:00:00Z").getTime();
-  const now = new Date().getTime();
-  const isSaleActive = now < saleEndDate;
+// Sale Cross-Promotion Component
+function SaleCrossPromo({ product }) {
+  if (!isSaleActive() || !product?.categories) return null;
 
-  if (!isSaleActive || !product?.categories) return null;
+  const { isEligible, isTrigger } = checkProductEligibility(product.categories);
+  if (!isEligible) return null;
 
-  // Check if product is in Pants or Tops category
-  const productCategorySlugs = product.categories.map(cat => cat.slug?.toLowerCase());
-  const isPants = productCategorySlugs.includes('pants');
-  const isTops = productCategorySlugs.includes('tops');
-
-  if (!isPants && !isTops) return null;
+  const { name, discount, triggerCategory, discountCategory, triggerCategoryName, discountCategoryName, messaging } = saleConfig;
 
   // Determine the cross-sell category
-  const targetCategory = isPants ? 'tops' : 'pants';
-  const targetCategoryName = isPants ? 'Top' : 'Pants';
-  const currentCategoryName = isPants ? 'Pants' : 'Top';
+  const targetCategory = isTrigger ? discountCategory : triggerCategory;
+  const targetCategoryName = isTrigger ? discountCategoryName : triggerCategoryName;
+  const currentCategoryName = isTrigger ? triggerCategoryName : discountCategoryName;
 
   return (
     <div
@@ -969,44 +938,24 @@ function CyberMondayPromo({ product, categories }) {
                   textTransform: 'uppercase',
                 }}
               >
-                Cyber Monday
+                {name}
               </span>
             </div>
             <h3 style={{ color: '#ffffff', fontSize: '1.25rem', fontWeight: '700', margin: '0 0 6px 0' }}>
-              {isPants ? (
-                <>
-                  Complete the Deal - Get a {targetCategoryName} for{' '}
-                  <span
-                    style={{
-                      background: 'linear-gradient(135deg, #9CB24D 0%, #b8d45a 100%)',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      backgroundClip: 'text',
-                    }}
-                  >
-                    30% OFF
-                  </span>
-                </>
-              ) : (
-                <>
-                  Buy {targetCategoryName} & Get This {currentCategoryName} for{' '}
-                  <span
-                    style={{
-                      background: 'linear-gradient(135deg, #9CB24D 0%, #b8d45a 100%)',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      backgroundClip: 'text',
-                    }}
-                  >
-                    30% OFF
-                  </span>
-                </>
-              )}
+              {isTrigger ? messaging.crossPromoTitle : messaging.crossPromoTitleAlt} {targetCategoryName} for{' '}
+              <span
+                style={{
+                  background: 'linear-gradient(135deg, #9CB24D 0%, #b8d45a 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }}
+              >
+                {discount}% OFF
+              </span>
             </h3>
             <p style={{ color: '#999', fontSize: '0.875rem', margin: 0 }}>
-              {isPants
-                ? 'Add these pants to your cart, then pick any top to save 30%!'
-                : 'Add any pants to your cart and this top will be 30% off!'}
+              {isTrigger ? messaging.crossPromoDescription : messaging.crossPromoDescriptionAlt}
             </p>
           </div>
 

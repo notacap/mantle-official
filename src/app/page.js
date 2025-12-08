@@ -1,5 +1,5 @@
 import HeroSlideshow from './components/HeroSlideshow';
-import BlackFridayBanner from './components/BlackFridayBanner';
+import SaleBanner from './components/SaleBanner';
 import ButtonWithHover from "./components/ButtonWithHover";
 import FeaturedProducts from "./components/FeaturedProducts";
 import ProductCategories from "./components/ProductCategories";
@@ -65,8 +65,8 @@ export default function Home() {
   // console.log('Homepage Metadata:', JSON.stringify(metadata, null, 2));
   return (
     <main style={{ backgroundColor: '#F8F8F8' }}>
-    {/* Black Friday Banner */}
-    <BlackFridayBanner />
+    {/* Sale Banner - controlled by saleConfig */}
+    <SaleBanner />
 
     {/* Hero Slideshow */}
     <section style={{ width: '100%' }}>
