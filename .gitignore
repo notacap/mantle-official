@@ -54,3 +54,6 @@ originalImages/
 prompt*
 .claude/
 *.claude
+
+nul
+NUL
