@@ -7,7 +7,7 @@ import SinglePostLoadingSkeleton from './loading'; // Will use the sibling loadi
 // WordPress API often allows fetching by slug directly. If not, we might need to fetch all and filter, or use an ID if available.
 // Assuming /wp/v2/posts?slug=<slug_here>&_embed will work.
 async function getPost(slug) {
-  const baseUrl = 'https://mantle-clothing.com/wp-json'; // Hardcoded for testing
+  const baseUrl = `${process.env.NEXT_PUBLIC_WORDPRESS_URL}/wp-json`;
 
   const fetchUrl = `${baseUrl}/wp/v2/posts?slug=${slug}&_embed`;
 
@@ -46,11 +46,30 @@ export default async function SinglePostPage({ params }) {
   const author = post._embedded?.author?.[0];
   const featuredMedia = post._embedded?.['wp:featuredmedia']?.[0];
 
+  // Decode HTML entities from WordPress
+  function decodeHtmlEntities(text) {
+    const entities = {
+      '&#8211;': '\u2013', // en-dash
+      '&#8212;': '\u2014', // em-dash
+      '&#8216;': '\u2018', // left single quote
+      '&#8217;': '\u2019', // right single quote
+      '&#8220;': '\u201C', // left double quote
+      '&#8221;': '\u201D', // right double quote
+      '&#038;': '&',
+      '&amp;': '&',
+      '&lt;': '<',
+      '&gt;': '>',
+      '&quot;': '"',
+      '&#39;': "'",
+    };
+    return text.replace(/&#?\w+;/g, entity => entities[entity] || entity);
+  }
+
   // Basic breadcrumbs - can be enhanced
   const breadcrumbs = [
     { name: 'Home', href: '/' },
     { name: 'Blog', href: '/blog' },
-    { name: post.title.rendered, href: `/blog/${post.slug}` },
+    { name: decodeHtmlEntities(post.title.rendered), href: `/blog/${post.slug}` },
   ];
 
   return (
@@ -108,8 +127,8 @@ export default async function SinglePostPage({ params }) {
           )}
 
           {/* Post Content */}
-          <div 
-            className="prose prose-lg max-w-none text-gray-800 prose-headings:text-gray-900 prose-a:text-[#9CB24D] hover:prose-a:underline"
+          <div
+            className="blog-content prose prose-lg max-w-none text-gray-800 prose-headings:text-gray-900 prose-a:text-[#9CB24D] hover:prose-a:underline"
             dangerouslySetInnerHTML={{ __html: post.content.rendered }}
           />
 

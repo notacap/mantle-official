@@ -48,7 +48,7 @@ export const metadata = {
 };
 
 async function fetchPosts() {
-  const baseUrl = 'https://api.mantle-clothing.com/wp-json'; // Hardcoded for testing
+  const baseUrl = `${process.env.NEXT_PUBLIC_WORDPRESS_URL}/wp-json`;
   // console.log('Attempting to fetch posts from hardcoded baseUrl:', baseUrl);
 
   const fetchUrl = `${baseUrl}/wp/v2/posts?_embed&orderby=date&order=desc`;

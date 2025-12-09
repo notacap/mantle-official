@@ -8,7 +8,7 @@ This is an e-commerce website for Mantle Clothing built with Next.js 15 (App Rou
 
 ## Tech Stack
 
-- **Framework**: Next.js 15.2.3 (App Router)
+- **Framework**: Next.js 15.5.7 (App Router)
 - **React**: 19.0.0
 - **Styling**: Tailwind CSS 4.0, Shadcn UI, Radix UI
 - **State Management**: React Context (CartContext), TanStack Query (React Query)

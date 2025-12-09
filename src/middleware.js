@@ -21,12 +21,6 @@ const ALLOWED_COUNTRIES = [
 ];
 
 export function middleware(request) {
-  // TEMPORARY: Block blog page until ready to launch
-  // To re-enable: Comment out or remove this entire if block
-  if (request.nextUrl.pathname.startsWith('/blog')) {
-    return NextResponse.redirect(new URL('/', request.url));
-  }
-
   const country = request.headers.get('x-vercel-ip-country');
   
   if (country && !ALLOWED_COUNTRIES.includes(country)) {
