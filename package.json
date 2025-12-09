@@ -27,7 +27,7 @@
     "embla-carousel-react": "^8.6.0",
     "isomorphic-dompurify": "^2.26.0",
     "lucide-react": "^0.482.0",
-    "next": "15.2.3",
+    "next": "15.2.6",
     "node-fetch": "^2.7.0",
     "package": "^1.0.1",
     "postcss": "^8.5.3",
