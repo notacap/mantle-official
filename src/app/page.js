@@ -1,7 +1,7 @@
 import HeroSlideshow from './components/HeroSlideshow';
 import SaleBanner from './components/SaleBanner';
 import ButtonWithHover from "./components/ButtonWithHover";
-import FeaturedProducts from "./components/FeaturedProducts";
+import FeaturedSection from "./components/FeaturedSection";
 import ProductCategories from "./components/ProductCategories";
 import InstagramSection from "./components/InstagramSection";
 import NewsletterSignup from "./components/NewsletterSignup";
@@ -72,9 +72,9 @@ export default function Home() {
     <section style={{ width: '100%' }}>
       <HeroSlideshow />
     </section>
-    
-    {/* Featured Products Section */}
-    <FeaturedProducts />
+
+    {/* Featured Section - shows NewProductFeatured or FeaturedProducts based on config */}
+    <FeaturedSection />
     
     {/* Product Categories Section */}
     <ProductCategories />

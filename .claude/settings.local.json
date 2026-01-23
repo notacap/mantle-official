@@ -8,5 +8,11 @@
     ],
     "deny": [],
     "ask": []
-  }
+  },
+  "enabledMcpjsonServers": [
+    "context7",
+    "memory",
+    "fetch"
+  ],
+  "enableAllProjectMcpServers": true
 }

@@ -24,6 +24,7 @@ import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import ProductReviewsSection from './ProductReviewsSection';
 import StarRating from './StarRating';
 import { saleConfig, isSaleActive, checkProductEligibility } from '@/config/saleConfig';
+import { newProductConfig, isNewProduct, isNewProductMarketingActive } from '@/config/newProductConfig';
 
 // Function to strip HTML tags
 function stripHtml(html) {
@@ -490,6 +491,9 @@ export default function SingleProduct({ productIdentifier }) {
 
       {/* Sale Top Banner - only for eligible products */}
       <SaleTopBanner isEligible={isPromoEligible} isTrigger={isPantsProduct} />
+
+      {/* New Product Top Banner - for products marked as new */}
+      <NewProductTopBanner productId={product?.id} />
 
       <div className="product-layout">
         {/* Product Image Section */}
@@ -988,6 +992,72 @@ function SaleCrossPromo({ product }) {
           </Link>
         </div>
       </div>
+    </div>
+  );
+}
+
+// New Product Top Banner Component - appears at top of product page for new products
+function NewProductTopBanner({ productId }) {
+  const { isNew } = isNewProduct(productId);
+
+  if (!isNewProductMarketingActive() || !isNew) return null;
+
+  const { badgeText, badgeStyle, messaging, colors } = newProductConfig;
+
+  return (
+    <div style={{ marginBottom: '1.5rem', textAlign: 'center' }}>
+      <div
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '12px',
+          padding: '12px 24px',
+          background: colors.bannerBackground,
+          borderRadius: '8px',
+          border: '1px solid rgba(156, 178, 77, 0.3)',
+        }}
+      >
+        <span
+          className={badgeStyle === 'animated' ? 'new-badge-pulse' : ''}
+          style={{
+            background: colors.badgeBackground,
+            color: colors.badgeText,
+            padding: '6px 14px',
+            borderRadius: '4px',
+            fontWeight: '800',
+            fontSize: '0.75rem',
+            letterSpacing: '0.1em',
+            textTransform: 'uppercase',
+            boxShadow: '0 2px 10px rgba(156, 178, 77, 0.4)',
+          }}
+        >
+          {badgeText}
+        </span>
+        <div style={{ textAlign: 'left' }}>
+          <span style={{ color: '#ffffff', fontSize: '1rem', fontWeight: '600', display: 'block' }}>
+            {messaging.productBanner}
+          </span>
+          <span style={{ color: '#999', fontSize: '0.8rem' }}>
+            {messaging.productSubtext}
+          </span>
+        </div>
+      </div>
+
+      {/* CSS for badge animation */}
+      <style jsx>{`
+        @keyframes newPulse {
+          0%, 100% {
+            box-shadow: 0 2px 10px rgba(156, 178, 77, 0.4);
+          }
+          50% {
+            box-shadow: 0 2px 20px rgba(156, 178, 77, 0.7);
+          }
+        }
+
+        .new-badge-pulse {
+          animation: newPulse 2s infinite;
+        }
+      `}</style>
     </div>
   );
 }
