@@ -1,3 +1,7 @@
+import BreadcrumbsJsonLd from '@/app/components/seo/BreadcrumbsJsonLd';
+
+const SITE_URL = 'https://www.mantle-clothing.com';
+
 export const metadata = {
   title: 'Shop All Products - Tactical Clothing & Gear | Mantle Clothing',
   description: 'Browse our complete collection of purpose-built tactical clothing. Waterproof pants, jackets, work bibs, and technical apparel designed for law enforcement and outdoor professionals.',
@@ -40,6 +44,16 @@ export const metadata = {
   },
 }
 
+const shopBreadcrumbItems = [
+  { name: 'Home', url: `${SITE_URL}/` },
+  { name: 'Shop', url: `${SITE_URL}/shop` },
+];
+
 export default function ShopLayout({ children }) {
-  return <>{children}</>;
-} 
+  return (
+    <>
+      <BreadcrumbsJsonLd items={shopBreadcrumbItems} />
+      {children}
+    </>
+  );
+}

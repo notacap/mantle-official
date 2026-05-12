@@ -1,7 +1,10 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import BreadcrumbsJsonLd from '@/app/components/seo/BreadcrumbsJsonLd';
 import SinglePostLoadingSkeleton from './loading'; // Will use the sibling loading.js
+
+const SITE_URL = 'https://www.mantle-clothing.com';
 
 // Function to fetch a single post by its slug
 // WordPress API often allows fetching by slug directly. If not, we might need to fetch all and filter, or use an ID if available.
@@ -72,8 +75,14 @@ export default async function SinglePostPage({ params }) {
     { name: decodeHtmlEntities(post.title.rendered), href: `/blog/${post.slug}` },
   ];
 
+  const breadcrumbJsonLdItems = breadcrumbs.map((b) => ({
+    name: b.name,
+    url: `${SITE_URL}${b.href}`,
+  }));
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <BreadcrumbsJsonLd items={breadcrumbJsonLdItems} />
       <Suspense fallback={<SinglePostLoadingSkeleton />}>
         <article>
           {/* Breadcrumbs */}

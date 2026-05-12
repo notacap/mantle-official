@@ -1,9 +1,13 @@
 import { Suspense } from 'react';
 import SingleProductComponent from '@/app/components/shop/SingleProduct';
 import NewsletterSignup from '@/app/components/NewsletterSignup';
+import ProductJsonLd from '@/app/components/seo/ProductJsonLd';
+import BreadcrumbsJsonLd from '@/app/components/seo/BreadcrumbsJsonLd';
 import { getProductBySlug } from '@/app/services/woocommerce';
 import '../loading.css';
 import '../product.css';
+
+const SITE_URL = 'https://www.mantle-clothing.com';
 
 // Function to generate metadata
 export async function generateMetadata({ params }) {
@@ -81,13 +85,35 @@ export async function generateMetadata({ params }) {
 export default async function ProductPage({ params }) {
   // Await params before accessing its properties
   const { slug } = await params;
-  
+
+  const product = await getProductBySlug(slug).catch(() => null);
+
+  const breadcrumbItems = [
+    { name: 'Home', url: `${SITE_URL}/` },
+    { name: 'Shop', url: `${SITE_URL}/shop` },
+  ];
+  if (product?.categories?.[0]) {
+    const primaryCategory = product.categories[0];
+    breadcrumbItems.push({
+      name: primaryCategory.name,
+      url: `${SITE_URL}/categories/${primaryCategory.slug}`,
+    });
+  }
+  if (product?.name) {
+    breadcrumbItems.push({
+      name: product.name,
+      url: `${SITE_URL}/product/${product.slug}`,
+    });
+  }
+
   return (
-    <div style={{ 
-      maxWidth: '1200px', 
-      margin: '0 auto', 
+    <div style={{
+      maxWidth: '1200px',
+      margin: '0 auto',
       padding: '2rem 1rem',
     }}>
+      {product && <ProductJsonLd product={product} />}
+      <BreadcrumbsJsonLd items={breadcrumbItems} />
       <Suspense fallback={<ProductLoadingSkeleton />}>
         <SingleProductComponent productIdentifier={slug} />
       </Suspense>

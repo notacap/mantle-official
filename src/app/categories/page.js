@@ -4,6 +4,14 @@ import { Suspense, useEffect, useState } from 'react';
 import { getCategories } from '../services/woocommerce';
 import Link from 'next/link';
 import Image from 'next/image';
+import BreadcrumbsJsonLd from '@/app/components/seo/BreadcrumbsJsonLd';
+
+const SITE_URL = 'https://www.mantle-clothing.com';
+const categoriesBreadcrumbItems = [
+  { name: 'Home', url: `${SITE_URL}/` },
+  { name: 'Shop', url: `${SITE_URL}/shop` },
+  { name: 'Categories', url: `${SITE_URL}/categories` },
+];
 
 // Mapping category names to image paths
 const categoryImageMap = {
@@ -193,6 +201,7 @@ function CategoriesData() {
 export default function CategoriesPage() {
   return (
     <div className="w-full"> {/* Simplified wrapper */}
+      <BreadcrumbsJsonLd items={categoriesBreadcrumbItems} />
       {/* Breadcrumb navigation */}
       <div className="text-sm text-gray-500 mb-6 max-w-7xl mx-auto px-4 pt-10">
         <Link href="/" className="hover:underline">Home</Link> {' / '}

@@ -4,6 +4,14 @@ import { Suspense, useEffect, useState } from 'react';
 import { getCollections } from '../services/woocommerce';
 import Link from 'next/link';
 import Image from 'next/image';
+import BreadcrumbsJsonLd from '@/app/components/seo/BreadcrumbsJsonLd';
+
+const SITE_URL = 'https://www.mantle-clothing.com';
+const collectionsBreadcrumbItems = [
+  { name: 'Home', url: `${SITE_URL}/` },
+  { name: 'Shop', url: `${SITE_URL}/shop` },
+  { name: 'Collections', url: `${SITE_URL}/collections` },
+];
 
 // Mapping collection names to image paths
 const collectionImageMap = {
@@ -188,6 +196,7 @@ function CollectionsData() {
 export default function CollectionsPage() {
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 1rem' }}>
+      <BreadcrumbsJsonLd items={collectionsBreadcrumbItems} />
       {/* Breadcrumb navigation */}
       <div className="text-sm text-gray-500 mb-6">
         <Link href="/" className="hover:underline">Home</Link> {' / '}

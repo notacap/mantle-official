@@ -117,7 +117,7 @@ Required in `.env.local`:
 
 `src/middleware.js` implements:
 - **Geo-blocking**: Restricts access to allowed countries only (US, CA, Western Europe)
-- **Route blocking**: Blocks `/blog` route (temporary, until ready for launch)
+- **Crawler exclusions**: Lets `robots.txt`, `sitemap.xml`, `llms.txt`, and `llms-full.txt` bypass the matcher so crawlers can reach them from any region
 
 ### SEO Focus
 

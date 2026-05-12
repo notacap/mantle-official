@@ -1,0 +1,31 @@
+# Mantle Clothing
+
+> Premium technical apparel for law enforcement, first responders, and outdoor professionals. Purpose-built tactical clothing designed by cops, for cops — waterproof, articulated, and field-tested.
+
+Mantle Clothing makes quality, purpose-built clothing for those who work in demanding environments. Co-founded by range instructor William Petty after 200+ days a year training police officers, the brand merges high-end outdoor performance with tactical functionality. Garments feature articulated cuts, integrated D3O knee protection, waterproof European fabrics, and purpose-built pockets designed for real operational use — not for fashion. Mantle is a US-based company; the brand name reflects historical garments worn by those who braved the elements to farm, protect, and build.
+
+## Products
+
+- [Shop All Products](https://www.mantle-clothing.com/shop): Complete product catalog
+- [Categories](https://www.mantle-clothing.com/categories): Pants, Tops, Outerwear, Accessories
+- [Collections](https://www.mantle-clothing.com/collections): The Rain Collection, The Range Collection
+
+## About the Brand
+
+- [About Mantle](https://www.mantle-clothing.com/about): Story, mission, team, and design philosophy
+- [In The Wild](https://www.mantle-clothing.com/in-the-wild): Law enforcement professionals who use Mantle gear operationally — Chase Jenkins, Dan Smith, Fred Hawkins, Bryan Veliz
+- [Partners](https://www.mantle-clothing.com/partners): Industry partners (Triarc Systems, Velocity Systems, Team Wendy, D3O, High Speed Gear) and authorized dealers (Khimaira Strategy Tactics — European distributor)
+
+## Support
+
+- [Contact](https://www.mantle-clothing.com/contact): General inquiries and order support via contact forms
+- [Warranty](https://www.mantle-clothing.com/warranty): 30-day defect warranty, 15-day exchange policy, claim procedures
+
+## Content
+
+- [Blog](https://www.mantle-clothing.com/blog): Tactical gear insights, product updates, and field-tested advice
+
+## Optional
+
+- [Sitemap (XML)](https://www.mantle-clothing.com/sitemap.xml): Machine-readable site index
+- [Full content for LLMs](https://www.mantle-clothing.com/llms-full.txt): Concatenated prose for context windows

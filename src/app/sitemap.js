@@ -1,4 +1,4 @@
-const URL = 'https://www.mantle-clothing.com';
+const SITE_URL = 'https://www.mantle-clothing.com';
 
 async function fetchAllWooCommerceItems(endpoint) {
   let allItems = [];
@@ -75,17 +75,17 @@ export default async function sitemap() {
   const allCollections = await fetchAllWooCommerceItems('products/tags');
 
   const products = allProducts.map(({ slug, date_modified }) => ({
-    url: `${URL}/product/${slug}`,
+    url: `${SITE_URL}/product/${slug}`,
     lastModified: date_modified ? new Date(date_modified) : new Date(),
   }));
 
   const categories = allCategories.filter(c => c.count > 0).map(({ slug }) => ({
-    url: `${URL}/categories/${slug}`,
+    url: `${SITE_URL}/categories/${slug}`,
     lastModified: new Date().toISOString(),
   }));
 
   const collections = allCollections.filter(c => c.count > 0).map(({ slug }) => ({
-    url: `${URL}/collections/${slug}`,
+    url: `${SITE_URL}/collections/${slug}`,
     lastModified: new Date().toISOString(),
   }));
 
@@ -104,7 +104,7 @@ export default async function sitemap() {
     '/shop',
     '/warranty',
   ].map((route) => ({
-    url: `${URL}${route}`,
+    url: `${SITE_URL}${route}`,
     lastModified: new Date().toISOString(),
   }));
 

@@ -1,0 +1,154 @@
+# Mantle Clothing — Full Content for LLMs
+
+This document concatenates the primary public-facing content of mantle-clothing.com for use in LLM context windows and as a citation source. Content is current as of 2026-05-12.
+
+---
+
+## About Mantle Clothing
+
+Premium technical apparel for law enforcement, first responders, and outdoor professionals. Purpose-built tactical clothing designed by cops, for cops — waterproof, articulated, and field-tested.
+
+Mantle Clothing is a US-based company that creates quality, purpose-built clothing for those who work in demanding environments. The brand was co-founded by range instructor William Petty, who is on the range over 200 days each year training police officers. After becoming frustrated with the existing law enforcement clothing options — gear that fell apart, was uncomfortable, and restrictive — he set out to design clothing specifically for police officers and what they do every day.
+
+### Our Story
+
+Mantle Clothing emerged from a simple truth: those who protect and serve deserve gear that works as hard as they do. What started as frustrated conversations around the range evolved into a mission to revolutionize tactical apparel.
+
+The word "mantle" itself tells the story. Historically, it was the outermost garment worn by those who braved the elements to farm, protect, and build. It represented both physical protection and the weight of responsibility. Mantle Clothing carries that tradition forward for modern professionals who still work in the elements.
+
+The brand's journey began with a year of meticulous development: selecting premium European fabrics, testing countless prototypes, and gathering feedback from law enforcement officers across the country. Mantle partnered with seamstresses with over 20 years of technical garment experience and consulted with SWAT officers, range instructors, and outdoor professionals. The result is a 9-piece collection that merges high-end outdoor performance with tactical functionality.
+
+### Our Mission
+
+The goal at Mantle is to make quality, purpose-built clothing for law enforcement and other first responders. Clothing should perform and function correctly, allowing individuals to focus on their job.
+
+Every piece addresses real-world operational needs. Examples include:
+- Waterproof work bibs that actually keep the wearer dry during 12-hour shifts
+- Pants with integrated D3O knee protection that moves with the body
+- Purpose-built pockets that work in positions other than standing
+- Air flow vents placed where they are needed
+- Articulated cuts that facilitate true movement while running, climbing, and engaging operationally
+
+### The Team
+
+Mantle is operated by three principals:
+- **Cait** — Co-Owner
+- **Will** (William Petty) — Co-Owner, range instructor and product designer
+- **Chris** — Web Dev / Digital Marketing
+
+### Design Philosophy
+
+Mantle's design philosophy centers on three core principles:
+
+1. **Purpose Over Fashion** — Every feature serves a function. Zippers, pockets, or panels are not added unless they solve a real problem.
+2. **Field-Tested Innovation** — Each garment undergoes rigorous testing in actual operational environments. If it doesn't work on the range deck, in the rain, or during a foot pursuit, it doesn't make the cut.
+3. **Uncompromising Quality** — Top-tier materials and construction methods are used even when cheaper alternatives exist. High-end fabrics, reinforced stitching in stress points, and components that won't fail when it matters most.
+
+---
+
+## Product Categories
+
+Mantle's catalog is organized into four primary categories:
+
+- **Pants** — Operational pants with articulated cuts and integrated knee protection
+- **Tops** — Technical shirts and jackets designed for operational use
+- **Outerwear** — Waterproof jackets and shells for working in the elements
+- **Accessories** — Supporting gear and accessories
+
+### Collections
+
+- **The Rain Collection** — Waterproof outerwear designed for sustained exposure to weather, optimized for operational and outdoor use
+- **The Range Collection** — Versatile range and training apparel for instructors and students
+
+---
+
+## Professional Field Testing — In The Wild
+
+Mantle gear is used in real-world operations by experienced law enforcement professionals. Featured professional partners include:
+
+### Chase Jenkins (@centrifuge_chase)
+
+Chase began his law enforcement career in 1992. During his 25-year career he served in various units and fields of the profession. Early on he was tasked with providing training for his department during in-service training. He was assigned to the Housing Authority — a unit responsible for patrolling public housing — which was awarded numerous citations for its programs. The unit worked closely with Narcotics by enforcing street-level narcotics activity and serving search and arrest warrants. Chase is currently a sworn/active deputy at a large Sheriff's Office in Alabama where his primary duties are providing advanced training and assisting in operations at the training facility.
+
+### Dan Smith (@danno1812)
+
+Dan has been a police officer for an agency in the Pacific Northwest for over 10 years. He is currently assigned as a K9 handler, working in patrol, detection, and SWAT roles. He has served on a Multi-Jurisdictional Regional SWAT team for the last 5 years. He is a CJTC certified firearms instructor in handgun, shotgun, and patrol rifle, and currently serves as the lead firearms instructor for both his agency and the SWAT Team. Dan served for six years in the Marine Corps, with a deployment to Iraq in 2005. He holds a B.A. in Criminal Justice from Washington State University.
+
+### Fred Hawkins (@fred_hawkins)
+
+Fred began his career in law enforcement in 2018 and serves in the patrol division. He has a desire to see law enforcement training evolve and give officers the skill sets to do the job safely. Fred leads by example — inspiring officers to seek training along with maintaining a healthy lifestyle.
+
+### Bryan Veliz (@slytactraining)
+
+Bryan began his career as a state law enforcement officer in 2012, serving as an active patrol officer for several years. Within his first two years in the field, he was assigned as a member of his agency's Special Response Team where he later was responsible for conducting firearms training and qualifications, as well as the instruction of both pistol and carbine weapons platforms. Bryan holds several Law Enforcement and Firearms Instructor certifications and continues to serve in law enforcement.
+
+---
+
+## Partners and Dealers
+
+### Authorized Dealer
+
+**Khimaira Strategy Tactics** (khimaira-st.com) — Dedicated to helping good people save lives by researching and developing material and sharing the best techniques. Khimaira carries Mantle Clothing and is Mantle's European distributor. If a product is not in stock, customers can contact them to request it.
+
+### Industry Partners
+
+Mantle works with the following industry partners:
+
+- **Triarc Systems**
+- **Velocity Systems**
+- **Team Wendy**
+- **D3O** (impact-protection material used in integrated knee protection)
+- **High Speed Gear**
+
+---
+
+## Warranty Policy
+
+### Returns and Exchanges
+
+- Returns for sizing exchanges and/or preference must be made within **15 days of purchase**
+- Items must be in new condition or a restocking fee will be applied
+
+### Warranty Coverage
+
+Mantle Clothing warrants all apparel to be free of defects in material or workmanship for a period of **30 days from the original date of purchase**. The apparel warranty covers defects of workmanship and materials but does not cover damage caused by:
+- Accident
+- Improper care
+- Negligence
+- Normal wear and tear
+- The natural breakdown of colors and material through time, exposure, or extensive use
+
+If a Mantle Clothing product is found to be defective after inspection by a warranty technician, Mantle Clothing will replace the product with an existing comparable model. Mantle Clothing is not liable for any damages, losses, and/or costs incurred resulting from the loss or usage of products.
+
+### Warranty Policy Limitations
+
+- All warranty claims must be accompanied by the original purchase receipt
+- All warranty claims returned must have a prior return authorization
+- Replaced products are covered by a new warranty starting from the date of exchange
+
+### How to Process a Warranty Claim
+
+Email the warranty department at **support@mantle-clothing.com** to obtain a Warranty Authorization. Include:
+
+- Pictures of the item
+- Picture of the proof of purchase
+- Warranty description
+- Customer address
+- Phone number
+
+After contacting the warranty department and receiving a return label:
+
+- Package the item in an appropriate box
+- Include a copy of the original receipt
+
+---
+
+## Contact
+
+All contact with Mantle Clothing — general inquiries, order support, warranty claims — is conducted through contact forms on the website at https://www.mantle-clothing.com/contact and via email at support@mantle-clothing.com for warranty.
+
+---
+
+## Source URL
+
+This document is canonical at https://www.mantle-clothing.com/llms-full.txt. The short index is at https://www.mantle-clothing.com/llms.txt. The XML sitemap is at https://www.mantle-clothing.com/sitemap.xml.
