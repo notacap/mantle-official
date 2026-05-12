@@ -510,8 +510,12 @@ export default function CheckoutPage() {
         }
 
         // Add paymentMethod.id to dataToSend for the final checkout call
+        // Updated to use modern WooCommerce Stripe Gateway payment_data format (2025+)
+        // See: https://javiermiz.github.io/blog/woocommerce-stripe-store-api-payment-data-guide/
         dataToSend.payment_data = [
-          { key: 'stripe_token', value: paymentMethod.id },
+          { key: 'payment_method', value: 'stripe' },
+          { key: 'wc-stripe-payment-method', value: paymentMethod.id },
+          { key: 'wc-stripe-is-deferred-intent', value: 'true' },
           { key: 'billing_email', value: formData.billing_address.email },
           { key: 'billing_first_name', value: formData.billing_address.first_name },
           { key: 'billing_last_name', value: formData.billing_address.last_name },

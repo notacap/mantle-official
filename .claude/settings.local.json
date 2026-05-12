@@ -4,15 +4,22 @@
       "Bash(curl:*)",
       "Bash(git mv:*)",
       "Bash(npm view:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:javiermiz.github.io)",
+      "WebFetch(domain:woocommerce.com)",
+      "Bash(npm run dev:*)",
+      "WebFetch(domain:localhost)",
+      "Bash(npm run lint)"
     ],
     "deny": [],
     "ask": []
   },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "context7",
     "memory",
     "fetch"
-  ],
-  "enableAllProjectMcpServers": true
+  ]
 }
