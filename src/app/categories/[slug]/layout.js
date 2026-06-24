@@ -30,7 +30,7 @@ export async function generateMetadata({ params: rawParams }) {
     description: `Browse our ${category.name} collection. ${
       category.description
         ? category.description.replace(/<[^>]*>/g, '')
-        : 'Purpose-built tactical apparel for law enforcement and outdoor professionals.'
+        : 'Quality, sustainable tactical apparel — purpose-built for law enforcement and outdoor professionals.'
     }`.trim(),
     alternates: { canonical: `${SITE_URL}/categories/${slug}` },
   };
@@ -60,6 +60,7 @@ export default async function CategorySlugLayout({ children, params: rawParams }
   return (
     <>
       <BreadcrumbsJsonLd items={breadcrumbItems} />
+      {category?.name && <h1 className="sr-only">{category.name} — Mantle Clothing</h1>}
       {children}
     </>
   );

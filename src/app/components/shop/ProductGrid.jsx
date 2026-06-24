@@ -33,7 +33,7 @@ function getShortDescription(product) {
     return text.substring(0, 70) + (text.length > 70 ? '...' : '');
   }
   
-  return 'Sustainable eco-friendly apparel';
+  return 'Purpose-built apparel from Mantle Clothing';
 }
 
 // Function to calculate combined rating from reviews

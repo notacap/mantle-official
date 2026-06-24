@@ -18,7 +18,7 @@ export const metadata = {
         url: '/images/banner-1.jpg',
         width: 1200,
         height: 630,
-        alt: 'Mantle Clothing - Sustainable Apparel',
+        alt: 'Mantle Clothing — Shop Tactical Apparel & Gear',
       },
     ],
   },
@@ -53,6 +53,7 @@ export default function ShopLayout({ children }) {
   return (
     <>
       <BreadcrumbsJsonLd items={shopBreadcrumbItems} />
+      <h1 className="sr-only">Shop All Products — Tactical Clothing & Gear</h1>
       {children}
     </>
   );

@@ -11,7 +11,8 @@
       "WebFetch(domain:woocommerce.com)",
       "Bash(npm run dev:*)",
       "WebFetch(domain:localhost)",
-      "Bash(npm run lint)"
+      "Bash(npm run lint)",
+      "Read(//tmp/**)"
     ],
     "deny": [],
     "ask": []

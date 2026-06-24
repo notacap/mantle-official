@@ -19,7 +19,7 @@ export const metadata = {
         url: '/images/banner-1.jpg',
         width: 1200,
         height: 630,
-        alt: 'Mantle Clothing - Sustainable Apparel',
+        alt: 'Mantle Clothing — Purpose-Built for Those Who Serve',
       },
     ],
   },
@@ -65,8 +65,7 @@ export default function About() {
           <div className="hero-text-container">
             <h1 className="hero-heading">
               Work can be shitty.
-            </h1>
-            <h1 className="hero-heading">
+              <br />
               Your clothes don&apos;t have to be.
             </h1>
           </div>

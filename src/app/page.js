@@ -8,9 +8,11 @@ import NewsletterSignup from "./components/NewsletterSignup";
 import Image from "next/image";
 
 export const metadata = {
-  title: 'Mantle Clothing - Premium Tactical & Outdoor Apparel for Law Enforcement',
-  description: 'Purpose-built technical clothing designed for operational use. Premium law enforcement and outdoor apparel featuring waterproof, articulated designs with integrated protection. Tough, warm, water-resistant gear for those who work in the elements.',
-  keywords: 'tactical clothing, law enforcement apparel, outdoor gear, waterproof work pants, technical clothing, police gear, security apparel, operational clothing, tactical jacket, work bibs',
+  title: 'Mantle Clothing — Tactical & Outdoor Apparel for Law Enforcement & First Responders',
+  description:
+    'Shop Mantle Clothing — sustainable, purpose-built tactical and outdoor apparel for law enforcement, first responders, and outdoor professionals. Waterproof pants, jackets, work bibs, and technical gear designed by cops, for cops.',
+  keywords:
+    'tactical clothing, law enforcement apparel, outdoor gear, waterproof work pants, technical clothing, police gear, security apparel, operational clothing, tactical jacket, work bibs',
   icons: {
     icon: '/images/MANTLE_LOGO.svg?v=2',
     shortcut: '/images/MANTLE_LOGO.svg?v=2',
@@ -36,8 +38,9 @@ export const metadata = {
     },
   },
   openGraph: {
-    title: 'Mantle Clothing - Premium Tactical & Outdoor Apparel',
-    description: 'Purpose-built technical clothing merging high-end outdoor performance with tactical functionality. Designed for law enforcement, security, and outdoor professionals.',
+    title: 'Mantle Clothing — Built for Those Who Work in the Elements',
+    description:
+      'Purpose-built technical clothing merging high-end outdoor performance with tactical functionality. Sustainably designed for law enforcement, first responders, and outdoor professionals.',
     type: 'website',
     locale: 'en_US',
     url: 'https://www.mantle-clothing.com',
@@ -47,16 +50,15 @@ export const metadata = {
         url: '/images/banner-1.jpg',
         width: 1200,
         height: 630,
-        alt: 'Mantle Clothing - Sustainable Apparel',
+        alt: 'Mantle Clothing — Tactical Apparel for Professionals',
       },
     ],
-    locale: 'en_US',
-    type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Mantle Clothing - Premium Tactical & Outdoor Apparel',
-    description: 'Purpose-built technical clothing for operational use. Premium gear for law enforcement and outdoor professionals.',
+    title: 'Mantle Clothing — Tactical & Outdoor Apparel',
+    description:
+      'Sustainable, purpose-built technical clothing for law enforcement, first responders, and outdoor professionals.',
     images: ['/images/banner-1.jpg'],
   },
 };

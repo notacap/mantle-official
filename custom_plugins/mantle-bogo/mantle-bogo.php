@@ -54,18 +54,44 @@ class Mantle_BOGO {
     /**
      * Add CORS headers for headless Next.js frontend
      */
+    /**
+     * Origins allowed to call the REST API with credentials.
+     *
+     * The headless Next.js frontend sends cart requests with
+     * `credentials: 'include'`, so a wildcard origin is both insecure and
+     * invalid per the Fetch spec — the origin must be echoed back exactly.
+     * Filterable so additional environments (staging/preview) can be added
+     * without editing the plugin.
+     */
+    private function get_allowed_origins() {
+        return apply_filters('mantle_bogo_allowed_origins', array(
+            'https://www.mantle-clothing.com',
+            'https://mantle-clothing.com',
+            'http://localhost:3000', // local development
+        ));
+    }
+
+    /**
+     * Add CORS headers for headless Next.js frontend
+     */
     public function add_cors_headers() {
-        // Only add headers for our custom endpoints
         remove_filter('rest_pre_serve_request', 'rest_send_cors_headers');
-        add_filter('rest_pre_serve_request', function($value) {
+
+        $allowed_origins = $this->get_allowed_origins();
+
+        add_filter('rest_pre_serve_request', function($value) use ($allowed_origins) {
             $origin = get_http_origin();
 
-            // Allow requests from any origin for public BOGO endpoints
-            // In production, you may want to restrict this to your specific domain
-            header('Access-Control-Allow-Origin: *');
-            header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-            header('Access-Control-Allow-Headers: Content-Type, Authorization');
-            header('Access-Control-Allow-Credentials: true');
+            // Only emit CORS headers for explicitly allowed origins. Credentialed
+            // requests require the exact origin to be echoed back, never '*'.
+            if ($origin && in_array($origin, $allowed_origins, true)) {
+                header('Access-Control-Allow-Origin: ' . $origin);
+                header('Vary: Origin');
+                header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+                header('Access-Control-Allow-Headers: Content-Type, Authorization, Nonce, Cart-Token');
+                header('Access-Control-Allow-Credentials: true');
+                header('Access-Control-Expose-Headers: Nonce, Cart-Token');
+            }
 
             return $value;
         });

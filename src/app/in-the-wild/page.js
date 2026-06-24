@@ -21,7 +21,7 @@ export const metadata = {
         url: '/images/banner-1.jpg',
         width: 1200,
         height: 630,
-        alt: 'Mantle Clothing - Sustainable Apparel',
+        alt: 'Mantle Clothing — Professional Partners in the Field',
       },
     ],
   },

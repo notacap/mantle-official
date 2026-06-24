@@ -60,7 +60,7 @@ export const metadata = {
         url: '/images/banner-1.jpg',
         width: 1200,
         height: 630,
-        alt: 'Mantle Clothing - Sustainable Apparel',
+        alt: 'Mantle Clothing — Tactical Apparel for Professionals',
       },
     ],
     locale: 'en_US',

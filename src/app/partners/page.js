@@ -18,7 +18,7 @@ export const metadata = {
         url: '/images/banner-1.jpg',
         width: 1200,
         height: 630,
-        alt: 'Mantle Clothing - Sustainable Apparel',
+        alt: 'Mantle Clothing — Industry Partners & Authorized Dealers',
       },
     ],
   },
@@ -89,7 +89,7 @@ export default function Partners() {
         <div className="section-container">
           <h2 className="section-title">Industry Partners</h2>
           <div className="partners-grid">
-            <a href="#" className="partner-logo-container">
+            <div className="partner-logo-container">
               <Image 
                 src="/images/partner1.jpg"
                 alt="Triarc Systems" 
@@ -97,8 +97,8 @@ export default function Partners() {
                 height={120}
                 className="partner-logo"
               />
-            </a>
-            <a href="#" className="partner-logo-container">
+            </div>
+            <div className="partner-logo-container">
               <Image 
                 src="/images/partner2.jpg"
                 alt="Velocity Systems" 
@@ -106,8 +106,8 @@ export default function Partners() {
                 height={120}
                 className="partner-logo"
               />
-            </a>
-            <a href="#" className="partner-logo-container">
+            </div>
+            <div className="partner-logo-container">
               <Image 
                 src="/images/partner3.jpg"
                 alt="Team Wendy" 
@@ -115,8 +115,8 @@ export default function Partners() {
                 height={120}
                 className="partner-logo"
               />
-            </a>
-            <a href="#" className="partner-logo-container">
+            </div>
+            <div className="partner-logo-container">
               <Image 
                 src="/images/partner4.jpg"
                 alt="D3O" 
@@ -124,8 +124,8 @@ export default function Partners() {
                 height={120}
                 className="partner-logo"
               />
-            </a>
-            <a href="#" className="partner-logo-container">
+            </div>
+            <div className="partner-logo-container">
               <Image 
                 src="/images/partner5.jpg"
                 alt="Elite Special Forces" 
@@ -133,8 +133,8 @@ export default function Partners() {
                 height={120}
                 className="partner-logo"
               />
-            </a>
-            <a href="#" className="partner-logo-container">
+            </div>
+            <div className="partner-logo-container">
               <Image 
                 src="/images/partner6.jpg"
                 alt="High Speed Gear" 
@@ -142,7 +142,7 @@ export default function Partners() {
                 height={120}
                 className="partner-logo"
               />
-            </a>
+            </div>
           </div>
         </div>
       </section>

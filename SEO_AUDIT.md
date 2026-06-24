@@ -1,8 +1,13 @@
 # SEO & AIO Audit — Mantle Clothing
 
-**Date:** 2026-05-12
-**Scope:** Read-only audit. Zero code changes. This document is the punch list for all subsequent phases.
+**Phase 0 (audit) Date:** 2026-05-12
+**Phase 1 (execution) Date:** 2026-05-12
+**Last Updated:** 2026-05-12
+**Status:** **Phase 1 COMPLETE** — all P0 items + selected P1 items shipped, build clean. Phase 2+ pending. See §8b for what shipped, §9 for the answered questions, and §12 for cold-start pickup instructions.
+**Scope:** Originally a read-only audit (Phase 0). Now also serves as the execution log for Phase 1 and the live punch list for Phase 2–4.
 **Goal:** Maximize both classical SEO (Google/Bing rich results, organic rankings) and AIO (AI Optimization — citation rates in ChatGPT, Claude, Perplexity, Gemini, AI Overviews).
+
+> **If you are a new agent picking this up:** read §12 first. It tells you exactly where to start and what's already shipped.
 
 ---
 
@@ -15,7 +20,7 @@ Every finding has:
 - **Risk** — `low` (purely additive, can't break existing rendering), `medium` (touches existing markup/metadata), `high` (touches rendering pipeline, RSC boundaries, or data flow)
 - **Phase** — which delivery phase it belongs to (Phase 1–4, see §8)
 
-Greenlight items individually or by phase. Nothing in this document changes any code.
+**As of 2026-05-12, Phase 1 is complete.** Items don't have inline status markers — check §8b for the complete done/pending breakdown. Items not listed as done in §8b are pending.
 
 ---
 
@@ -464,34 +469,141 @@ What ships:
 
 ---
 
-## 9. Open questions for greenlight before Phase 1
+## 8b. Phase 1 outcomes — what shipped (2026-05-12)
 
-These need user answers before we can land Phase 1 cleanly:
+Both Phase 1a (pure additions) and Phase 1b (markup edits) shipped on 2026-05-12. `npm run build` passes clean. Author: Claude Opus 4.7 in a single session under the user's supervision.
+
+### Items DONE
+
+| ID | Title | How it shipped |
+|---|---|---|
+| P0-1 | Product JSON-LD | New `src/app/components/seo/ProductJsonLd.jsx` (server). Supports `Offer` for simple products, `AggregateOffer` (lowPrice/highPrice/offerCount) for variable products. Includes `AggregateRating` when `rating_count > 0`. Wired into `src/app/product/[slug]/page.js` — the page now fetches the product server-side (in addition to `generateMetadata`'s fetch, deduped by Next.js's fetch cache) and emits the schema. |
+| P0-2 | Organization + WebSite JSON-LD | New `OrganizationJsonLd.jsx` and `WebSiteJsonLd.jsx` server components in `src/app/components/seo/`, both injected into `src/app/layout.js` `<body>`. `Organization` includes `sameAs` with Instagram + Facebook (per Q-1 answer), `contactPoint` pointing to `/contact`, logo at `/images/MANTLE_LOGO.svg`. No `SearchAction` (no site search exists). |
+| P0-3 | BreadcrumbList JSON-LD | New `BreadcrumbsJsonLd.jsx` server component. Injected on: product slug page (server, includes primary category), shop layout (static), categories/[slug] layout (dynamic with category name), collections/[slug] layout (same), categories listing page (client SSR, static breadcrumb), collections listing page (same), blog/[slug] page (server). |
+| P0-4 | `robots.js` | New `src/app/robots.js`. Allows all bots `*` with disallow on `/api/`, `/cart`, `/checkout`, `/order-confirmation`. Explicit allow rules for ~18 AI/search bots (GPTBot, ChatGPT-User, OAI-SearchBot, ClaudeBot, Claude-Web, anthropic-ai, PerplexityBot, Perplexity-User, Google-Extended, GoogleOther, Applebot-Extended, Bytespider, CCBot, cohere-ai, Meta-ExternalAgent, FacebookBot, Diffbot, DuckAssistBot, YouBot). Declares sitemap. |
+| P0-5 | `llms.txt` + `llms-full.txt` | New `public/llms.txt` (Markdown index, ~30 lines) and `public/llms-full.txt` (full curated brand content, ~150 lines — story, mission, team, design philosophy, product categories, professional partners, partners/dealers, warranty policy, contact). Both served at site root. |
+| P0-6 | sr-only H1s | `<h1 className="sr-only">` server-rendered from layouts on: `shop/layout.js` ("Shop All Products — Tactical Clothing & Gear"), `categories/[slug]/layout.js` (`{category.name} — Mantle Clothing`), `collections/[slug]/layout.js` (`{collection.name} — Mantle Clothing`). Zero visual change — uses Tailwind's `sr-only` utility. |
+| P0-7 | Brand-language pass (NUANCED) | Per user feedback, **eco/sustainability messaging is an intentional brand pillar** and was NOT stripped. What changed: (a) 7 OG image alt strings made page-specific (e.g. About → "Purpose-Built for Those Who Serve"; Partners → "Industry Partners & Authorized Dealers"); (b) `ProductGrid.jsx` empty-description fallback "Sustainable eco-friendly apparel" → "Purpose-built apparel from Mantle Clothing"; (c) category/collection layout fallback descriptions now combine sustainable + tactical language. `ProductCategories.jsx` descriptions left untouched (intentional dual-message brand voice). See `brand-positioning` memory for the dual-pillar rule. |
+| P0-8 | Homepage-specific metadata | `src/app/page.js` metadata now distinct from root layout: title "Tactical & Outdoor Apparel for Law Enforcement & First Responders", description leads with "sustainable, purpose-built", OG title "Built for Those Who Work in the Elements". Also cleaned up duplicate `locale` and `type` keys in the OG object. |
+| P1-4 | Categories listing metadata | New `src/app/categories/layout.js` with full metadata (rolled into Phase 1 from "Phase 1 or 2"). |
+| P1-5 | Collections listing metadata | New `src/app/collections/layout.js` with full metadata (same). |
+| P1-9 | Middleware matcher hardened | `src/middleware.js` matcher now excludes `robots.txt`, `sitemap.xml`, `llms.txt`, `llms-full.txt` from the geo-block path. |
+| P1-12 | About H1 duplicate | `src/app/about/page.js` — combined the two `<h1 className="hero-heading">` siblings into one with a `<br>`. Visual unchanged. |
+| P1-14 | Partner `href="#"` dead links | `src/app/partners/page.js` — all six `<a href="#">` wrappers around industry-partner logos converted to `<div>`. Same `partner-logo-container` class, no visual change. |
+
+### Documentation maintenance
+
+- **`CLAUDE.md`** — removed the outdated note about `/blog` being middleware-blocked (it wasn't, the doc was stale). Added a note about the new crawler-exclusion matcher behavior.
+
+### Bonus fix (not in original audit)
+
+**Sitemap URL constructor shadowing.** `src/app/sitemap.js:1` declared `const URL = 'https://...'`, which shadowed the global `URL` constructor. Every `new URL(...)` call inside `fetchAllWooCommerceItems` threw `TypeError: w is not a constructor` at build time, silently returning `[]`. **Result: production `sitemap.xml` was shipping with only static routes — zero products, zero categories, zero collections.** Renamed the const to `SITE_URL` and updated 4 template-literal references. Build now generates the full sitemap.
+
+**Implication:** any pre-Phase-1 Google Search Console product-discovery data is misleading — product pages were not in the sitemap and Google was finding them only through internal links from the shop grid. Expect a measurable post-deploy lift just from the sitemap actually working.
+
+### Build verification
+
+- `npm run build` runs cleanly with all 40 pages compiling
+- `/robots.txt` and `/sitemap.xml` appear in the route table as `○ Static` with revalidate hints (sitemap now revalidates 1h)
+- All JSON-LD components are server components and render in initial HTML
+- Pre-existing dynamic-server-usage warnings on API routes remain (intentional, not caused by Phase 1)
+
+### Files created (10)
+
+```
+src/app/robots.js
+src/app/categories/layout.js
+src/app/collections/layout.js
+src/app/components/seo/OrganizationJsonLd.jsx
+src/app/components/seo/WebSiteJsonLd.jsx
+src/app/components/seo/ProductJsonLd.jsx
+src/app/components/seo/BreadcrumbsJsonLd.jsx
+public/llms.txt
+public/llms-full.txt
+SEO_AUDIT.md (this file)
+```
+
+### Files modified (13)
+
+```
+src/app/layout.js                       (JSON-LD injection + OG alt)
+src/app/page.js                         (homepage-specific metadata, dedupe keys)
+src/app/about/page.js                   (H1 merge + OG alt)
+src/app/contact/page.js                 (OG alt)
+src/app/in-the-wild/page.js             (OG alt)
+src/app/partners/page.js                (OG alt + dead links to <div>)
+src/app/blog/page.js                    (OG alt)
+src/app/blog/[slug]/page.js             (Breadcrumb JSON-LD)
+src/app/product/[slug]/page.js          (Product + Breadcrumb JSON-LD)
+src/app/shop/layout.js                  (Breadcrumb JSON-LD + sr-only H1 + OG alt)
+src/app/categories/[slug]/layout.js     (rewritten — Breadcrumb + sr-only H1 + cleaner generateMetadata)
+src/app/collections/[slug]/layout.js    (same)
+src/app/categories/page.js              (Breadcrumb JSON-LD on listing)
+src/app/collections/page.js             (Breadcrumb JSON-LD on listing)
+src/app/components/shop/ProductGrid.jsx (fallback description)
+src/app/sitemap.js                      (URL → SITE_URL bug fix)
+src/middleware.js                       (matcher hardened)
+CLAUDE.md                               (outdated blog note removed)
+```
+
+### Memory artifacts persisted
+
+Three memory files written for future sessions (paths under `C:\Users\nocap\.claude\projects\C--Users-nocap-Desktop-code-mantle-official\memory\`):
+
+- `seo-methodical-approach.md` — feedback: prior SEO bulk-update broke the site; do audit-first, additive-before-refactor
+- `seo-audit-baseline.md` — project: pointer to this doc as the punch list
+- `brand-positioning.md` — project: Mantle's brand is **dual** (tactical AND sustainable); do not strip sustainability messaging when working on copy
+
+---
+
+## 9. Open questions for greenlight before Phase 1 — ANSWERED 2026-05-12
+
+All six blocking questions were answered by the user before Phase 1 shipped. Answers preserved verbatim (inlined under each question), followed by an *Implementation* note showing how it was applied in Phase 1.
 
 - **Q-1:** What social profile URLs should `Organization.sameAs` include? Only Instagram (`instagram.com/mantle_clothing/`) is linked anywhere in the codebase. Facebook? YouTube? X/Twitter? LinkedIn? TikTok?
 
   Answer: Let's add Facebook as well. Profile URL = https://www.facebook.com/p/Mantle-Clothing-LLC-100063763260203/
 
+  *Implementation:* `src/app/components/seo/OrganizationJsonLd.jsx` — `sameAs` array contains both URLs. No other platforms in use as of 2026-05-12.
+
 - **Q-2:** AI bot policy in `robots.txt`. Allow all (recommended for e-commerce, maximizes AI citation rates) or selectively block any of: GPTBot, ClaudeBot, PerplexityBot, Google-Extended (controls AI Overviews), CCBot, anthropic-ai, cohere-ai, Meta-ExternalAgent, Applebot-Extended?
 
   Answer: Allow All
+
+  *Implementation:* `src/app/robots.js` — wildcard allow plus explicit allow rules for ~18 named AI/search bots. Disallows are limited to `/api/`, `/cart`, `/checkout`, `/order-confirmation`.
 
 - **Q-3:** H1 restoration (P0-6) — visible H1 (matches design, ranking-positive) or `sr-only` H1 (invisible, neutral design impact)?
 
   Answer: lets go with 'sr-only'
 
+  *Implementation:* Tailwind `sr-only` `<h1>` server-rendered from `shop/layout.js`, `categories/[slug]/layout.js`, `collections/[slug]/layout.js`. Zero visual impact. Page-level commented-out H1s in `shop/page.js`, `categories/[slug]/page.js`, `collections/[slug]/page.js` were left commented (the layout-rendered sr-only H1 covers the SEO need).
+
 - **Q-4:** Blog status (P1-7) — currently rendered and crawlable. Is it ready to be indexed, or should `/blog` and `/blog/[slug]` get `noindex` until content lands? `CLAUDE.md` says blog is "blocked until ready for launch" but the middleware doesn't actually block it.
 
   Answer: The CLAUDE.md file contains out of date information. The blog is live and there is a piece of content up. Let's makes sure crawlers can recognize the blog.
+
+  *Implementation:* `CLAUDE.md` updated to remove the outdated "Blocks `/blog` route" line. Breadcrumb JSON-LD added to `blog/[slug]/page.js`. **Still pending in Phase 2 (P1-7):** per-post `generateMetadata` + `Article` schema for blog posts — currently each post inherits the blog index metadata.
 
 
 - **Q-5:** Business contact info (P1-11) — is there a public business address, support phone, and any social profiles beyond Instagram to include in footer + Organization schema?
 
   Answer: All contact with the business is conducted through the contact forms on the website.
 
+  *Implementation:* `Organization` schema's `contactPoint` points to `/contact` (URL only, no phone). **Scope adjustment for Phase 2 P1-11:** the footer-trust-signals item is partially out of scope — there is no address/phone/hours to add. What IS still in scope: social profile icons (IG + FB), legal name "Mantle Clothing LLC", payment method icons. See Q-9 below.
+
 - **Q-6:** Brand color / theme for dynamic OG images (P1-8) — confirm `#9CB24D` (the green I see throughout the code) is the brand primary, and what logo asset to use.
 
-  Answer: yes, that's the green for now... though it seems that lighthouse doesn't like the color, and i've just been too lazy to update it. The logo asset is located in the public/images directory. There is a small image 'logo.svg' and a large image named 'MANTLE_LOGO.svg' 
+  Answer: yes, that's the green for now... though it seems that lighthouse doesn't like the color, and i've just been too lazy to update it. The logo asset is located in the public/images directory. There is a small image 'logo.svg' and a large image named 'MANTLE_LOGO.svg'
+
+  *Implementation:* `Organization` schema's `logo` points to `/images/MANTLE_LOGO.svg` (the large version). The dynamic OG image generator (P1-8) is still pending in Phase 2 — when implemented, it should use `#9CB24D` as the brand color and `MANTLE_LOGO.svg` as the brand mark. **Flagged for Phase 4 a11y/contrast pass:** `#9CB24D` on white is ~2.5:1 contrast — fails WCAG AA. See Q-8 below.
+
+---
+
+### New open questions raised by Phase 1 work
+
+- **Q-7 (Phase 2 sequencing):** Deploy Phase 1 to production first and capture GSC + Lighthouse deltas before starting Phase 2, so we can measure impact and re-prioritize Phase 2 items based on what moved? (Recommended.) Or stack Phase 2 locally and deploy as a bigger bundle? Confirm before the next agent starts Phase 2.
+- **Q-8 (Contrast remediation timing):** `#9CB24D` on white fails WCAG AA (~2.5:1) per the user's Lighthouse note. Not strictly SEO but feeds Google's Page Experience signals via Lighthouse a11y score. Schedule a brand/design decision — color tweak or restricted usage (only on dark backgrounds)?
+- **Q-9 (Footer P1-11 scope adjustment):** Given Q-5's answer (no address/phone/hours), confirm Phase 2 scope for footer trust signals: add social icons (IG + FB), legal name "Mantle Clothing LLC", payment method icons. Skip address/phone/hours.
 
 ---
 
@@ -509,6 +621,87 @@ So you know the gaps:
 
 ---
 
-## 11. Summary of what I touched in this audit
+## 11. Summary of what the original Phase 0 audit touched
 
-This audit produced this single file (`SEO_AUDIT.md`) and made zero other code changes. No new dependencies, no edits to existing files, no new components, no config changes. Greenlight Phase 1 (or any subset of P0/P1 items) when ready.
+(Historical — applies to the Phase 0 audit pass only. Phase 1 file changes are listed in §8b above.)
+
+The original Phase 0 audit (2026-05-12 morning) produced this single file (`SEO_AUDIT.md`) and made zero other code changes. No new dependencies, no edits to existing files, no new components, no config changes. Phase 1 shipped later the same day under the user's greenlight.
+
+---
+
+## 12. Starting fresh — pickup instructions for the next agent
+
+**If you are an agent picking up this project cold, read this first. It tells you exactly where things are and what to do next.**
+
+### Current state (as of 2026-05-12)
+
+- **Phase 0:** done — this audit doc is the artifact
+- **Phase 1:** done — see §8b for everything that shipped
+- **Phase 2, 3, 4:** pending — see §8 for the phase definitions
+
+`npm run build` should still pass clean. The user has NOT yet deployed Phase 1 to production (or has, but hasn't told the next agent) — verify deployment status before reading anything into Search Console data.
+
+### Required reading in order
+
+1. **Memory files** (auto-loaded into your context):
+   - `seo-methodical-approach` — the user got burned by a prior bulk SEO update. Work in small batches, additive-first, verify between phases.
+   - `brand-positioning` — Mantle's brand is dual (tactical AND sustainable). Don't strip sustainability messaging when working on copy.
+   - `seo-audit-baseline` — pointer back to this doc.
+2. **This doc** — read §8b first (what shipped), then §9 (answered + new open questions), then §8 (phase definitions).
+3. **`CLAUDE.md`** — project-level instructions and tech stack.
+
+### The next decision the user owes you
+
+Before starting Phase 2, get user answers on **Q-7, Q-8, Q-9** in §9. Specifically Q-7 (deploy Phase 1 first vs. stack Phase 2 locally) determines the entire next session's workflow.
+
+### Recommended next phase scope (Phase 2)
+
+Assuming the user says "go" on Phase 2 without changing scope, the natural Phase 2 batch is:
+
+| ID | Title | Effort | Notes |
+|---|---|---|---|
+| P1-7 | Blog `generateMetadata` + `Article` JSON-LD per post | M | Adds title/description/OG/dates/author per post. Touch `src/app/blog/[slug]/page.js`. |
+| P1-1 | FAQ schema on warranty / about / contact / partners | M | Warranty is the clearest fit (literal Q&A on how to file a claim). |
+| P1-2 | ItemList JSON-LD on shop / category / collection grids | M | Caveat: those pages are `'use client'` — emit from layout or server-side facing JSON-LD. |
+| P1-3 | Title template (`title.template`) in root metadata | M | Touches every page's title — verify each in build. |
+| P1-6 | Warranty page metadata completion | S | Currently missing OG/Twitter/canonical/robots. |
+| P1-8 | Dynamic OG image generator via `next/og` | L | Use `#9CB24D` + `MANTLE_LOGO.svg` per Q-6. |
+| P1-10 | `next.config.mjs` modernization | S | `domains` → `remotePatterns`, add AVIF/WebP, deviceSizes. |
+| P1-11 | Footer trust signals (scope per Q-9) | S–M | Social icons (IG + FB), legal name, payment icons. Skip address/phone. |
+| P2-1 | `manifest.js` | S | PWA polish. |
+| P2-4 | Homepage + shop `sr-only` H1 | S | Same pattern as P0-6 — covers the home root. |
+
+Recommended split: **Phase 2a** = all the metadata + JSON-LD additions (P1-7, P1-1, P1-2, P1-3, P1-6, P2-1, P2-4) — additive, low risk. **Phase 2b** = dynamic OG generator + image config + footer (P1-8, P1-10, P1-11) — touches more, higher value, slightly more visible change.
+
+### Things to verify before code changes in Phase 2
+
+1. **Pull `git log` since 2026-05-12** to see what (if anything) shipped to production. The deployed state may differ from what's in `main`.
+2. **Visit `https://www.mantle-clothing.com/robots.txt`, `/sitemap.xml`, `/llms.txt`, `/llms-full.txt`** in a browser — confirm they're live in production.
+3. **Run [Rich Results Test](https://search.google.com/test/rich-results) on the live homepage and one product page** — verify the JSON-LD parses cleanly. If it does, Phase 1 is healthy and you can start Phase 2 with confidence. If errors appear, fix those first.
+4. **Check Google Search Console** for the past 7–14 days — has indexed-page count moved? Has product impressions changed? These tell you whether Phase 1 had measurable impact and inform Phase 2 priorities.
+5. **`npm run build` locally** before any new edits — confirm baseline is still green.
+
+### Don't repeat these mistakes
+
+- Don't try to do "all of Phase 2" in one pass. The user explicitly prefers small batches with verification.
+- Don't strip sustainability/eco language from copy. It's an intentional brand pillar. See `brand-positioning` memory and P0-7's nuanced approach (§8b).
+- Don't convert `"use client"` components to server components in Phase 2. That's Phase 4 work — high risk, save for last.
+- Don't try to add address/phone to the footer or Organization schema. Q-5 said there's none.
+- Don't re-run a "full audit" — this doc IS the audit. Start from §8b's done-list, work down §4 / §5 / §6 for what's left.
+
+### Where to find things
+
+| Looking for... | It's at... |
+|---|---|
+| The JSON-LD components from Phase 1 | `src/app/components/seo/` |
+| `robots.txt` | Generated by `src/app/robots.js` |
+| `llms.txt` and `llms-full.txt` | `public/llms.txt`, `public/llms-full.txt` |
+| Sitemap | `src/app/sitemap.js` (was bugged, fixed in Phase 1 — see §8b bonus fix) |
+| Brand positioning rule | Memory: `brand-positioning.md` |
+| Why the previous SEO attempt broke things | Memory: `seo-methodical-approach.md` |
+| The original audit findings (Phase 0) | §3, §4, §5, §6 of this doc |
+| What Phase 1 shipped | §8b |
+| Answered project questions | §9 (Q-1 through Q-6) |
+| Open project questions | §9 (Q-7, Q-8, Q-9) |
+| Phase definitions and gates | §8 |
+| What this audit didn't cover | §10 |
