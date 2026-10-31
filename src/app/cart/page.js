@@ -412,18 +412,22 @@ export default function Cart() {
             </div>
             
             <div className="mt-6 space-y-4">
-              <Link 
-                href="/checkout"
-                passHref
-                legacyBehavior
-              >
-                <button 
-                  disabled={isLoading || isUpdatingCartItems || cartItems.length === 0}
-                  className="w-full bg-[#9CB24D] hover:bg-[#8CA23D] text-white py-3 px-4 rounded-md font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              {isLoading || isUpdatingCartItems || cartItems.length === 0 ? (
+                <button
+                  type="button"
+                  disabled
+                  className="w-full bg-[#9CB24D] text-white py-3 px-4 rounded-md font-medium opacity-50 cursor-not-allowed"
                 >
                   Proceed to Checkout
                 </button>
-              </Link>
+              ) : (
+                <Link
+                  href="/checkout"
+                  className="block w-full text-center bg-[#9CB24D] hover:bg-[#8CA23D] text-white py-3 px-4 rounded-md font-medium transition-colors cursor-pointer"
+                >
+                  Proceed to Checkout
+                </Link>
+              )}
               
               <Link 
                 href="/shop" 
