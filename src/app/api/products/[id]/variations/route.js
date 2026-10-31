@@ -37,8 +37,9 @@ export async function GET(request, { params }) {
       headers: {
         'Content-Type': 'application/json',
       },
-      // You might want to configure caching
-      next: { revalidate: 3600 }, // Cache for 1 hour
+      // Variations carry live stock data, so keep this cache short. A long cache caused
+      // the storefront to show stale "out of stock" / stale quantities after inventory edits.
+      next: { revalidate: 60 },
     });
 
     if (!response.ok) {

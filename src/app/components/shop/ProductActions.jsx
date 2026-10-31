@@ -15,7 +15,7 @@ export default function ProductActions({ productId, price, sizes, colors, amount
   const [isSizeDropdownOpen, setIsSizeDropdownOpen] = useState(false);
   const colorDropdownRef = useRef(null);
   const sizeDropdownRef = useRef(null);
-  const { callCartApi, setIsLoading: setCartLoading, isLoading: isCartLoading, nonce, openSideCart } = useCart(); // Get context functions
+  const { cart, callCartApi, setIsLoading: setCartLoading, isLoading: isCartLoading, nonce, openSideCart } = useCart(); // Get context functions
   
   // Helper function to update variation image - memoized to prevent re-renders
   const updateVariationImage = useCallback((color, size) => {
@@ -134,76 +134,102 @@ export default function ProductActions({ productId, price, sizes, colors, amount
     };
   }, []);
   
-  // Handle quantity change
-  const handleQuantityChange = (e) => {
-    const value = parseInt(e.target.value);
-    if (value >= 1) {
-      setQuantity(value);
-    }
+  const hasVariations = Boolean(variations && variations.length > 0);
+  const hasSizes = Boolean(sizes && sizes.length > 0);
+  const hasColors = Boolean(colors && colors.length > 0);
+
+  // Find the variation matching a color/size combination (attributes the product doesn't use are ignored)
+  const findVariation = (color, size) => variations?.find(v =>
+    (!hasSizes || v.attributes.some(a => isSizeAttribute(a) && a.option === size)) &&
+    (!hasColors || v.attributes.some(a => isColorAttribute(a) && a.option === color))
+  );
+
+  const isComboAvailable = (color, size) => {
+    const variation = findVariation(color, size);
+    return Boolean(variation) && variation.stock_status !== 'outofstock';
   };
-  
-  // Increase/decrease quantity
-  const decreaseQuantity = () => {
-    if (quantity > 1) {
-      setQuantity(quantity - 1);
-    }
-  };
-  
-  const increaseQuantity = () => {
-    setQuantity(quantity + 1);
-  };
-  
+
   const handleSelectSize = (size) => {
     setSelectedSize(size);
     let finalColor = selectedColor;
     // When a size is selected, check if the current color is valid with it.
     // If not, find the first available color for this size.
-    if (selectedColor && isOptionDisabled('color', selectedColor, size)) {
-       const firstAvailableColor = colors.find(color => !isOptionDisabled('color', color, size));
+    if (hasVariations && selectedColor && !isComboAvailable(selectedColor, size)) {
+       const firstAvailableColor = colors.find(color => isComboAvailable(color, size));
        finalColor = firstAvailableColor || '';
        setSelectedColor(finalColor);
     }
-    
+
     // Update variation image
     updateVariationImage(finalColor, size);
   };
 
   const handleSelectColor = (color) => {
     setSelectedColor(color);
-    // When a color is selected, find the first available size for this new color.
-    const firstAvailableSize = sizes.find(size => !isOptionDisabled('size', size, color));
-    setSelectedSize(firstAvailableSize || '');
-    
+    // When a color is selected, keep the current size if it's available in that color,
+    // otherwise fall back to the first available size for the new color.
+    const nextSize = selectedSize && !isOptionDisabled('size', selectedSize, color)
+      ? selectedSize
+      : sizes.find(size => !isOptionDisabled('size', size, color)) || '';
+    setSelectedSize(nextSize);
+
     // Update variation image
-    updateVariationImage(color, firstAvailableSize || '');
+    updateVariationImage(color, nextSize);
   };
 
-  const isOptionDisabled = (type, value, localSelected) => {
-    if (!variations || variations.length === 0) return false; // No variations data, enable all
+  const isOptionDisabled = (type, value, otherSelection) => {
+    if (!hasVariations) return false; // No variations data, enable all
 
-    const localSelectedSize = type === 'color' ? localSelected || selectedSize : value;
-    const localSelectedColor = type === 'size' ? localSelected || selectedColor : value;
-
-    const hasSizes = sizes && sizes.length > 0;
-    const hasColors = colors && colors.length > 0;
-
-    // If the product has both attributes, but one is not yet selected, we can't determine the stock.
-    // So we don't disable it, to allow the user to make a full selection.
-    if (hasSizes && hasColors && (!localSelectedSize || !localSelectedColor)) {
-      return false;
+    if (type === 'color') {
+      // A color is only "out of stock" when no size of that color is purchasable.
+      // It must NOT depend on the currently selected size: e.g. if "Black / XXL" is selected
+      // and "Mantle Green / XXL" is sold out, Mantle Green must still be selectable
+      // (handleSelectColor then switches to an in-stock size).
+      if (!hasSizes) return !isComboAvailable(value, '');
+      return !variations.some(v =>
+        v.stock_status !== 'outofstock' &&
+        v.attributes.some(a => isColorAttribute(a) && a.option === value)
+      );
     }
 
-    const variation = variations.find(v => {
-        // A variation matches if all its defined attributes match our selection.
-        const sizeAttr = !hasSizes || v.attributes.find(a => (a.name.toLowerCase() === 'size' || a.name.toLowerCase() === 'sizes') && a.option === localSelectedSize);
-        const colorAttr = !hasColors || v.attributes.find(a => (a.name.toLowerCase() === 'color' || a.name.toLowerCase() === 'colours') && a.option === localSelectedColor);
-        return sizeAttr && colorAttr;
-    });
-
-    if (!variation) return true; // Combination doesn't exist
-    return variation.stock_status === 'outofstock';
+    // type === 'size': depends on the selected color (color is chosen first in the UI)
+    const color = otherSelection || selectedColor;
+    if (hasColors && !color) return false; // Can't determine stock until a color is chosen
+    return !isComboAvailable(color, value);
   };
-  
+
+  // --- Stock limits for the current selection ---
+  // WooCommerce rejects add-to-cart when (requested qty + qty already in cart) > stock,
+  // so cap the quantity selector to what can actually still be added.
+  const selectedVariation = hasVariations ? findVariation(selectedColor, selectedSize) : null;
+  const quantityInCart = selectedVariation
+    ? (cart?.items || [])
+        .filter(item => item.id === selectedVariation.id)
+        .reduce((sum, item) => sum + (item.quantity || 0), 0)
+    : 0;
+  const isStockLimited = Boolean(
+    selectedVariation?.manage_stock &&
+    selectedVariation.backorders === 'no' &&
+    Number.isFinite(selectedVariation.stock_quantity)
+  );
+  const availableQuantity = isStockLimited
+    ? Math.max(0, selectedVariation.stock_quantity - quantityInCart)
+    : null; // null = no limit known
+  const maxSelectableQuantity = availableQuantity === null ? Infinity : Math.max(1, availableQuantity);
+  // Derived (not stored) so switching to a lower-stock variation clamps automatically
+  const effectiveQuantity = Math.min(quantity, maxSelectableQuantity);
+
+  const handleQuantityChange = (e) => {
+    const value = parseInt(e.target.value);
+    if (value >= 1) {
+      setQuantity(Math.min(value, maxSelectableQuantity));
+    }
+  };
+
+  const decreaseQuantity = () => setQuantity(Math.max(1, effectiveQuantity - 1));
+
+  const increaseQuantity = () => setQuantity(Math.min(effectiveQuantity + 1, maxSelectableQuantity));
+
   // Helper function to get slug from display name
   const getSizeSlug = (sizeName) => {
     if (!sizeOptions || !sizeName) return sizeName;
@@ -281,7 +307,7 @@ export default function ProductActions({ productId, price, sizes, colors, amount
 
     const itemData = {
       id: productId,
-      quantity: quantity,
+      quantity: effectiveQuantity,
       ...(variation.length > 0 && { variation })
     };
 
@@ -292,7 +318,7 @@ export default function ProductActions({ productId, price, sizes, colors, amount
     } catch (error) {
       console.error('Failed to add to cart:', error);
       console.error('Error details:', error.response?.data || error.message);
-      alert(`Failed to add product to cart: ${error.message || 'Please try again.'}`);
+      alert(`Failed to add product to cart: ${decodeHtmlEntities(error.message) || 'Please try again.'}`);
     } finally {
       setIsAddingToCart(false);
       setCartLoading(false); // Uncommented: Clear global loading state
@@ -300,33 +326,16 @@ export default function ProductActions({ productId, price, sizes, colors, amount
   };
   
   const isCurrentSelectionInvalid = () => {
-    if (!variations || variations.length === 0) return false;
-    
-    const hasSizes = sizes && sizes.length > 0;
-    const hasColors = colors && colors.length > 0;
+    if (!hasVariations) return false;
 
     if ((hasSizes && !selectedSize) || (hasColors && !selectedColor)) {
       return true; // A selection is required but not made
     }
 
-    if (selectedSize && selectedColor) {
-      return isOptionDisabled('size', selectedSize, selectedColor);
-    }
-    
-    // Handle products with only one attribute type
-    if (hasSizes && !hasColors && selectedSize) {
-        const variation = variations.find(v => v.attributes.some(a => (a.name.toLowerCase() === 'size' || a.name.toLowerCase() === 'sizes') && a.option === selectedSize));
-        if (!variation) return true;
-        return variation.stock_status === 'outofstock';
-    }
+    if (!selectedVariation || selectedVariation.stock_status === 'outofstock') return true;
 
-    if (hasColors && !hasSizes && selectedColor) {
-        const variation = variations.find(v => v.attributes.some(a => (a.name.toLowerCase() === 'color' || a.name.toLowerCase() === 'colours') && a.option === selectedColor));
-        if (!variation) return true;
-        return variation.stock_status === 'outofstock';
-    }
-
-    return false;
+    // Everything in stock for this option is already in the cart
+    return availableQuantity === 0;
   };
 
   // Determine if the button should be disabled
@@ -553,7 +562,9 @@ export default function ProductActions({ productId, price, sizes, colors, amount
           </button>
           <input 
             type="number" 
-            value={quantity} 
+            value={effectiveQuantity} 
+            min={1}
+            {...(availableQuantity !== null && { max: maxSelectableQuantity })}
             onChange={handleQuantityChange} 
             style={{
               width: '4rem',
@@ -566,12 +577,14 @@ export default function ProductActions({ productId, price, sizes, colors, amount
           />
           <button 
             onClick={increaseQuantity} 
+            disabled={effectiveQuantity >= maxSelectableQuantity}
             style={{
               padding: '0.5rem 0.75rem',
               border: '1px solid #e5e7eb',
               borderRadius: '0.375rem',
               backgroundColor: 'white',
-              cursor: 'pointer',
+              cursor: effectiveQuantity >= maxSelectableQuantity ? 'not-allowed' : 'pointer',
+              opacity: effectiveQuantity >= maxSelectableQuantity ? 0.5 : 1,
               lineHeight: '1'
             }}
             aria-label="Increase quantity"
@@ -584,11 +597,13 @@ export default function ProductActions({ productId, price, sizes, colors, amount
         <div style={{ textAlign: 'right' }}>
           <h3 style={{ fontSize: '1rem', fontWeight: '500', marginBottom: '0.25rem' }}>Total</h3>
           <p style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#9CB24D' }}>
-            {formatPrice(unitPrice * quantity)}
+            {formatPrice(unitPrice * effectiveQuantity)}
           </p>
         </div>
       </div>
       
+      <StockNotice availableQuantity={availableQuantity} quantityInCart={quantityInCart} />
+
       {/* Add to Cart Button */}
       <button
         onClick={handleAddToCart}
@@ -612,4 +627,46 @@ export default function ProductActions({ productId, price, sizes, colors, amount
       </button>
     </div>
   );
-} 
+}
+
+function StockNotice({ availableQuantity, quantityInCart }) {
+  if (availableQuantity === null) return null;
+
+  if (availableQuantity === 0 && quantityInCart > 0) {
+    return (
+      <p role="status" style={{ fontSize: '0.875rem', color: '#b45309', margin: 0 }}>
+        You already have all available stock of this option in your cart.
+      </p>
+    );
+  }
+
+  if (availableQuantity > 0 && availableQuantity <= LOW_STOCK_THRESHOLD) {
+    return (
+      <p role="status" style={{ fontSize: '0.875rem', color: '#b45309', margin: 0 }}>
+        Only {availableQuantity} left in stock{quantityInCart > 0 ? ' (excluding what is in your cart)' : ''}.
+      </p>
+    );
+  }
+
+  return null;
+}
+
+function isSizeAttribute(attribute) {
+  const name = attribute.name.toLowerCase();
+  return name === 'size' || name === 'sizes';
+}
+
+function isColorAttribute(attribute) {
+  const name = attribute.name.toLowerCase();
+  return name === 'color' || name === 'colours';
+}
+
+// WooCommerce Store API error messages contain HTML entities (e.g. &quot;)
+function decodeHtmlEntities(text) {
+  if (!text || typeof document === 'undefined') return text;
+  const textarea = document.createElement('textarea');
+  textarea.innerHTML = text;
+  return textarea.value;
+}
+
+const LOW_STOCK_THRESHOLD = 5;

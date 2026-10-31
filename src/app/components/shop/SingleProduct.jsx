@@ -180,6 +180,7 @@ export default function SingleProduct({ productIdentifier }) {
       return response.json();
     },
     enabled: !!productId,
+    staleTime: 60 * 1000, // Stock changes often; don't hold variation stock for the global 5 min
     retry: false, // Don't retry if variations fail, it's likely not a variable product.
   });
 
