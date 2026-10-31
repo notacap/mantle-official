@@ -1,10 +1,10 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { notFound } from 'next/navigation';
 import BreadcrumbsJsonLd from '@/app/components/seo/BreadcrumbsJsonLd';
+import { SITE_URL, SITE_NAME, decodeEntities, htmlToText, truncate, jsonLdString } from '@/app/lib/seo';
 import SinglePostLoadingSkeleton from './loading'; // Will use the sibling loading.js
-
-const SITE_URL = 'https://www.mantle-clothing.com';
 
 // Function to fetch a single post by its slug
 // WordPress API often allows fetching by slug directly. If not, we might need to fetch all and filter, or use an ID if available.
@@ -25,9 +25,7 @@ async function getPost(slug) {
   }
   const posts = await response.json();
   if (posts.length === 0) {
-    // Handle post not found, perhaps redirect to a 404 page or show a message
-    // For now, throwing an error which can be caught by an error boundary
-    throw new Error('Post not found');
+    return null;
   }
   return posts[0]; // The API returns an array even for a single slug match
 }
@@ -42,9 +40,66 @@ async function getPost(slug) {
 //   }));
 // }
 
+export async function generateMetadata({ params }) {
+  const { slug } = await params;
+  const post = await getPost(slug).catch(() => null);
+  const url = `${SITE_URL}/blog/${slug}`;
+
+  if (!post) {
+    return {
+      title: 'Post Not Found | Mantle Clothing',
+      robots: { index: false, follow: true },
+      alternates: { canonical: url },
+    };
+  }
+
+  const yoast = post.yoast_head_json || {};
+  const title = decodeEntities(htmlToText(post.title?.rendered));
+  const description = truncate(
+    htmlToText(yoast.description) ||
+      htmlToText(post.excerpt?.rendered) ||
+      htmlToText(post.content?.rendered)
+  );
+  const featuredMedia = post._embedded?.['wp:featuredmedia']?.[0];
+  const author = post._embedded?.author?.[0];
+  const images = featuredMedia?.source_url
+    ? [{
+        url: featuredMedia.source_url,
+        width: featuredMedia.media_details?.width,
+        height: featuredMedia.media_details?.height,
+        alt: featuredMedia.alt_text || title,
+      }]
+    : undefined;
+
+  return {
+    title: `${title} | ${SITE_NAME} Blog`,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title,
+      description,
+      url,
+      siteName: SITE_NAME,
+      type: 'article',
+      locale: 'en_US',
+      publishedTime: post.date_gmt ? `${post.date_gmt}Z` : undefined,
+      modifiedTime: post.modified_gmt ? `${post.modified_gmt}Z` : undefined,
+      authors: author?.name ? [author.name] : undefined,
+      images,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: images?.map((img) => img.url),
+    },
+  };
+}
+
 export default async function SinglePostPage({ params }) {
-  const { slug } = params;
+  const { slug } = await params;
   const post = await getPost(slug);
+  if (!post) notFound();
 
   const author = post._embedded?.author?.[0];
   const featuredMedia = post._embedded?.['wp:featuredmedia']?.[0];
@@ -80,9 +135,30 @@ export default async function SinglePostPage({ params }) {
     url: `${SITE_URL}${b.href}`,
   }));
 
+  const postTitle = decodeEntities(htmlToText(post.title.rendered));
+  const articleJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    '@id': `${SITE_URL}/blog/${post.slug}#article`,
+    headline: postTitle,
+    description: truncate(htmlToText(post.excerpt?.rendered) || htmlToText(post.content?.rendered), 300) || undefined,
+    image: featuredMedia?.source_url ? [featuredMedia.source_url] : undefined,
+    datePublished: post.date_gmt ? `${post.date_gmt}Z` : undefined,
+    dateModified: post.modified_gmt ? `${post.modified_gmt}Z` : undefined,
+    author: author?.name
+      ? { '@type': 'Person', name: author.name }
+      : { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+    publisher: { '@id': `${SITE_URL}/#organization` },
+    mainEntityOfPage: `${SITE_URL}/blog/${post.slug}`,
+  };
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <BreadcrumbsJsonLd items={breadcrumbJsonLdItems} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLdString(articleJsonLd) }}
+      />
       <Suspense fallback={<SinglePostLoadingSkeleton />}>
         <article>
           {/* Breadcrumbs */}

@@ -278,7 +278,7 @@ export default function Cart() {
               return (
                 <div key={item.key} className="p-4 md:p-6 border-b border-gray-200 grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
                   <div className="md:col-span-6 flex items-center">
-                    <div onClick={() => handleProductLinkClick(item.id)} className="w-24 h-24 relative flex-shrink-0 rounded-md overflow-hidden border border-gray-200 cursor-pointer">
+                    <div onClick={() => handleProductLinkClick(item.id)} aria-hidden="true" className="w-24 h-24 relative flex-shrink-0 rounded-md overflow-hidden border border-gray-200 cursor-pointer">
                       <Image
                         src={imageUrl}
                         alt={item.name}
@@ -287,7 +287,12 @@ export default function Cart() {
                       />
                     </div>
                     <div className="ml-4 flex-1">
-                      <div onClick={() => handleProductLinkClick(item.id)} className="text-lg font-medium text-gray-900 hover:text-[#9CB24D] cursor-pointer">
+                      <div
+                        onClick={() => handleProductLinkClick(item.id)}
+                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleProductLinkClick(item.id); } }}
+                        role="link"
+                        tabIndex={0}
+                        className="text-lg font-medium text-gray-900 hover:text-[#9CB24D] cursor-pointer">
                         {decodeHtmlEntities(item.name)}
                       </div>
                       {variationText && 
@@ -328,6 +333,7 @@ export default function Cart() {
                         onChange={(e) => handleQuantityInputChange(item.key, e.target.value)}
                         onBlur={() => handleQuantityInputBlur(item.key)}
                         disabled={isUpdatingCartItems || isLoading}
+                        aria-label={`Quantity for ${decodeHtmlEntities(item.name)}`}
                         className="px-1 py-1 text-center w-12 border-none focus:ring-0 focus:outline-none text-sm rounded-md tabular-nums"
                         min="1"
                       />

@@ -119,6 +119,7 @@ export default function NewsletterSignup() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Your email address"
+              aria-label="Email address"
               disabled={isSubmitting || isSubmitted}
               style={{
                 flex: '1',

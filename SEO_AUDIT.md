@@ -705,3 +705,37 @@ Recommended split: **Phase 2a** = all the metadata + JSON-LD additions (P1-7, P1
 | Open project questions | §9 (Q-7, Q-8, Q-9) |
 | Phase definitions and gates | §8 |
 | What this audit didn't cover | §10 |
+
+---
+
+## 13. Session 2026-10-31 — metadata correctness + accessibility pass (uncommitted until user reviews)
+
+### Critical findings fixed
+- **Homepage canonical leaking to child pages.** Root `layout.js` sets `alternates.canonical` to the homepage; Next.js inherits it. `/warranty`, `/specials`, and every `/blog/[slug]` post declared themselves duplicates of the homepage. Fixed with explicit canonicals (warranty metadata, new `specials/layout.js`, blog `generateMetadata`).
+- **Product canonical pointed at a redirect.** Yoast canonical/og:url are `/product/slug/` (trailing slash, 308s on Next). Product `generateMetadata` now always self-references `${SITE_URL}/product/${slug}`; also covers products with no Yoast data (would have inherited homepage canonical).
+- **Product meta descriptions** now use `getProductMetaDescription()` in new `src/app/lib/seo.js`: Yoast desc → on-page custom `description` meta → short/long description → Yoast og_description → generated sentence. Entities decoded, ~155 chars, word-boundary truncation. Empty Yoast `og_image: []` no longer suppresses product-image fallback.
+- **Blog posts (P1-7 DONE):** `generateMetadata` (title, description from Yoast/excerpt, OG article dates/author/image) + `BlogPosting` JSON-LD linked to `#organization`. Missing post → `notFound()` (was a thrown 500). `params` now awaited.
+- **Warranty (P1-6 DONE):** canonical, OG, Twitter.
+- **cart / checkout / order-confirmation:** new layouts with `robots: noindex,nofollow`.
+- **JSON-LD hardening:** all JSON-LD now serialized via `jsonLdString()` (escapes `<`). Product schema description uses on-page description; name entity-decoded.
+
+### Accessibility (attribute-only, no visual change)
+- Skip-to-content link (sr-only until focused) + `id="main-content"` on root `<main>`.
+- Navbar: cart link accessible name with count; mobile menu toggle `aria-label`/`aria-expanded`/`aria-controls`.
+- SideCart: `role="dialog"`, `aria-modal`, labelled by title; `inert` + `aria-hidden` when closed (was keyboard-reachable off-screen); coupon input label; remove-coupon label; product name keyboard-operable.
+- ProductActions size/color dropdown: was mouse-only. Now `aria-haspopup`/`aria-expanded`, `role=listbox/option`, focusable options with Enter/Space/Escape. Amount buttons `aria-pressed`.
+- Cart page: quantity input label; product name keyboard-operable.
+- Newsletter email input label.
+
+### Catalog content audit (read-only, 17 published products)
+- Yoast meta description missing: 16/17. Short description missing: 17/17. Image alt text missing: 123/123. Custom on-page `description` meta missing: poncho, logo t-shirt, retro t-shirt, P5 elbow pair. Main description empty: patch, gift card. SKU missing: 10/17.
+- These are content fixes in WP admin (or via REST with approval). Code fallbacks now prevent blank meta descriptions, but hand-written descriptions + alt text are the real win.
+
+### Still open / next candidates
+- **P3-2 (biggest remaining SEO gap):** product pages ship **no H1 and no product text in server HTML** — `SingleProduct.jsx` fetches everything client-side via React Query. Google renders JS, but slower; most AI crawlers don't. Fix = pass server-fetched product (+variations, categories) as `initialData`; needs care because of `typeof window` branches (features list) that would hydrate-mismatch. Do as its own change with visual + cart smoke test.
+- Unknown product slugs return HTTP 200 (client `notFound()`), now with `noindex`. Proper 404 needs server-side `notFound()` in `product/[slug]/page.js`.
+- Homepage has no `<h1>` (P2-4).
+- Seven pages nest `<main>` inside the layout `<main>`; left alone because `globals.css` styles `main { position: relative }`.
+- Open: Q-8 contrast, P1-1/P1-2/P1-3/P1-8/P1-10/P1-11, P2-1.
+- Gotcha: running `npm run build` while `next dev` is running corrupts the dev server's `.next` (shared dir). Restart dev after building.
+- Production returns a Vercel Security Checkpoint (429) to non-browser clients, including spoofed Googlebot. Real verified bots pass, but use GSC URL Inspection / Rich Results Test to confirm, and check the firewall doesn't challenge unverified AI crawlers if AI visibility matters.

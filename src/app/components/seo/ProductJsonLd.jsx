@@ -1,9 +1,4 @@
-const SITE_URL = 'https://www.mantle-clothing.com';
-
-function stripHtml(html) {
-  if (!html) return '';
-  return html.replace(/<[^>]*>?/gm, '').replace(/\s+/g, ' ').trim();
-}
+import { SITE_URL, decodeEntities, getProductDescriptionText, jsonLdString } from '@/app/lib/seo';
 
 function parsePrice(value) {
   if (value === null || value === undefined || value === '') return null;
@@ -28,9 +23,7 @@ export default function ProductJsonLd({ product }) {
   const images = Array.isArray(product.images)
     ? product.images.map((img) => img.src).filter(Boolean)
     : [];
-  const description = stripHtml(
-    product.short_description || product.description || ''
-  );
+  const description = getProductDescriptionText(product);
 
   const availability =
     product.stock_status === 'instock'
@@ -43,7 +36,7 @@ export default function ProductJsonLd({ product }) {
     '@context': 'https://schema.org',
     '@type': 'Product',
     '@id': `${url}#product`,
-    name: product.name,
+    name: decodeEntities(product.name),
     url,
     image: images.length > 0 ? images : undefined,
     description: description || undefined,
@@ -94,7 +87,7 @@ export default function ProductJsonLd({ product }) {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: jsonLdString(data) }}
     />
   );
 }

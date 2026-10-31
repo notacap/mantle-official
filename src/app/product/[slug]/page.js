@@ -4,10 +4,9 @@ import NewsletterSignup from '@/app/components/NewsletterSignup';
 import ProductJsonLd from '@/app/components/seo/ProductJsonLd';
 import BreadcrumbsJsonLd from '@/app/components/seo/BreadcrumbsJsonLd';
 import { getProductBySlug } from '@/app/services/woocommerce';
+import { SITE_URL, SITE_NAME, decodeEntities, getProductMetaDescription } from '@/app/lib/seo';
 import '../loading.css';
 import '../product.css';
-
-const SITE_URL = 'https://www.mantle-clothing.com';
 
 // Function to generate metadata
 export async function generateMetadata({ params }) {
@@ -20,54 +19,61 @@ export async function generateMetadata({ params }) {
             return {
                 title: 'Product Not Found',
                 description: 'The product you are looking for could not be found.',
+                robots: { index: false, follow: true },
             };
         }
 
         const { yoast_head_json } = product;
+        const productName = decodeEntities(product.name);
 
-        // Define base URLs for replacement
-        const oldBaseUrl = 'https://mantle-clothing.com';
-        const newBaseUrl = 'https://www.mantle-clothing.com';
-
-        // Replace base URL in Yoast data
-        const ogUrl = yoast_head_json?.og_url?.replace(oldBaseUrl, newBaseUrl);
-        const canonicalUrl = yoast_head_json?.canonical?.replace(oldBaseUrl, newBaseUrl);
+        // Always self-reference the Next.js URL. Yoast's canonical/og_url use a
+        // trailing slash (/product/slug/) which redirects on this site, and if
+        // Yoast data is missing the page would otherwise inherit the homepage
+        // canonical from the root layout.
+        const pageUrl = `${SITE_URL}/product/${product.slug}`;
 
         // Replace base URL in image URLs from Yoast
-        const updatedOgImage = yoast_head_json?.og_image?.map(img => ({
-            ...img,
-            url: img.url?.replace(oldBaseUrl, process.env.NEXT_PUBLIC_WORDPRESS_URL)
-        }));
+        const oldBaseUrl = 'https://mantle-clothing.com';
+        const yoastOgImages = (yoast_head_json?.og_image || [])
+            .filter(img => img?.url)
+            .map(img => ({
+                ...img,
+                url: img.url.replace(oldBaseUrl, process.env.NEXT_PUBLIC_WORDPRESS_URL),
+                alt: img.alt || productName,
+            }));
+        const productImages = (product.images || [])
+            .filter(img => img?.src)
+            .map(img => ({
+                url: img.src,
+                alt: img.alt || productName,
+            }));
+        const ogImages = yoastOgImages.length > 0 ? yoastOgImages : productImages;
 
-        // Fallback for description
-        const description = yoast_head_json?.og_description || product.short_description?.replace(/<[^>]*>?/gm, '') || product.description?.replace(/<[^>]*>?/gm, '');
+        const description = getProductMetaDescription(product);
+        const title = decodeEntities(yoast_head_json?.title) || `${productName} | ${SITE_NAME}`;
+        const ogTitle = decodeEntities(yoast_head_json?.og_title) || productName;
 
         const metadata = {
-            title: yoast_head_json?.title || product.name,
-            description: description,
+            title,
+            description,
             keywords: product.tags?.map(tag => tag.name),
             openGraph: {
-                title: yoast_head_json?.og_title || product.name,
-                description: description,
-                url: ogUrl || `${newBaseUrl}/product/${product.slug}`,
-                siteName: yoast_head_json?.og_site_name || 'Mantle',
-                images: updatedOgImage || product.images?.map(img => ({
-                    url: img.src,
-                    width: img.src_w || 800,
-                    height: img.src_h || 600,
-                    alt: img.alt || product.name,
-                })),
-                locale: yoast_head_json?.og_locale || 'en_US',
-                type: yoast_head_json?.og_type || 'article',
+                title: ogTitle,
+                description,
+                url: pageUrl,
+                siteName: SITE_NAME,
+                images: ogImages,
+                locale: 'en_US',
+                type: 'website',
             },
             twitter: {
-                card: yoast_head_json?.twitter_card || 'summary_large_image',
-                title: yoast_head_json?.og_title || product.name,
-                description: description,
-                images: updatedOgImage?.map(img => img.url) || product.images?.map(img => img.src),
+                card: 'summary_large_image',
+                title: ogTitle,
+                description,
+                images: ogImages.map(img => img.url),
             },
             alternates: {
-                canonical: canonicalUrl,
+                canonical: pageUrl,
             },
         };
 
@@ -75,8 +81,8 @@ export async function generateMetadata({ params }) {
     } catch (error) {
         console.error(`Error generating metadata for slug "${slug}":`, error);
         return {
-            title: "Error",
-            description: "An error occurred while generating page metadata."
+            title: 'Mantle Clothing',
+            alternates: { canonical: `${SITE_URL}/product/${slug}` },
         };
     }
 }
@@ -101,7 +107,7 @@ export default async function ProductPage({ params }) {
   }
   if (product?.name) {
     breadcrumbItems.push({
-      name: product.name,
+      name: decodeEntities(product.name),
       url: `${SITE_URL}/product/${product.slug}`,
     });
   }

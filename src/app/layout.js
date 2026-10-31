@@ -85,8 +85,15 @@ export default function RootLayout({ children }) {
         <GoogleAnalytics />
         <ReactQueryProvider>
           <CartProvider>
+            <a
+              href="#main-content"
+              className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:bg-white focus:text-black focus:px-4 focus:py-2 focus:rounded focus:shadow"
+            >
+              Skip to main content
+            </a>
             <Navbar />
             <main 
+              id="main-content"
               className="relative flex-grow min-h-0"
               style={{ position: 'relative', zIndex: 1 }}
             >

@@ -1,3 +1,4 @@
+import { jsonLdString } from '@/app/lib/seo';
 const SITE_URL = 'https://www.mantle-clothing.com';
 
 export default function OrganizationJsonLd() {
@@ -30,7 +31,7 @@ export default function OrganizationJsonLd() {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: jsonLdString(data) }}
     />
   );
 }

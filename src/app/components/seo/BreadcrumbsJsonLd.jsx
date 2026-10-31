@@ -1,3 +1,4 @@
+import { jsonLdString } from '@/app/lib/seo';
 export default function BreadcrumbsJsonLd({ items }) {
   if (!Array.isArray(items) || items.length === 0) return null;
 
@@ -15,7 +16,7 @@ export default function BreadcrumbsJsonLd({ items }) {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: jsonLdString(data) }}
     />
   );
 }

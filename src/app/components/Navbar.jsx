@@ -357,11 +357,15 @@ const Navbar = () => {
           {/* Cart icon and mobile menu button */}
           <div className="flex items-center">
             {/* Cart Icon (always visible) */}
-            <Link href="/cart" className="text-[#9CB24D] hover:text-black transition-colors mr-6 relative">
+            <Link
+              href="/cart"
+              className="text-[#9CB24D] hover:text-black transition-colors mr-6 relative"
+              aria-label={itemCount > 0 ? `Cart, ${itemCount} ${itemCount === 1 ? 'item' : 'items'}` : 'Cart'}
+            >
               <span className="flex items-center">
-                <FiShoppingCart className="h-6 w-6" />
+                <FiShoppingCart className="h-6 w-6" aria-hidden="true" />
                 {itemCount > 0 && (
-                  <span className="absolute -top-2 -right-2 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-600 rounded-full">
+                  <span aria-hidden="true" className="absolute -top-2 -right-2 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-600 rounded-full">
                     {itemCount}
                   </span>
                 )}
@@ -374,6 +378,9 @@ const Navbar = () => {
                 type="button"
                 className="text-black hover:text-[#9CB24D] focus:outline-none"
                 onClick={toggleMenu}
+                aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+                aria-expanded={isMenuOpen}
+                aria-controls="mobile-menu"
               >
                 {isMenuOpen ? (
                   <FiX className="h-7 w-7" />
@@ -388,7 +395,7 @@ const Navbar = () => {
 
       {/* Mobile Navigation */}
       {isMenuOpen && (
-        <div className="md:hidden bg-white border-b border-gray-200">
+        <div id="mobile-menu" className="md:hidden bg-white border-b border-gray-200">
           <div className="px-2 pt-2 pb-3 space-y-2 sm:px-3">
             {saleActive && (
               <Link

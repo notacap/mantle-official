@@ -148,15 +148,21 @@ export default function SideCart() {
         className={`fixed inset-0 bg-black z-40 transition-opacity duration-300 ease-in-out ${isSideCartOpen ? '' : 'opacity-0 pointer-events-none'}`}
         style={isSideCartOpen ? { backgroundColor: 'rgba(0, 0, 0, 0.2)' } : {}}
         onClick={closeSideCart}
+        aria-hidden="true"
       ></div>
 
       {/* Side Cart Panel */}
       <div 
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="sidecart-title"
+        aria-hidden={!isSideCartOpen}
+        inert={!isSideCartOpen}
         className={`fixed top-0 right-0 w-full max-w-md h-full bg-white shadow-xl z-50 flex flex-col transform transition-transform duration-300 ease-in-out ${isSideCartOpen ? 'translate-x-0' : 'translate-x-full'}`}
       >
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-800">My Cart</h2>
+          <h2 id="sidecart-title" className="text-xl font-semibold text-gray-800">My Cart</h2>
           <button 
             onClick={closeSideCart} 
             className="text-gray-500 hover:text-gray-700"
@@ -187,7 +193,7 @@ export default function SideCart() {
 
               return (
                 <div key={item.key} className="flex items-start space-x-3 pb-4 border-b border-gray-100 last:border-b-0">
-                  <div onClick={() => handleProductLinkClick(item.id)} className="w-20 h-20 relative flex-shrink-0 rounded-md overflow-hidden border border-gray-200 cursor-pointer">
+                  <div onClick={() => handleProductLinkClick(item.id)} aria-hidden="true" className="w-20 h-20 relative flex-shrink-0 rounded-md overflow-hidden border border-gray-200 cursor-pointer">
                     <Image
                       src={imageUrl}
                       alt={decodeHtmlEntities(item.name)}
@@ -196,7 +202,12 @@ export default function SideCart() {
                     />
                   </div>
                   <div className="flex-grow">
-                    <div onClick={() => handleProductLinkClick(item.id)} className="text-sm font-medium text-gray-800 hover:text-[#9CB24D] cursor-pointer">
+                    <div
+                      onClick={() => handleProductLinkClick(item.id)}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleProductLinkClick(item.id); } }}
+                      role="link"
+                      tabIndex={0}
+                      className="text-sm font-medium text-gray-800 hover:text-[#9CB24D] cursor-pointer">
                       {decodeHtmlEntities(item.name)}
                     </div>
                     {variationText && <p className="text-xs text-gray-500 mt-0.5">{variationText}</p>}
@@ -247,7 +258,7 @@ export default function SideCart() {
                   {appliedCoupons.map((coupon) => (
                     <div key={coupon.code} className="flex justify-between items-center bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
                       <span><strong>{coupon.code}</strong> applied!</span>
-                      <button onClick={() => handleRemoveCoupon(coupon.code)} className="text-green-800 hover:text-red-500"><FiX /></button>
+                      <button onClick={() => handleRemoveCoupon(coupon.code)} className="text-green-800 hover:text-red-500" aria-label={`Remove coupon ${coupon.code}`}><FiX aria-hidden="true" /></button>
                     </div>
                   ))}
                 </div>
@@ -258,6 +269,7 @@ export default function SideCart() {
                   value={couponCode}
                   onChange={(e) => setCouponCode(e.target.value)}
                   placeholder="Gift card or discount code"
+                  aria-label="Gift card or discount code"
                   disabled={isApplyingCoupon || isUpdatingItem}
                   className="block w-full px-3 py-2 border-gray-300 rounded-md shadow-sm text-sm focus:ring-[#9CB24D] focus:border-[#9CB24D]"
                 />

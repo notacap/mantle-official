@@ -4,6 +4,29 @@ import './warranty.css';
 export const metadata = {
   title: "Warranty Policy | Mantle Clothing",
   description: "View Mantle Clothing's warranty policy, return information, and warranty claim procedures.",
+  alternates: {
+    canonical: 'https://www.mantle-clothing.com/warranty',
+  },
+  openGraph: {
+    title: 'Warranty Policy | Mantle Clothing',
+    description: "Mantle Clothing's warranty coverage, return and exchange windows, and how to file a warranty claim.",
+    url: 'https://www.mantle-clothing.com/warranty',
+    siteName: 'Mantle Clothing',
+    type: 'website',
+    locale: 'en_US',
+    images: [
+      {
+        url: '/images/home-2.jpg',
+        alt: 'Mantle Clothing Warranty Policy',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Warranty Policy | Mantle Clothing',
+    description: "Mantle Clothing's warranty coverage, return and exchange windows, and how to file a warranty claim.",
+    images: ['/images/home-2.jpg'],
+  },
 };
 
 export default function Warranty() {

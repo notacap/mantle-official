@@ -357,6 +357,10 @@ export default function ProductActions({ productId, price, sizes, colors, amount
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
+          onKeyDown={(e) => { if (e.key === 'Escape' && isOpen) setIsOpen(false); }}
+          aria-haspopup="listbox"
+          aria-expanded={isOpen}
+          aria-label={value ? `${placeholder}: ${value} selected` : placeholder}
           style={{
             width: '100%',
             padding: '0.75rem 1rem',
@@ -401,6 +405,7 @@ export default function ProductActions({ productId, price, sizes, colors, amount
               fill="none"
               viewBox="0 0 20 20"
               style={{ width: '15px', height: '15px' }}
+              aria-hidden="true"
             >
               <path
                 stroke="#6b7280"
@@ -415,6 +420,8 @@ export default function ProductActions({ productId, price, sizes, colors, amount
 
         {isOpen && (
           <div
+            role="listbox"
+            aria-label={placeholder}
             style={{
               position: 'absolute',
               top: '100%',
@@ -434,9 +441,22 @@ export default function ProductActions({ productId, price, sizes, colors, amount
               return (
                 <div
                   key={option}
+                  role="option"
+                  aria-selected={option === value}
+                  aria-disabled={isDisabled}
+                  tabIndex={isDisabled ? -1 : 0}
                   onClick={() => {
                     if (!isDisabled) {
                       onChange(option);
+                      setIsOpen(false);
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if ((e.key === 'Enter' || e.key === ' ') && !isDisabled) {
+                      e.preventDefault();
+                      onChange(option);
+                      setIsOpen(false);
+                    } else if (e.key === 'Escape') {
                       setIsOpen(false);
                     }
                   }}
@@ -522,6 +542,8 @@ export default function ProductActions({ productId, price, sizes, colors, amount
             {amounts.map((amount) => (
               <button
                 key={amount}
+                type="button"
+                aria-pressed={selectedAmount === amount}
                 onClick={() => setSelectedAmount(amount)}
                 style={{
                   padding: '0.5rem 1rem',
