@@ -1,9 +1,13 @@
+import { enforceRateLimit, RATE_LIMITS } from '@/app/lib/rate-limit';
 import { NextResponse } from 'next/server';
 import getPayPalClient from '@/lib/paypal-sdk';
 // We might need to import specific request/response types if the SDK uses them explicitly
 // e.g., import { OrderRequest } from '@paypal/paypal-server-sdk/lib/orders/types'; // Path is a guess
 
 export async function POST(request) {
+  const rateLimited = await enforceRateLimit(request, RATE_LIMITS.payment);
+  if (rateLimited) return rateLimited;
+
   try {
     const { orderId, amount, currency_code = 'USD' } = await request.json();
 

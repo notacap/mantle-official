@@ -1,6 +1,10 @@
+import { enforceRateLimit, RATE_LIMITS } from '@/app/lib/rate-limit';
 import { contactSchema, validateInput, getSecurityHeaders, validateRequestSize } from '@/app/lib/validation';
 
 export async function POST(req) {
+  const rateLimited = await enforceRateLimit(req, RATE_LIMITS.formSubmit);
+  if (rateLimited) return rateLimited;
+
   // Security headers
   const headers = {
     "Content-Type": "application/json",

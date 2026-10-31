@@ -1,6 +1,10 @@
+import { enforceRateLimit, RATE_LIMITS } from '@/app/lib/rate-limit';
 import { NextResponse } from 'next/server';
 
 export async function POST(request) {
+  const rateLimited = await enforceRateLimit(request, RATE_LIMITS.payment);
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await request.json();
 

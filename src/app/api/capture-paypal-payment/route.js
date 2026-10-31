@@ -1,3 +1,4 @@
+import { enforceRateLimit, RATE_LIMITS } from '@/app/lib/rate-limit';
 import { NextResponse } from 'next/server';
 import getPayPalClient from '@/lib/paypal-sdk';
 import WooCommerceRestApi from '@woocommerce/woocommerce-rest-api';
@@ -22,6 +23,9 @@ const getWooCommerceApi = () => {
 };
 
 export async function POST(request) {
+  const rateLimited = await enforceRateLimit(request, RATE_LIMITS.payment);
+  if (rateLimited) return rateLimited;
+
   try {
     const { paypalOrderID } = await request.json();
 

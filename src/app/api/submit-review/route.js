@@ -1,7 +1,11 @@
+import { enforceRateLimit, RATE_LIMITS } from '@/app/lib/rate-limit';
 import { NextResponse } from 'next/server';
 import { reviewSchema, validateInput, getSecurityHeaders, validateRequestSize } from '@/app/lib/validation';
 
 export async function POST(request) {
+  const rateLimited = await enforceRateLimit(request, RATE_LIMITS.formSubmit);
+  if (rateLimited) return rateLimited;
+
   // Security headers
   const headers = getSecurityHeaders();
 

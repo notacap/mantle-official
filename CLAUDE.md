@@ -47,7 +47,6 @@ npm run lint
 - **`src/context/`** - React Context providers
   - **`CartContext.js`** - Global cart state and WooCommerce Store API integration
 - **`src/lib/`** - Shared library code
-- **`src/middleware.js`** - Next.js middleware for geo-blocking and route protection
 
 ### Key Architecture Patterns
 
@@ -113,11 +112,16 @@ Required in `.env.local`:
 - `NEXT_PUBLIC_GA_ID` - Google Analytics ID
 - `NEXT_PUBLIC_SITE_URL` - Site URL (defaults to localhost:3000 in dev)
 
-### Middleware
+### Security & Rate Limiting
 
-`src/middleware.js` implements:
-- **Geo-blocking**: Restricts access to allowed countries only (US, CA, Western Europe)
-- **Crawler exclusions**: Lets `robots.txt`, `sitemap.xml`, `llms.txt`, and `llms-full.txt` bypass the matcher so crawlers can reach them from any region
+There is no middleware and no geo-blocking (both were removed in favor of the Vercel Firewall).
+
+- **Vercel Firewall** (dashboard): Bot Protection managed ruleset handles bot traffic at the edge.
+- **Rate limiting**: `src/app/lib/rate-limit.js` wraps `@vercel/firewall`'s `checkRateLimit`. Call `enforceRateLimit(request, RATE_LIMITS.x)` at the top of any sensitive POST route.
+  - `form-submit` → `submit-contact`, `submit-newsletter`, `submit-review`
+  - `payment` → `create-paypal-payment`, `capture-paypal-payment`, `bogo/validate`
+  - Each ID needs a matching `@vercel/firewall` rule in the Vercel dashboard, which sets the threshold. It fails open: no limiting in local dev or if the rule is missing.
+- **Not covered**: Stripe checkout and cart calls go directly to the WooCommerce Store API, so protect the WordPress origin separately (Cloudflare/Wordfence) and rely on Stripe Radar for card testing.
 
 ### SEO Focus
 

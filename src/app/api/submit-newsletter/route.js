@@ -1,4 +1,8 @@
+import { enforceRateLimit, RATE_LIMITS } from '@/app/lib/rate-limit';
 export async function POST(req) {
+  const rateLimited = await enforceRateLimit(req, RATE_LIMITS.formSubmit);
+  if (rateLimited) return rateLimited;
+
   const { email } = await req.json();
 
   if (!email) {
