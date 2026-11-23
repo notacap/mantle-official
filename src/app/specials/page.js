@@ -6,7 +6,7 @@ import ProductGrid from '@/app/components/shop/ProductGrid';
 import ProductSkeleton from '@/app/components/shop/ProductSkeleton';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { saleConfig, isSaleActive, getTimeRemaining } from '@/config/saleConfig';
+import { saleConfig, isSaleActive, isCrossCategorySale, getTimeRemaining } from '@/config/saleConfig';
 
 export default function SpecialsPage() {
   const [timeLeft, setTimeLeft] = useState({
@@ -20,7 +20,9 @@ export default function SpecialsPage() {
 
   const { name, badgeText, discount, messaging, sections, triggerCategory, discountCategory, triggerCategoryName, discountCategoryName } = saleConfig;
 
-  // Fetch categories to get IDs for Pants and Tops
+  const hasTrigger = isCrossCategorySale();
+
+  // Fetch categories to get IDs for the sale categories
   const {
     data: categoriesData,
     isLoading: isLoadingCategories,
@@ -62,7 +64,7 @@ export default function SpecialsPage() {
       }
       return response.json();
     },
-    enabled: !!triggerCategoryData?.id,
+    enabled: hasTrigger && !!triggerCategoryData?.id,
     staleTime: 5 * 60 * 1000,
   });
 
@@ -88,7 +90,7 @@ export default function SpecialsPage() {
     staleTime: 5 * 60 * 1000,
   });
 
-  const isLoading = isLoadingCategories || isLoadingTrigger || isLoadingDiscount;
+  const isLoading = isLoadingCategories || (hasTrigger && isLoadingTrigger) || isLoadingDiscount;
   const hasError = triggerError || discountError;
 
   // Check if sale is active and setup countdown timer
@@ -298,8 +300,8 @@ export default function SpecialsPage() {
           </div>
         )}
 
-        {/* SECTION 1: BUY ONE - Trigger Category */}
-        <div style={{ marginBottom: '60px' }}>
+        {/* SECTION 1: BUY ONE - Trigger Category (cross-category sales only) */}
+        {hasTrigger && <div style={{ marginBottom: '60px' }}>
           {/* Section Header */}
           <div
             style={{
@@ -376,9 +378,9 @@ export default function SpecialsPage() {
               <p style={{ color: '#666' }}>No {triggerCategoryName.toLowerCase()} available at the moment.</p>
             </div>
           )}
-        </div>
+        </div>}
 
-        {/* SECTION 2: GET ONE X% OFF - Discount Category */}
+        {/* SECTION 2: Discounted products */}
         <div style={{ marginBottom: '60px' }}>
           {/* Section Header */}
           <div
@@ -463,7 +465,7 @@ export default function SpecialsPage() {
           {/* No Products State */}
           {!isLoadingCategories && !isLoadingDiscount && !discountError && (!discountProducts || discountProducts.length === 0) && (
             <div style={{ textAlign: 'center', padding: '40px 20px', background: '#1a1a1a', borderRadius: '12px' }}>
-              <p style={{ color: '#666' }}>No {discountCategoryName.toLowerCase()}s available at the moment.</p>
+              <p style={{ color: '#666' }}>No {discountCategoryName.toLowerCase()} available at the moment.</p>
             </div>
           )}
         </div>

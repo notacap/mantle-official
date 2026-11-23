@@ -23,7 +23,7 @@ import {
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import ProductReviewsSection from './ProductReviewsSection';
 import StarRating from './StarRating';
-import { saleConfig, isSaleActive, checkProductEligibility } from '@/config/saleConfig';
+import { saleConfig, isSaleActive, isCrossCategorySale, checkProductEligibility } from '@/config/saleConfig';
 import { newProductConfig, isNewProduct, isNewProductMarketingActive } from '@/config/newProductConfig';
 
 // Function to strip HTML tags
@@ -897,9 +897,9 @@ function SaleCrossPromo({ product }) {
   const { name, discount, triggerCategory, discountCategory, triggerCategoryName, discountCategoryName, messaging } = saleConfig;
 
   // Determine the cross-sell category
-  const targetCategory = isTrigger ? discountCategory : triggerCategory;
-  const targetCategoryName = isTrigger ? discountCategoryName : triggerCategoryName;
-  const currentCategoryName = isTrigger ? triggerCategoryName : discountCategoryName;
+  const shouldLinkToDiscount = isTrigger || !isCrossCategorySale();
+  const targetCategory = shouldLinkToDiscount ? discountCategory : triggerCategory;
+  const targetCategoryName = shouldLinkToDiscount ? discountCategoryName : triggerCategoryName;
 
   return (
     <div
@@ -947,7 +947,7 @@ function SaleCrossPromo({ product }) {
               </span>
             </div>
             <h3 style={{ color: '#ffffff', fontSize: '1.25rem', fontWeight: '700', margin: '0 0 6px 0' }}>
-              {isTrigger ? messaging.crossPromoTitle : messaging.crossPromoTitleAlt} {targetCategoryName} for{' '}
+              {isTrigger ? messaging.crossPromoTitle : messaging.crossPromoTitleAlt}{' '}
               <span
                 style={{
                   background: 'linear-gradient(135deg, #9CB24D 0%, #b8d45a 100%)',
@@ -989,7 +989,7 @@ function SaleCrossPromo({ product }) {
               e.currentTarget.style.boxShadow = '0 4px 15px rgba(156, 178, 77, 0.3)';
             }}
           >
-            Shop {targetCategoryName === 'Pants' ? 'Pants' : 'Tops'}
+            Shop {targetCategoryName}
           </Link>
         </div>
       </div>

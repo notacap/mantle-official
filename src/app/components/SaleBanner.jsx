@@ -143,7 +143,7 @@ export default function SaleBanner() {
                 letterSpacing: "0.02em",
               }}
             >
-              {messaging.tagline}, Get
+              {messaging.tagline}
             </span>
             <span
               style={{

@@ -12,72 +12,82 @@
 
 export const saleConfig = {
   // Master toggle - set to false to disable all sale marketing
-  enabled: false,
+  enabled: true,
 
   // Sale identity
-  name: "Cyber Monday",
-  badgeText: "CYBER MONDAY",
+  name: "Black Friday",
+  badgeText: "BLACK FRIDAY",
 
   // Sale timing (ISO 8601 format, UTC)
-  // The sale will only show when current time is between these dates AND enabled is true
-  startDate: "2025-12-02T06:00:00Z",
-  endDate: "2025-12-08T06:00:00Z",
+  // The sale will only show when current time is between these dates AND enabled is true.
+  // Times match the WordPress store timezone (America/Denver, UTC-7 in winter), which is
+  // what the BOGO plugin uses, so the marketing and the discount end together.
+  startDate: "2026-11-23T07:00:00Z", // Nov 23, 12:00 AM MST
+  endDate: "2026-12-02T07:00:00Z", // Dec 2, 12:00 AM MST (end of Dec 1)
 
-  // Discount configuration
+  // "category": straight % off everything in discountCategory
+  // "cross-category": buy from triggerCategory, get % off discountCategory
+  saleType: "category",
+
+  // Discount configuration.
+  // MESSAGING ONLY: the actual discount is the deal in WooCommerce > BOGO Deals.
   discount: 30, // Percentage off
 
   // Category configuration (slugs)
-  triggerCategory: "pants",      // Buy this category...
-  discountCategory: "tops",      // ...get discount on this category
+  triggerCategory: null, // Only used by "cross-category" sales
+  discountCategory: "outerwear",
 
   // Display names for messaging
-  triggerCategoryName: "Pants",
-  discountCategoryName: "Top",
+  triggerCategoryName: null, // Only used by "cross-category" sales
+  discountCategoryName: "Outerwear",
 
-  // Messaging templates
+  // Messaging templates. Items marked (+ discount) are followed by "{discount}% OFF".
   messaging: {
-    // Short tagline for banners
-    tagline: "Buy Pants, Get a Top",
+    // Short tagline for banners (+ discount)
+    tagline: "All Outerwear",
 
     // Hero section (specials page)
-    heroHeadline: "Buy Pants, Get a Top",
-    heroSubheadline: "Purchase any pair of pants and get 30% off any top. Premium tactical gear for professionals. Limited time only.",
+    heroHeadline: "All Outerwear", // (+ discount)
+    heroSubheadline: "Save 30% on every piece of Mantle outerwear. No code needed: the discount is applied automatically in your cart. Ends December 1.",
 
-    // Product page banner (when viewing trigger category product)
-    triggerProductBanner: "Buy these pants, get any top",
+    // Product page banner, trigger category product (+ discount, "cross-category" only)
+    triggerProductBanner: "",
 
-    // Product page banner (when viewing discount category product)
-    discountProductBanner: "Buy any pants, get this top",
+    // Product page banner, discount category product (+ discount)
+    discountProductBanner: "All outerwear",
 
-    // Cross-promotion section on product pages
-    crossPromoTitle: "Complete the Deal - Get a Top for",
-    crossPromoTitleAlt: "Buy Pants & Get This Top for",
-    crossPromoDescription: "Add these pants to your cart, then pick any top to save 30%!",
-    crossPromoDescriptionAlt: "Add any pants to your cart and this top will be 30% off!",
+    // Promo section on product pages. The non-Alt versions show on trigger
+    // category products ("cross-category" only). Titles are (+ discount).
+    crossPromoTitle: "",
+    crossPromoTitleAlt: "All Outerwear Is",
+    crossPromoDescription: "",
+    crossPromoDescriptionAlt: "No code needed. Your discount is applied automatically in the cart.",
 
     // Bottom CTA on specials page
     ctaTitle: "Don't Miss Out",
-    ctaDescription: "Buy any pants and get 30% off any top. Discount applied automatically at checkout!",
+    ctaDescription: "30% off all outerwear ends December 1. Discount applied automatically in your cart.",
   },
 
   // Navigation link configuration
   navLink: {
-    text: "Cyber Monday",
-    mobileText: "Cyber Monday Sale",
+    text: "Black Friday",
+    mobileText: "Black Friday Sale",
     href: "/specials",
   },
 
   // Specials page section headers
   sections: {
+    // Trigger category products ("cross-category" only)
     step1: {
       badge: "Step 1",
-      title: "Buy a Pair of Pants",
-      description: "Choose from our premium tactical pants collection",
+      title: "",
+      description: "",
     },
+    // Discounted products
     step2: {
-      badge: "Step 2",
-      title: "Get a Top for",
-      description: "Add any top to your cart and the discount will be applied automatically",
+      badge: "On Sale",
+      title: "All Outerwear", // (+ discount)
+      description: "Prices shown are before the discount. 30% comes off automatically in your cart.",
     },
   },
 };
@@ -97,6 +107,13 @@ export function isSaleActive() {
   const endDate = new Date(saleConfig.endDate).getTime();
 
   return now >= startDate && now < endDate;
+}
+
+/**
+ * Whether the sale requires buying from one category to discount another
+ */
+export function isCrossCategorySale() {
+  return saleConfig.saleType === "cross-category";
 }
 
 /**
@@ -132,7 +149,7 @@ export function checkProductEligibility(productCategories) {
   }
 
   const slugs = productCategories.map(cat => cat.slug?.toLowerCase());
-  const isTrigger = slugs.includes(saleConfig.triggerCategory);
+  const isTrigger = isCrossCategorySale() && slugs.includes(saleConfig.triggerCategory);
   const isDiscount = slugs.includes(saleConfig.discountCategory);
 
   return {
