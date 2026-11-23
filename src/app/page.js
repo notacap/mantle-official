@@ -1,5 +1,6 @@
 import HeroSlideshow from './components/HeroSlideshow';
 import SaleBanner from './components/SaleBanner';
+import { isSaleActive } from '@/config/saleConfig';
 import ButtonWithHover from "./components/ButtonWithHover";
 import FeaturedSection from "./components/FeaturedSection";
 import ProductCategories from "./components/ProductCategories";
@@ -63,12 +64,15 @@ export const metadata = {
   },
 };
 
+// Re-render every 5 minutes so the sale banner starts and ends on schedule
+export const revalidate = 300;
+
 export default function Home() {
   // console.log('Homepage Metadata:', JSON.stringify(metadata, null, 2));
   return (
     <main style={{ backgroundColor: '#F8F8F8' }}>
     {/* Sale Banner - controlled by saleConfig */}
-    <SaleBanner />
+    <SaleBanner initialActive={isSaleActive()} />
 
     {/* Hero Slideshow */}
     <section style={{ width: '100%' }}>

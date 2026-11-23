@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import ProductGrid from './ProductGrid';
 import ProductSkeleton from './ProductSkeleton';
 import SortSelector from './SortSelector';
+import { getEffectivePrice } from '@/app/services/woocommerce';
 import { sortProductsByRating } from '@/app/utils/reviewUtils';
 import Link from 'next/link';
 
@@ -71,10 +72,10 @@ export default function CollectionProducts({ tag }) {
       setIsSorting(false);
       switch (sortBy) {
         case 'price-low-high':
-          setSortedProducts(productsCopy.sort((a, b) => parseFloat(a.price) - parseFloat(b.price)));
+          setSortedProducts(productsCopy.sort((a, b) => getEffectivePrice(a) - getEffectivePrice(b)));
           break;
         case 'price-high-low':
-          setSortedProducts(productsCopy.sort((a, b) => parseFloat(b.price) - parseFloat(a.price)));
+          setSortedProducts(productsCopy.sort((a, b) => getEffectivePrice(b) - getEffectivePrice(a)));
           break;
         default:
           setSortedProducts(productsCopy);

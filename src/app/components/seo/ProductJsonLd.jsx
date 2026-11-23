@@ -1,3 +1,4 @@
+import { saleConfig, getSaleDiscountPercent, applyDiscount } from '@/config/saleConfig';
 import { SITE_URL, decodeEntities, getProductDescriptionText, jsonLdString } from '@/app/lib/seo';
 
 function parsePrice(value) {
@@ -50,13 +51,17 @@ export default function ProductJsonLd({ product }) {
   const priceRange = extractPriceRange(product.price_html);
   const singlePrice = parsePrice(product.price || product.regular_price);
 
+  // Match the price shown on the page while a sale is running
+  const salePercent = getSaleDiscountPercent(product);
+  const toOfferPrice = (price) => applyDiscount(price, salePercent).toFixed(2);
+
   if (product.type === 'variable' && priceRange) {
     data.offers = {
       '@type': 'AggregateOffer',
       url,
       priceCurrency: 'USD',
-      lowPrice: priceRange.low.toFixed(2),
-      highPrice: priceRange.high.toFixed(2),
+      lowPrice: toOfferPrice(priceRange.low),
+      highPrice: toOfferPrice(priceRange.high),
       offerCount: Array.isArray(product.variations) ? product.variations.length : undefined,
       availability,
       itemCondition: 'https://schema.org/NewCondition',
@@ -66,7 +71,8 @@ export default function ProductJsonLd({ product }) {
       '@type': 'Offer',
       url,
       priceCurrency: 'USD',
-      price: singlePrice.toFixed(2),
+      price: toOfferPrice(singlePrice),
+      priceValidUntil: salePercent ? saleConfig.endDate : undefined,
       availability,
       itemCondition: 'https://schema.org/NewCondition',
     };

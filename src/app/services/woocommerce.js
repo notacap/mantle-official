@@ -1,3 +1,5 @@
+import { getSaleDiscountPercent, applyDiscount } from '@/config/saleConfig';
+
 /**
  * WooCommerce API service
  * Handles fetching products and other data from the WooCommerce API via our internal API routes
@@ -427,11 +429,43 @@ function getBaseUrl(context) {
   }
 
   /**
-   * Get formatted price display for a product, handling sale prices properly
+   * Get formatted price display for a product, including any active sale discount.
+   * The sale comes off the current WooCommerce price, matching the cart.
    * @param {Object} product - Product object from WooCommerce
    * @returns {Object} - Object with { display: string, hasDiscount: boolean, regularPrice: string|null, salePrice: string|null }
    */
   export function getProductPriceDisplay(product) {
+    const base = getBasePriceDisplay(product);
+    const percent = getSaleDiscountPercent(product);
+    if (!percent) return base;
+
+    // `display` is the current price, or a "$min - $max" range
+    const salePrice = base.display
+      .split(' - ')
+      .map((price) => formatPrice(applyDiscount(parseFloat(price.replace(/[$,]/g, '')), percent)))
+      .join(' - ');
+
+    return {
+      display: salePrice,
+      hasDiscount: true,
+      regularPrice: base.regularPrice || base.display,
+      salePrice,
+    };
+  }
+
+  /**
+   * Price a product sorts by: its current price less any active sale discount
+   */
+  export function getEffectivePrice(product) {
+    return applyDiscount(parseFloat(product?.price) || 0, getSaleDiscountPercent(product));
+  }
+
+  /**
+   * Get formatted price display from WooCommerce data alone
+   * @param {Object} product - Product object from WooCommerce
+   * @returns {Object} - Object with { display: string, hasDiscount: boolean, regularPrice: string|null, salePrice: string|null }
+   */
+  function getBasePriceDisplay(product) {
     if (!product) {
       return { display: '$0.00', hasDiscount: false, regularPrice: null, salePrice: null };
     }

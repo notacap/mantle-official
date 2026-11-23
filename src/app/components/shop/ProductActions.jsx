@@ -2,9 +2,10 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { formatPrice } from '@/app/services/woocommerce';
+import { applyDiscount } from '@/config/saleConfig';
 import { useCart } from '@/context/CartContext'; // Import useCart hook
 
-export default function ProductActions({ productId, price, sizes, colors, amounts, sizeOptions, colorOptions, amountOptions, variations, onVariationImageChange }) {
+export default function ProductActions({ productId, price, discountPercent = 0, sizes, colors, amounts, sizeOptions, colorOptions, amountOptions, variations, onVariationImageChange }) {
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
@@ -619,7 +620,7 @@ export default function ProductActions({ productId, price, sizes, colors, amount
         <div style={{ textAlign: 'right' }}>
           <h3 style={{ fontSize: '1rem', fontWeight: '500', marginBottom: '0.25rem' }}>Total</h3>
           <p style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#9CB24D' }}>
-            {formatPrice(unitPrice * effectiveQuantity)}
+            {formatPrice(applyDiscount(unitPrice * effectiveQuantity, discountPercent))}
           </p>
         </div>
       </div>

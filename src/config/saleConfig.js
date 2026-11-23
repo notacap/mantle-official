@@ -16,7 +16,6 @@ export const saleConfig = {
 
   // Sale identity
   name: "Black Friday",
-  badgeText: "BLACK FRIDAY",
 
   // Sale timing (ISO 8601 format, UTC)
   // The sale will only show when current time is between these dates AND enabled is true.
@@ -30,7 +29,9 @@ export const saleConfig = {
   saleType: "category",
 
   // Discount configuration.
-  // MESSAGING ONLY: the actual discount is the deal in WooCommerce > BOGO Deals.
+  // DISPLAY ONLY: the actual discount is the deal in WooCommerce > BOGO Deals.
+  // "category" sales also use this to show sale prices across the shop, so this
+  // percentage, the category and the dates must always match that deal.
   discount: 30, // Percentage off
 
   // Category configuration (slugs)
@@ -41,14 +42,15 @@ export const saleConfig = {
   triggerCategoryName: null, // Only used by "cross-category" sales
   discountCategoryName: "Outerwear",
 
-  // Messaging templates. Items marked (+ discount) are followed by "{discount}% OFF".
+  // Messaging templates. Items marked (+ discount) are followed by "{discount}% off".
   messaging: {
-    // Short tagline for banners (+ discount)
-    tagline: "All Outerwear",
+    // Homepage banner
+    bannerHeadline: "All outerwear, for Black Friday",
+    bannerCta: "Shop outerwear",
 
     // Hero section (specials page)
-    heroHeadline: "All Outerwear", // (+ discount)
-    heroSubheadline: "Save 30% on every piece of Mantle outerwear. No code needed: the discount is applied automatically in your cart. Ends December 1.",
+    heroHeadline: "All outerwear, for Black Friday",
+    heroSubheadline: "No code needed. Your discount is applied automatically in the cart.",
 
     // Product page banner, trigger category product (+ discount, "cross-category" only)
     triggerProductBanner: "",
@@ -57,15 +59,21 @@ export const saleConfig = {
     discountProductBanner: "All outerwear",
 
     // Promo section on product pages. The non-Alt versions show on trigger
-    // category products ("cross-category" only). Titles are (+ discount).
+    // category products ("cross-category" only). The discount shows beside them.
     crossPromoTitle: "",
-    crossPromoTitleAlt: "All Outerwear Is",
+    crossPromoTitleAlt: "All outerwear is on sale",
     crossPromoDescription: "",
-    crossPromoDescriptionAlt: "No code needed. Your discount is applied automatically in the cart.",
+    crossPromoDescriptionAlt: "No code needed. The sale price shown here is applied automatically in your cart.",
 
     // Bottom CTA on specials page
-    ctaTitle: "Don't Miss Out",
-    ctaDescription: "30% off all outerwear ends December 1. Discount applied automatically in your cart.",
+    ctaTitle: "Looking for something else?",
+    ctaDescription: "Pants, tops and accessories are in the full shop.",
+  },
+
+  // Homepage banner photo (works best on a near-black backdrop)
+  banner: {
+    image: "/images/home-1.jpg",
+    imagePosition: "50% 38%",
   },
 
   // Navigation link configuration
@@ -85,9 +93,9 @@ export const saleConfig = {
     },
     // Discounted products
     step2: {
-      badge: "On Sale",
-      title: "All Outerwear", // (+ discount)
-      description: "Prices shown are before the discount. 30% comes off automatically in your cart.",
+      badge: "Step 2", // "cross-category" only
+      title: "All outerwear", // (+ discount)
+      description: "Prices shown include your discount.",
     },
   },
 };
@@ -136,6 +144,34 @@ export function getTimeRemaining() {
     minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
     seconds: Math.floor((difference % (1000 * 60)) / 1000),
   };
+}
+
+/**
+ * Last day of the sale in the store's timezone, e.g. "Tuesday, December 1"
+ */
+export function getSaleEndLabel() {
+  return new Intl.DateTimeFormat("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    timeZone: "America/Denver",
+  }).format(new Date(saleConfig.endDate).getTime() - 1);
+}
+
+/**
+ * Percentage currently taken off a product on its own (0 if none).
+ * Cross-category sales return 0: their discount depends on the rest of the cart.
+ */
+export function getSaleDiscountPercent(product) {
+  if (!isSaleActive() || isCrossCategorySale()) return 0;
+  return checkProductEligibility(product?.categories).isDiscount ? saleConfig.discount : 0;
+}
+
+/**
+ * Apply a percentage discount to a price, rounded to cents
+ */
+export function applyDiscount(price, percent) {
+  return Math.round(price * (100 - percent)) / 100;
 }
 
 /**

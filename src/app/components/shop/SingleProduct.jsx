@@ -23,7 +23,8 @@ import {
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import ProductReviewsSection from './ProductReviewsSection';
 import StarRating from './StarRating';
-import { saleConfig, isSaleActive, isCrossCategorySale, checkProductEligibility } from '@/config/saleConfig';
+import { saleConfig, isSaleActive, isCrossCategorySale, checkProductEligibility, getSaleDiscountPercent, getSaleEndLabel } from '@/config/saleConfig';
+import { SaleDiscountMark, saleButtonClass, saleSurfaceClass } from '@/app/components/SaleElements';
 import { newProductConfig, isNewProduct, isNewProductMarketingActive } from '@/config/newProductConfig';
 
 // Function to strip HTML tags
@@ -631,6 +632,11 @@ export default function SingleProduct({ productIdentifier }) {
                 return priceInfo.display;
               }
             })()}
+            {getSaleDiscountPercent(product) > 0 && (
+              <p style={{ margin: '0.25rem 0 0', fontSize: '0.875rem', fontWeight: '500', color: '#4b5563' }}>
+                {saleConfig.name}: {saleConfig.discount}% off, applied automatically in your cart. Ends {getSaleEndLabel()}.
+              </p>
+            )}
           </div>
           
           <div dangerouslySetInnerHTML={{ __html: ogDescriptionValue.replace(/Price range: \$[\d,]+\.?\d* through \$[\d,]+\.?\d*/gi, '') }} 
@@ -640,6 +646,7 @@ export default function SingleProduct({ productIdentifier }) {
           <ProductActions 
             productId={product.id} 
             price={product.price} 
+            discountPercent={getSaleDiscountPercent(product)}
             sizes={sizes} 
             colors={colors}
             amounts={amounts}
@@ -828,62 +835,18 @@ function SaleTopBanner({ isEligible, isTrigger }) {
   const { name, discount, navLink, messaging } = saleConfig;
 
   return (
-    <div style={{ marginBottom: '1.5rem', textAlign: 'center' }}>
-      <Link
-        href={navLink.href}
-        style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '12px',
-          padding: '10px 20px',
-          background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
-          borderRadius: '8px',
-          border: '1px solid #333',
-          textDecoration: 'none',
-          transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.transform = 'translateY(-1px)';
-          e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.3)';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = 'translateY(0)';
-          e.currentTarget.style.boxShadow = 'none';
-        }}
-      >
-        <span
-          style={{
-            background: 'linear-gradient(135deg, #ff4444 0%, #cc0000 100%)',
-            color: 'white',
-            padding: '4px 10px',
-            borderRadius: '4px',
-            fontWeight: '700',
-            fontSize: '0.7rem',
-            letterSpacing: '0.1em',
-            textTransform: 'uppercase',
-          }}
-        >
-          {name}
-        </span>
-        <span style={{ color: '#ffffff', fontSize: '0.95rem', fontWeight: '500' }}>
-          {isTrigger ? messaging.triggerProductBanner : messaging.discountProductBanner}{' '}
-          <span
-            style={{
-              background: 'linear-gradient(135deg, #9CB24D 0%, #b8d45a 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              fontWeight: '700',
-            }}
-          >
-            {discount}% OFF
-          </span>
-        </span>
-        <span style={{ color: '#9CB24D', fontSize: '0.8rem', fontWeight: '600' }}>
-          Shop Deal →
-        </span>
-      </Link>
-    </div>
+    <Link
+      href={navLink.href}
+      className={`${saleSurfaceClass} group mb-6 flex min-h-11 flex-wrap items-center justify-between gap-x-6 gap-y-1 rounded px-5 py-3 text-sm no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black sm:text-base`}
+    >
+      <span className="font-semibold tracking-tight">
+        {name}: {isTrigger ? messaging.triggerProductBanner : messaging.discountProductBanner}{' '}
+        <span className="text-[#9CB24D]">{discount}% off</span>
+      </span>
+      <span className="text-sm text-neutral-300 underline underline-offset-4 transition-colors group-hover:text-white">
+        See the sale
+      </span>
+    </Link>
   );
 }
 
@@ -894,7 +857,7 @@ function SaleCrossPromo({ product }) {
   const { isEligible, isTrigger } = checkProductEligibility(product.categories);
   if (!isEligible) return null;
 
-  const { name, discount, triggerCategory, discountCategory, triggerCategoryName, discountCategoryName, messaging } = saleConfig;
+  const { triggerCategory, discountCategory, triggerCategoryName, discountCategoryName, messaging } = saleConfig;
 
   // Determine the cross-sell category
   const shouldLinkToDiscount = isTrigger || !isCrossCategorySale();
@@ -902,98 +865,22 @@ function SaleCrossPromo({ product }) {
   const targetCategoryName = shouldLinkToDiscount ? discountCategoryName : triggerCategoryName;
 
   return (
-    <div
-      style={{
-        marginTop: '2rem',
-        padding: '24px',
-        background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%)',
-        borderRadius: '12px',
-        border: '1px solid #333',
-        position: 'relative',
-        overflow: 'hidden',
-      }}
+    <aside
+      className={`${saleSurfaceClass} mt-8 flex flex-col items-start gap-5 rounded px-6 py-7 md:flex-row md:items-center md:gap-8 md:px-8`}
     >
-      {/* Background pattern */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
-          opacity: 0.5,
-          pointerEvents: 'none',
-        }}
-      />
-
-      <div style={{ position: 'relative', zIndex: 1 }}>
-        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
-          <div style={{ flex: '1 1 300px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-              <span
-                style={{
-                  background: 'linear-gradient(135deg, #ff4444 0%, #cc0000 100%)',
-                  color: 'white',
-                  padding: '4px 10px',
-                  borderRadius: '4px',
-                  fontWeight: '700',
-                  fontSize: '0.7rem',
-                  letterSpacing: '0.1em',
-                  textTransform: 'uppercase',
-                }}
-              >
-                {name}
-              </span>
-            </div>
-            <h3 style={{ color: '#ffffff', fontSize: '1.25rem', fontWeight: '700', margin: '0 0 6px 0' }}>
-              {isTrigger ? messaging.crossPromoTitle : messaging.crossPromoTitleAlt}{' '}
-              <span
-                style={{
-                  background: 'linear-gradient(135deg, #9CB24D 0%, #b8d45a 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                }}
-              >
-                {discount}% OFF
-              </span>
-            </h3>
-            <p style={{ color: '#999', fontSize: '0.875rem', margin: 0 }}>
-              {isTrigger ? messaging.crossPromoDescription : messaging.crossPromoDescriptionAlt}
-            </p>
-          </div>
-
-          <Link
-            href={`/categories/${targetCategory}`}
-            style={{
-              display: 'inline-block',
-              padding: '12px 24px',
-              background: 'linear-gradient(135deg, #9CB24D 0%, #8aa542 100%)',
-              color: '#1a1a1a',
-              borderRadius: '6px',
-              fontWeight: '600',
-              fontSize: '0.875rem',
-              textDecoration: 'none',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-              boxShadow: '0 4px 15px rgba(156, 178, 77, 0.3)',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 6px 20px rgba(156, 178, 77, 0.4)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 4px 15px rgba(156, 178, 77, 0.3)';
-            }}
-          >
-            Shop {targetCategoryName}
-          </Link>
-        </div>
+      <SaleDiscountMark size="sm" />
+      <div className="flex-1">
+        <h3 className="m-0 text-xl font-semibold tracking-tight">
+          {isTrigger ? messaging.crossPromoTitle : messaging.crossPromoTitleAlt}
+        </h3>
+        <p className="m-0 mt-1 text-sm text-neutral-300">
+          {isTrigger ? messaging.crossPromoDescription : messaging.crossPromoDescriptionAlt}
+        </p>
       </div>
-    </div>
+      <Link href={`/categories/${targetCategory}`} className={saleButtonClass}>
+        Shop {targetCategoryName.toLowerCase()}
+      </Link>
+    </aside>
   );
 }
 
